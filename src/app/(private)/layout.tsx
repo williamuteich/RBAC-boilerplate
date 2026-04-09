@@ -1,15 +1,7 @@
-export default function RootLayout({
+export default function PrivateLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return (
-        <html
-            lang="pt-br"
-        >
-            <body className="min-h-full flex flex-col">
-                {children}
-            </body>
-        </html>
-    );
+    return <>{children}</>;
 }
