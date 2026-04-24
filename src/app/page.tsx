@@ -6,18 +6,24 @@ import MetricsDifferential from "./components/home/metrics-differential";
 import HowItWorks from "./components/home/how-it-works";
 import Pricing from "./components/home/pricing";
 import Cta from "./components/home/cta";
+import Footer from "./components/footer/footer";
+import Header from "./components/header/header";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-white text-gray-900 selection:bg-blue-600 selection:text-white">
-      <Hero />
-      <Problem />
-      <Solution />
-      <AIFeatures />
-      <MetricsDifferential />
-      <HowItWorks />
-      <Pricing />
-      <Cta />
+    <div>
+      <Header />
+      <div className="flex flex-col min-h-screen bg-white text-gray-900 selection:bg-blue-600 selection:text-white">
+        <Hero />
+        <Problem />
+        <Solution />
+        <AIFeatures />
+        <MetricsDifferential />
+        <HowItWorks />
+        <Pricing />
+        <Cta />
+      </div>
+      <Footer />
     </div>
   );
 }
