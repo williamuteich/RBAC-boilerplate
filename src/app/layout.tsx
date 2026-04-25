@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AdControl - Gestão e Controle Inteligente",
-  description: "A solução completa para sua operação.",
+  title: "RentalPro - Gestão de Locadoras de Equipamentos",
+  description: "Sistema completo para gestão de estoque, locações e clientes da sua locadora.",
 };
 
 import { Providers } from "./components/providers";

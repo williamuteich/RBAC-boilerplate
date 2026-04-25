@@ -8,13 +8,15 @@ export default function Header() {
                 <div className="relative flex items-center justify-between">
                     <div className="w-auto max-w-full">
                         <Link href="/" className="block">
-                            <div className="flex items-center gap-1 sm:gap-2">
-                                <img
-                                    src="/logo.png"
-                                    alt="AdControl"
-                                    className="transition-all duration-300 h-8 sm:h-10"
-                                />
-                                <span className="text-lg sm:text-2xl font-bold text-black">AdControl</span>
+                            <div className="flex items-center gap-1 sm:gap-2 text-[#EA580C]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-key">
+                                  <circle cx="7.5" cy="15.5" r="5.5" />
+                                  <path d="m21 2-9.6 9.6" />
+                                  <path d="m15.5 7.5 3 3L22 7l-3-3" />
+                                </svg>
+                                <span className="text-xl sm:text-2xl font-black tracking-tighter text-neutral-900">
+                                    Rental<span className="text-orange-600">Pro</span>
+                                </span>
                             </div>
                         </Link>
                     </div>

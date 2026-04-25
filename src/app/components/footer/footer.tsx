@@ -7,12 +7,18 @@ export default function Footer() {
                 <div className="-mx-4 flex flex-wrap justify-center">
                     <div className="w-full px-4 flex justify-center">
                         <div className="mb-12 max-w-[360px] flex flex-col items-center text-center lg:mb-16">
-                            <Link href="/" className="mb-8 flex items-center gap-2">
-                                <img src="/logo.png" alt="AdControl" className="h-10" />
-                                <span className="text-2xl font-bold text-black">AdControl</span>
+                            <Link href="/" className="mb-8 flex items-center gap-2 text-[#EA580C]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-key">
+                                  <circle cx="7.5" cy="15.5" r="5.5" />
+                                  <path d="m21 2-9.6 9.6" />
+                                  <path d="m15.5 7.5 3 3L22 7l-3-3" />
+                                </svg>
+                                <span className="text-2xl font-black tracking-tighter text-neutral-900">
+                                    Rental<span className="text-orange-600">Pro</span>
+                                </span>
                             </Link>
                             <p className="mb-9 text-base font-medium leading-relaxed text-body-color dark:text-body-color-dark">
-                                Potencializando o seu negócio com controle inteligente e gestão simplificada.
+                                Gestão completa para sua locadora de equipamentos. Controle lojistas, devoluções e relatórios.
                             </p>
                             <div className="flex items-center justify-center gap-4">
                                 <a href="/" aria-label="social-link" className="text-body-color dark:text-body-color-dark hover:text-primary">
@@ -33,7 +39,7 @@ export default function Footer() {
                 <div className="h-px w-full bg-linear-to-r from-transparent via-[#D2D8E183] to-transparent dark:via-[#959CB183]"></div>
                 <div className="py-8">
                     <p className="text-center text-base font-medium text-body-color dark:text-body-color-dark">
-                        &copy; {new Date().getFullYear()} AdControl. Todos os direitos reservados.
+                        &copy; {new Date().getFullYear()} RentalPro. Todos os direitos reservados.
                     </p>
                 </div>
             </div>

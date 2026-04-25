@@ -41,16 +41,14 @@ export default function ButtonLogin() {
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
                     </svg>
                 </div>
-                <span className="hidden xs:inline">Google</span>
-                <span className="xs:hidden">Entrar</span>
+                <span className="hidden xs:inline">Entrar com Google</span>
+                <span className="xs:hidden">Google</span>
             </button>
-
             <button
-                onClick={() => signIn("google")}
-                className={`${buttonBase} ${padding} cursor-pointer bg-primary text-white text-[10px] sm:text-sm hover:shadow-primary/30 hidden min-[360px]:flex`}
+                onClick={() => signIn()}
+                className={`${buttonBase} ${padding} cursor-pointer bg-orange-600 text-white text-[12px] sm:text-sm hover:bg-orange-700 hover:shadow-orange-600/30`}
             >
-                <span className="hidden sm:inline">Criar Conta Grátis</span>
-                <span className="sm:hidden">Cadastro</span>
+                Entrar
             </button>
         </div>
     );
