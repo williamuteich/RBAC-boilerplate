@@ -1,11 +1,19 @@
 "use client";
 
-import { LayoutDashboard, Calendar, UserRound, ShieldCheck, Key } from "lucide-react";
-import { NavItem } from "./nav-item";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { NavItem } from "./nav-item";
+import { hasPermission } from "@/src/lib/auth-helpers";
+import { ADMIN_NAVIGATION } from "@/src/lib/navigation";
+import React from "react";
 
 export function SidebarContent({ onClose }: { onClose?: () => void }) {
     const pathname = usePathname();
+    const { data: session } = useSession();
+
+    if (!session) return null;
+
+    const sections = ["MAIN MENU", "SISTEMA"] as const;
 
     return (
         <div className="flex flex-col h-full bg-white border-r border-slate-200 lg:border-none">
@@ -19,36 +27,35 @@ export function SidebarContent({ onClose }: { onClose?: () => void }) {
             </div>
 
             <div className="flex-1 overflow-y-auto py-3 px-3 flex flex-col gap-1 custom-scrollbar">
-                <div className="text-[11px] font-semibold text-slate-400 mb-2 px-3 tracking-wider mt-4">MAIN MENU</div>
+                {sections.map(section => {
+                    const sectionItems = ADMIN_NAVIGATION.filter(item => item.section === section);
 
-                <div onClick={onClose}>
-                    <NavItem href="/admin" icon={<LayoutDashboard strokeWidth={2.5} size={18} />} active={pathname === "/admin"}>
-                        Dashboard
-                    </NavItem>
-                </div>
-                <div onClick={onClose}>
-                    <NavItem href="/admin/usuarios" icon={<ShieldCheck strokeWidth={2.5} size={18} />} active={pathname === "/admin/usuarios"}>
-                        Administradores
-                    </NavItem>
-                </div>
-                <div onClick={onClose}>
-                    <NavItem href="/admin/cargos" icon={<Key strokeWidth={2.5} size={18} />} active={pathname === "/admin/cargos"}>
-                        Cargos e Permissões
-                    </NavItem>
-                </div>
-                
-                <div className="text-[11px] font-semibold text-slate-400 mb-2 px-3 tracking-wider mt-4">SISTEMA</div>
-                
-                <div onClick={onClose}>
-                    <NavItem href="#" icon={<Calendar strokeWidth={2.5} size={18} />}>
-                        Calendário
-                    </NavItem>
-                </div>
-                <div onClick={onClose}>
-                    <NavItem href="#" icon={<UserRound strokeWidth={2.5} size={18} />}>
-                        Perfil
-                    </NavItem>
-                </div>
+                    const visibleItems = sectionItems.filter(item => {
+                        if (!item.resource) return true;
+                        return hasPermission(session as any, item.resource, "visualizar");
+                    });
+
+                    if (visibleItems.length === 0) return null;
+
+                    return (
+                        <React.Fragment key={section}>
+                            <div className="text-[11px] font-semibold text-slate-400 mb-2 px-3 tracking-wider mt-4 uppercase">
+                                {section}
+                            </div>
+                            {visibleItems.map(item => (
+                                <div key={item.title} onClick={onClose}>
+                                    <NavItem
+                                        href={item.href}
+                                        icon={<item.icon strokeWidth={2.5} size={18} />}
+                                        active={pathname === item.href}
+                                    >
+                                        {item.title}
+                                    </NavItem>
+                                </div>
+                            ))}
+                        </React.Fragment>
+                    );
+                })}
             </div>
         </div>
     );

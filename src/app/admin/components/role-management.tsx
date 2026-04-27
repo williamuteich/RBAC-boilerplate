@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Plus, Loader2, ShieldAlert, Key, CheckCircle2, Pencil, Trash2 } from "lucide-react";
 
 interface Role {
@@ -36,8 +35,7 @@ interface Role {
     }[];
 }
 
-const RESOURCES = ["usuarios", "configuracoes", "relatorios"];
-const ACTIONS = ["visualizar", "criar", "editar", "deletar"];
+import { ALL_RESOURCES, ALL_ACTIONS } from "@/src/lib/navigation";
 
 export function RoleManagement() {
     const [roles, setRoles] = useState<Role[]>([]);
@@ -46,11 +44,10 @@ export function RoleManagement() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
-    // Form state
     const [editingId, setEditingId] = useState<number | null>(null);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [selectedPermissions, setSelectedPermissions] = useState<{resource: string, action: string}[]>([]);
+    const [selectedPermissions, setSelectedPermissions] = useState<{ resource: string, action: string }[]>([]);
 
     async function fetchRoles() {
         setLoading(true);
@@ -104,10 +101,10 @@ export function RoleManagement() {
             const res = await fetch(url, {
                 method,
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    name, 
-                    description, 
-                    permissions: selectedPermissions 
+                body: JSON.stringify({
+                    name,
+                    description,
+                    permissions: selectedPermissions
                 }),
             });
 
@@ -212,24 +209,23 @@ export function RoleManagement() {
                             <div className="space-y-4">
                                 <Label className="text-base font-semibold">Permissões</Label>
                                 <div className="grid gap-4">
-                                    {RESOURCES.map(resource => (
+                                    {ALL_RESOURCES.map(resource => (
                                         <div key={resource} className="space-y-2 border rounded-lg p-3 bg-muted/30">
                                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
                                                 {resource}
                                             </h4>
                                             <div className="grid grid-cols-2 gap-2">
-                                                {ACTIONS.map(action => {
+                                                {ALL_ACTIONS.map(action => {
                                                     const isSelected = selectedPermissions.some(p => p.resource === resource && p.action === action);
                                                     return (
                                                         <button
                                                             key={action}
                                                             type="button"
                                                             onClick={() => togglePermission(resource, action)}
-                                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                                                                isSelected 
-                                                                ? "bg-indigo-600 text-white shadow-sm" 
+                                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${isSelected
+                                                                ? "bg-indigo-600 text-white shadow-sm"
                                                                 : "bg-white border text-zinc-600 hover:border-indigo-300"
-                                                            }`}
+                                                                }`}
                                                         >
                                                             {isSelected && <CheckCircle2 className="h-3 w-3" />}
                                                             {action.charAt(0).toUpperCase() + action.slice(1)}
@@ -243,7 +239,7 @@ export function RoleManagement() {
                             </div>
 
                             {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
-                            
+
                             <DialogFooter>
                                 <Button type="submit" disabled={saving} className="w-full bg-indigo-600">
                                     {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (editingId ? "Salvar Alterações" : "Salvar Cargo")}
@@ -289,11 +285,11 @@ export function RoleManagement() {
                                                 role.permissions.forEach(p => {
                                                     const res = p.permission.resource;
                                                     const action = p.permission.action;
-                                                    const code = action === "visualizar" ? "V" : 
-                                                                action === "criar" ? "C" : 
-                                                                action === "editar" ? "E" : 
+                                                    const code = action === "visualizar" ? "V" :
+                                                        action === "criar" ? "C" :
+                                                            action === "editar" ? "E" :
                                                                 action === "deletar" ? "D" : action.charAt(0).toUpperCase();
-                                                    
+
                                                     if (!grouped[res]) grouped[res] = [];
                                                     grouped[res].push(code);
                                                 });

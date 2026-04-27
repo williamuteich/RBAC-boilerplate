@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
-import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers";
+import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 
 export async function DELETE(
     request: Request,

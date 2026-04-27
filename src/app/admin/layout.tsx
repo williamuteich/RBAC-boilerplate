@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
-import { requireAdminContext } from "@/src/lib/auth-helpers";
+import { requireAdminContext } from "@/src/lib/auth-helpers-server";
 
 export default async function PrivateLayout({ children }: { children: ReactNode }) {
     await requireAdminContext();
