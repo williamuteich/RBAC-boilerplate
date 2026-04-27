@@ -4,22 +4,21 @@ import { redirect } from "next/navigation";
 
 type AppSession = Awaited<ReturnType<typeof getServerSession<typeof auth>>>;
 
-// Garante que é Administrator
+// Para Server Components
 export async function requireAdminContext() {
     const session = await getServerSession(auth);
-    if (!session) redirect("/admin/login");
-    if (session.user.tipo !== "ADMINISTRATOR") redirect("/admin/login");
+    if (!session || session.user.tipo !== "ADMINISTRATOR") {
+        redirect("/");
+    }
     return session;
 }
 
-// Garante que é Lojista ou ShopMember
-export async function requireLojaContext() {
+// Para API Routes
+export async function checkAdminApi() {
     const session = await getServerSession(auth);
-    if (!session) redirect("/loja/login");
-    const isLoja =
-        session.user.tipo === "LOJISTA" ||
-        session.user.tipo === "SHOP_MEMBER";
-    if (!isLoja) redirect("/loja/login");
+    if (!session || session.user.tipo !== "ADMINISTRATOR") {
+        return null;
+    }
     return session;
 }
 
@@ -30,15 +29,19 @@ export function hasPermission(
     action: string
 ): boolean {
     if (!session) return false;
-    // Lojista tem acesso total ao próprio ambiente
-    if (session.user.tipo === "LOJISTA") return true;
-    return session.user.permissions.includes(`${resource}:${action}`);
+    const perms = session.user.permissions;
+    // all:all = super admin sem cargo, acesso total
+    return perms.includes("all:all") || perms.includes(`${resource}:${action}`);
 }
 
-// Garante permissão ou redireciona
+// Para Server Components que precisam de permissão específica
 export async function requirePermission(resource: string, action: string) {
     const session = await getServerSession(auth);
-    if (!session) redirect("/loja/login");
-    if (!hasPermission(session, resource, action)) redirect("/unauthorized");
+    if (!session || session.user.tipo !== "ADMINISTRATOR") {
+        redirect("/");
+    }
+    if (!hasPermission(session, resource, action)) {
+        redirect("/admin/unauthorized");
+    }
     return session;
 }

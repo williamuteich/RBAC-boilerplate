@@ -138,3 +138,6 @@ body {
     @apply font-sans;
   }
 }
+button, a, [role="button"] {
+  cursor: pointer !important;
+}

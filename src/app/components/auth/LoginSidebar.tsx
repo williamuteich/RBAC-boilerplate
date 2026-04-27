@@ -23,17 +23,17 @@ export function LoginSidebar() {
         </h1>
 
         <p className="text-zinc-400 text-lg mb-12">
-          Controle lojistas, equipamentos, locações e relatórios em uma única plataforma robusta e segura.
+          Controle equipamentos, locações e relatórios em uma única plataforma robusta e segura.
         </p>
 
         <div className="space-y-8">
           <div className="flex gap-4">
-            <div className="shrink-0 items-center justify-center w-12 h-12 rounded-xl bg-zinc-900/80 border border-zinc-800">
+            <div className="shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-zinc-900/80 border border-zinc-800">
               <Users className="w-6 h-6 text-orange-500" />
             </div>
             <div>
-              <h3 className="text-white font-semibold text-lg">Cadastro multi-lojista</h3>
-              <p className="text-zinc-500 text-sm mt-1">Cada lojista no seu próprio ambiente isolado</p>
+              <h3 className="text-white font-semibold text-lg">Gestão de Usuários</h3>
+              <p className="text-zinc-500 text-sm mt-1">Controle de acesso centralizado e seguro</p>
             </div>
           </div>
 

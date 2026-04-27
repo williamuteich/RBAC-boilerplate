@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell, Moon, Search } from "lucide-react";
-import { UserDropdown } from "./components/user-dropdown";
+import { UserDropdown } from "../components/user-dropdown";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
@@ -22,9 +22,6 @@ export function Header() {
             </div>
 
             <div className="flex items-center gap-2 md:gap-4 ml-auto shrink-0">
-                <Button variant="ghost" size="icon" className="rounded-full text-slate-500 hover:text-slate-700 hover:bg-slate-100 hidden sm:flex">
-                    <Moon className="w-5 h-5" />
-                </Button>
                 <div className="relative">
                     <Button variant="ghost" size="icon" className="rounded-full text-slate-500 hover:text-slate-700 hover:bg-slate-100">
                         <Bell className="w-5 h-5" />

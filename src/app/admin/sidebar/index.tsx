@@ -1,9 +1,12 @@
 "use client";
 
-import { LayoutDashboard, Calendar, UserRound } from "lucide-react";
-import { NavItem } from "./components/nav-item";
+import { LayoutDashboard, Calendar, UserRound, Store, ShieldCheck, Key } from "lucide-react";
+import { NavItem } from "../components/nav-item";
+import { usePathname } from "next/navigation";
 
 export function Sidebar() {
+    const pathname = usePathname();
+
     return (
         <aside className="w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col h-full shrink-0 relative transition-transform">
             <div className="h-20 flex items-center px-6 border-b border-transparent shrink-0">
@@ -18,14 +21,23 @@ export function Sidebar() {
             <div className="flex-1 overflow-y-auto py-3 px-3 flex flex-col gap-1 custom-scrollbar">
                 <div className="text-[11px] font-semibold text-slate-400 mb-2 px-3 tracking-wider mt-4">MAIN MENU</div>
 
-                <NavItem href="/admin" icon={<LayoutDashboard strokeWidth={2.5} size={18} />} active>
+                <NavItem href="/admin" icon={<LayoutDashboard strokeWidth={2.5} size={18} />} active={pathname === "/admin"}>
                     Dashboard
                 </NavItem>
+                <NavItem href="/admin/usuarios" icon={<ShieldCheck strokeWidth={2.5} size={18} />} active={pathname === "/admin/usuarios"}>
+                    Administradores
+                </NavItem>
+                <NavItem href="/admin/cargos" icon={<Key strokeWidth={2.5} size={18} />} active={pathname === "/admin/cargos"}>
+                    Cargos e Permissões
+                </NavItem>
+                
+                <div className="text-[11px] font-semibold text-slate-400 mb-2 px-3 tracking-wider mt-4">SISTEMA</div>
+                
                 <NavItem href="#" icon={<Calendar strokeWidth={2.5} size={18} />}>
-                    Calendar
+                    Calendário
                 </NavItem>
                 <NavItem href="#" icon={<UserRound strokeWidth={2.5} size={18} />}>
-                    Profile
+                    Perfil
                 </NavItem>
             </div>
         </aside>

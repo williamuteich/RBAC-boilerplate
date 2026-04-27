@@ -1,8 +1,11 @@
 import { ReactNode } from "react";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
+import { requireAdminContext } from "@/src/lib/auth-helpers";
 
-export default function PrivateLayout({ children }: { children: ReactNode }) {
+export default async function PrivateLayout({ children }: { children: ReactNode }) {
+    await requireAdminContext();
+
     return (
         <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 font-sans">
             <Sidebar />
