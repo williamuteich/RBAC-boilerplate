@@ -1,7 +1,16 @@
 import { AdminManagement } from "../components/admin-management";
 import { ShieldCheck } from "lucide-react";
+import { getAdmins, getRoles } from "@/src/services/administrator";
+import NotAuthorized from "@/src/app/components/notAuthorized";
 
-export default function UsuariosAdminPage() {
+export default async function UsuariosAdminPage() {
+    const initialAdmins = await getAdmins();
+    const initialRoles = await getRoles();
+
+    if (initialAdmins === null || initialRoles === null) {
+        return <NotAuthorized />;
+    }
+
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
@@ -14,7 +23,10 @@ export default function UsuariosAdminPage() {
                 </p>
             </div>
 
-            <AdminManagement />
+            <AdminManagement
+                initialAdmins={initialAdmins}
+                initialRoles={initialRoles}
+            />
         </div>
     );
 }

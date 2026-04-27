@@ -1,0 +1,77 @@
+"use server";
+import { Admin, Role } from "@/src/types/dashboard/admins";
+import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+export async function getAdmins(): Promise<Admin[] | null> {
+    const cookie = (await headers()).get("cookie") || "";
+    const res = await fetch(`${API_URL}/api/admin/usuarios`, { headers: { Cookie: cookie } });
+    if (res.status === 403 || res.status === 401) return null;
+    if (!res.ok) throw new Error("Failed to fetch admins");
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+}
+
+export async function getRoles(): Promise<Role[] | null> {
+    const cookie = (await headers()).get("cookie") || "";
+    const res = await fetch(`${API_URL}/api/admin/roles`, { headers: { Cookie: cookie } });
+    if (res.status === 403 || res.status === 401) return null;
+    if (!res.ok) throw new Error("Failed to fetch roles");
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+}
+
+export async function createAdmin(data: { name: string; email: string; roleId: string }): Promise<{ success: boolean; error?: string }> {
+    const cookie = (await headers()).get("cookie") || "";
+    const res = await fetch(`${API_URL}/api/admin/usuarios`, {
+        method: "POST",
+        headers: {
+            "Cookie": cookie,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (res.status === 403) return { success: false, error: "Sem permissão" };
+    const result = await res.json();
+    if (!res.ok) return { success: false, error: result.error || "Erro ao criar administrador" };
+    
+    revalidatePath("/admin/usuarios");
+    return { success: true };
+}
+
+export async function updateAdmin(id: number, data: { name: string; email: string; roleId: string; active: boolean }): Promise<{ success: boolean; error?: string }> {
+    const cookie = (await headers()).get("cookie") || "";
+    const res = await fetch(`${API_URL}/api/admin/usuarios/${id}`, {
+        method: "PUT",
+        headers: {
+            "Cookie": cookie,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (res.status === 403) return { success: false, error: "Sem permissão" };
+    const result = await res.json();
+    if (!res.ok) return { success: false, error: result.error || "Erro ao atualizar administrador" };
+    
+    revalidatePath("/admin/usuarios");
+    return { success: true };
+}
+
+export async function deleteAdmin(id: number): Promise<{ success: boolean; error?: string }> {
+    const cookie = (await headers()).get("cookie") || "";
+    const res = await fetch(`${API_URL}/api/admin/usuarios/${id}`, {
+        method: "DELETE",
+        headers: { Cookie: cookie }
+    });
+
+    if (res.status === 403) return { success: false, error: "Sem permissão" };
+    const result = await res.json();
+    if (!res.ok) return { success: false, error: result.error || "Erro ao excluir administrador" };
+    
+    revalidatePath("/admin/usuarios");
+    return { success: true };
+}
