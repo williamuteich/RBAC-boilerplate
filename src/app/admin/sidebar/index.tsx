@@ -18,7 +18,7 @@ export function Sidebar() {
             <div className="flex-1 overflow-y-auto py-3 px-3 flex flex-col gap-1 custom-scrollbar">
                 <div className="text-[11px] font-semibold text-slate-400 mb-2 px-3 tracking-wider mt-4">MAIN MENU</div>
 
-                <NavItem href="/dashboard" icon={<LayoutDashboard strokeWidth={2.5} size={18} />} active>
+                <NavItem href="/admin" icon={<LayoutDashboard strokeWidth={2.5} size={18} />} active>
                     Dashboard
                 </NavItem>
                 <NavItem href="#" icon={<Calendar strokeWidth={2.5} size={18} />}>

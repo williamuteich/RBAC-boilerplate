@@ -8,8 +8,95 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+// ═══════════════════════════════════════════
+// ADMIN — acesso total, login só via Google
+// ═══════════════════════════════════════════
+model Administrator {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String?
+  image     String?
+  active    Boolean   @default(true)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ═══════════════════════════════════════════
+// LOJA — Lojista + Funcionários
+// ═══════════════════════════════════════════
+model Lojista {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String?
+  password  String? // null se entrou via Google
+  image     String?
+  active    Boolean   @default(true)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  members ShopMember[]
+  roles   ShopRole[]
+}
+
+// Cargos criados pelo lojista para os funcionários dele
+model ShopRole {
+  id          Int      @id @default(autoincrement())
+  lojistaId   Int
+  name        String
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lojista     Lojista              @relation(fields: [lojistaId], references: [id], onDelete: Cascade)
+  members     ShopMember[]
+  permissions ShopRolePermission[]
+
+  @@unique([lojistaId, name])
+}
+
+// Funcionários do lojista — cadastrados pelo próprio lojista
+model ShopMember {
+  id         Int       @id @default(autoincrement())
+  lojistaId  Int
+  shopRoleId Int
+  email      String    @unique
+  name       String?
+  password   String? // null se usa Google
+  active     Boolean   @default(true)
+  lastLogin  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  lojista  Lojista  @relation(fields: [lojistaId], references: [id], onDelete: Cascade)
+  shopRole ShopRole @relation(fields: [shopRoleId], references: [id])
+}
+
+// Permissões disponíveis — populadas via seed
+// resource: "equipamentos" | "clientes" | "locacoes" | "relatorios" | "funcionarios"
+// action:   "visualizar" | "criar" | "editar" | "deletar"
+model ShopPermission {
+  id          Int     @id @default(autoincrement())
+  resource    String
+  action      String
+  description String?
+
+  roles ShopRolePermission[]
+
+  @@unique([resource, action])
+}
+
+// Qual cargo tem qual permissão
+model ShopRolePermission {
+  id               Int      @id @default(autoincrement())
+  shopRoleId       Int
+  shopPermissionId Int
+  createdAt        DateTime @default(now())
+
+  shopRole       ShopRole       @relation(fields: [shopRoleId], references: [id], onDelete: Cascade)
+  shopPermission ShopPermission @relation(fields: [shopPermissionId], references: [id], onDelete: Cascade)
+
+  @@unique([shopRoleId, shopPermissionId])
 }

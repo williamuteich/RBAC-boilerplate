@@ -10,6 +10,9 @@ export const auth: NextAuthOptions = {
             clientSecret: process.env.GOOGLE_SECRET!,
         })
     ],
+    pages: {
+        signIn: "/",
+    },
     callbacks: {
         async signIn({ user }) {
             if (!user.email) return false;
