@@ -21,7 +21,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Loader2, ShieldAlert, Key, CheckCircle2, Pencil, Trash2 } from "lucide-react";
+import { Plus, Loader2, ShieldAlert, Key, CheckCircle2, Pencil, Trash2, AlertTriangle } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Role {
     id: number;
@@ -124,18 +135,17 @@ export function RoleManagement() {
     }
 
     async function handleDelete(id: number) {
-        if (!confirm("Tem certeza que deseja remover este cargo?")) return;
-
         try {
             const res = await fetch(`/api/admin/roles/${id}`, { method: "DELETE" });
             if (res.ok) {
                 fetchRoles();
             } else {
                 const data = await res.json();
-                alert(data.error || "Erro ao excluir cargo");
+                setError(data.error || "Erro ao excluir cargo");
             }
         } catch (err) {
             console.error(err);
+            setError("Erro de rede ao excluir");
         }
     }
 
@@ -314,12 +324,45 @@ export function RoleManagement() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button variant="ghost" size="icon-sm" onClick={() => startEdit(role)}>
-                                                <Pencil className="h-4 w-4 text-slate-500" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon-sm" onClick={() => handleDelete(role.id)}>
-                                                <Trash2 className="h-4 w-4 text-red-500" />
-                                            </Button>
+                                            {role.name !== "Admin" ? (
+                                                <>
+                                                    <Button variant="ghost" size="icon-sm" onClick={() => startEdit(role)}>
+                                                        <Pencil className="h-4 w-4 text-slate-500" />
+                                                    </Button>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger render={
+                                                            <Button variant="ghost" size="icon-sm">
+                                                                 <Trash2 className="h-4 w-4 text-red-500" />
+                                                            </Button>
+                                                        } />
+                                                        <AlertDialogContent className="border-red-100">
+                                                            <AlertDialogHeader>
+                                                                <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-2">
+                                                                    <AlertTriangle className="h-6 w-6 text-red-600" />
+                                                                </div>
+                                                                <AlertDialogTitle>Remover Cargo</AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Tem certeza que deseja remover o cargo <strong>{role.name}</strong>? 
+                                                                    Esta ação é irreversível e pode afetar o acesso de vários administradores vinculados a este cargo.
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                                <AlertDialogAction 
+                                                                    onClick={() => handleDelete(role.id)}
+                                                                    className="bg-red-600 hover:bg-red-700 text-white"
+                                                                >
+                                                                    Sim, excluir
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </>
+                                            ) : (
+                                                <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest border border-slate-200 rounded bg-slate-50">
+                                                    Sistema
+                                                </div>
+                                            )}
                                         </div>
                                     </TableCell>
                                 </TableRow>

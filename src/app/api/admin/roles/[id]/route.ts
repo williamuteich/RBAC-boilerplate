@@ -16,6 +16,14 @@ export async function DELETE(
     const { id } = await params;
 
     try {
+        const roleToDelete = await prisma.adminRole.findUnique({
+            where: { id: Number(id) }
+        });
+
+        if (roleToDelete?.name === "Admin") {
+            return NextResponse.json({ error: "O cargo de Admin não pode ser removido." }, { status: 403 });
+        }
+
         await prisma.adminRole.delete({
             where: { id: Number(id) },
         });
@@ -40,6 +48,14 @@ export async function PUT(
     const { id } = await params;
 
     try {
+        const roleToUpdate = await prisma.adminRole.findUnique({
+            where: { id: Number(id) }
+        });
+
+        if (roleToUpdate?.name === "Admin") {
+            return NextResponse.json({ error: "O cargo de Admin não pode ser alterado por aqui." }, { status: 403 });
+        }
+
         const body = await request.json();
         const { name, description, permissions } = body;
 

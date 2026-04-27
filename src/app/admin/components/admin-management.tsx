@@ -22,7 +22,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Loader2, UserPlus, Mail, Shield, ShieldCheck, Trash2, Pencil, Clock } from "lucide-react";
+import { Plus, Loader2, UserPlus, Mail, Shield, ShieldCheck, Trash2, Pencil, Clock, AlertTriangle } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Role {
     id: number;
@@ -119,17 +130,16 @@ export function AdminManagement() {
     }
 
     async function handleDelete(id: number) {
-        if (!confirm("Tem certeza que deseja remover este administrador?")) return;
-
         try {
             const res = await fetch(`/api/admin/usuarios/${id}`, { method: "DELETE" });
             if (res.ok) {
                 fetchData();
             } else {
-                alert("Erro ao excluir administrador");
+                setError("Erro ao excluir administrador");
             }
         } catch (err) {
             console.error(err);
+            setError("Ocorreu um erro inesperado");
         }
     }
 
@@ -206,11 +216,13 @@ export function AdminManagement() {
                                     required
                                 >
                                     <option value="">Selecione um cargo</option>
-                                    {roles.map((role) => (
-                                        <option key={role.id} value={role.id}>
-                                            {role.name}
-                                        </option>
-                                    ))}
+                                    {roles
+                                        .filter(role => role.name !== "Admin")
+                                        .map((role) => (
+                                            <option key={role.id} value={role.id}>
+                                                {role.name}
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
                             
@@ -278,14 +290,17 @@ export function AdminManagement() {
                                     </TableCell>
                                     <TableCell>
                                         {admin.role ? (
-                                            <div className="flex items-center gap-1.5 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full w-fit text-xs font-semibold">
+                                            <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full w-fit text-xs font-semibold ${
+                                                admin.role.name === "Admin" 
+                                                ? "text-amber-600 bg-amber-50 border border-amber-200" 
+                                                : "text-blue-600 bg-blue-50"
+                                            }`}>
                                                 <ShieldCheck className="h-3 w-3" />
                                                 {admin.role.name}
                                             </div>
                                         ) : (
-                                            <div className="flex items-center gap-1.5 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full w-fit text-xs font-bold border border-amber-200">
-                                                <ShieldCheck className="h-3 w-3" />
-                                                Super Admin
+                                            <div className="flex items-center gap-1.5 text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full w-fit text-xs font-medium border border-slate-200 italic">
+                                                Sem cargo
                                             </div>
                                         )}
                                     </TableCell>
@@ -307,12 +322,45 @@ export function AdminManagement() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Button variant="ghost" size="icon-sm" onClick={() => startEdit(admin)}>
-                                                <Pencil className="h-4 w-4 text-slate-500" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon-sm" onClick={() => handleDelete(admin.id)}>
-                                                <Trash2 className="h-4 w-4 text-red-500" />
-                                            </Button>
+                                            {admin.email !== "williamuteich14@gmail.com" ? (
+                                                <>
+                                                    <Button variant="ghost" size="icon-sm" onClick={() => startEdit(admin)}>
+                                                        <Pencil className="h-4 w-4 text-slate-500" />
+                                                    </Button>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger render={
+                                                            <Button variant="ghost" size="icon-sm">
+                                                                <Trash2 className="h-4 w-4 text-red-500" />
+                                                            </Button>
+                                                        } />
+                                                        <AlertDialogContent className="border-red-100">
+                                                            <AlertDialogHeader>
+                                                                <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-2">
+                                                                    <AlertTriangle className="h-6 w-6 text-red-600" />
+                                                                </div>
+                                                                <AlertDialogTitle>Remover Administrador</AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    Tem certeza que deseja remover <strong>{admin.name || admin.email}</strong>? 
+                                                                    Esta ação não poderá ser desfeita e o usuário perderá acesso imediato.
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                                                <AlertDialogAction 
+                                                                    onClick={() => handleDelete(admin.id)}
+                                                                    className="bg-red-600 hover:bg-red-700 text-white"
+                                                                >
+                                                                    Sim, excluir
+                                                                </AlertDialogAction>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
+                                                </>
+                                            ) : (
+                                                <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest border border-slate-200 rounded bg-slate-50">
+                                                    Sistema
+                                                </div>
+                                            )}
                                         </div>
                                     </TableCell>
                                 </TableRow>
