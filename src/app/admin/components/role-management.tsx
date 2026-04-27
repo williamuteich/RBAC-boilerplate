@@ -47,6 +47,7 @@ interface Role {
 }
 
 import { ALL_RESOURCES, ALL_ACTIONS } from "@/src/lib/navigation";
+import { ViewPermissions } from "./view-permissions";
 
 export function RoleManagement() {
     const [roles, setRoles] = useState<Role[]>([]);
@@ -290,33 +291,8 @@ export function RoleManagement() {
                                     <TableCell className="text-sm text-slate-500">{role.description || "-"}</TableCell>
                                     <TableCell>
                                         <div className="flex flex-col gap-1.5">
-                                            {(() => {
-                                                const grouped: Record<string, string[]> = {};
-                                                role.permissions.forEach(p => {
-                                                    const res = p.permission.resource;
-                                                    const action = p.permission.action;
-                                                    const code = action === "visualizar" ? "V" :
-                                                        action === "criar" ? "C" :
-                                                            action === "editar" ? "E" :
-                                                                action === "deletar" ? "D" : action.charAt(0).toUpperCase();
+                                            <ViewPermissions permissions={role.permissions} roleName={role.name} />
 
-                                                    if (!grouped[res]) grouped[res] = [];
-                                                    grouped[res].push(code);
-                                                });
-
-                                                return Object.entries(grouped).map(([resource, codes]) => (
-                                                    <div key={resource} className="flex items-center gap-2">
-                                                        <span className="text-[10px] font-bold uppercase text-slate-400 w-20">{resource}:</span>
-                                                        <div className="flex gap-1">
-                                                            {codes.map((code, idx) => (
-                                                                <span key={idx} className="flex items-center justify-center w-5 h-5 text-[9px] font-bold bg-indigo-50 text-indigo-600 rounded-md border border-indigo-100">
-                                                                    {code}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                ));
-                                            })()}
                                             {role.permissions.length === 0 && (
                                                 <span className="text-xs text-muted-foreground italic">Sem permissões</span>
                                             )}
@@ -332,7 +308,7 @@ export function RoleManagement() {
                                                     <AlertDialog>
                                                         <AlertDialogTrigger render={
                                                             <Button variant="ghost" size="icon-sm">
-                                                                 <Trash2 className="h-4 w-4 text-red-500" />
+                                                                <Trash2 className="h-4 w-4 text-red-500" />
                                                             </Button>
                                                         } />
                                                         <AlertDialogContent className="border-red-100">
@@ -342,13 +318,13 @@ export function RoleManagement() {
                                                                 </div>
                                                                 <AlertDialogTitle>Remover Cargo</AlertDialogTitle>
                                                                 <AlertDialogDescription>
-                                                                    Tem certeza que deseja remover o cargo <strong>{role.name}</strong>? 
+                                                                    Tem certeza que deseja remover o cargo <strong>{role.name}</strong>?
                                                                     Esta ação é irreversível e pode afetar o acesso de vários administradores vinculados a este cargo.
                                                                 </AlertDialogDescription>
                                                             </AlertDialogHeader>
                                                             <AlertDialogFooter>
                                                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                                                <AlertDialogAction 
+                                                                <AlertDialogAction
                                                                     onClick={() => handleDelete(role.id)}
                                                                     className="bg-red-600 hover:bg-red-700 text-white"
                                                                 >

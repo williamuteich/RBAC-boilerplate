@@ -24,6 +24,7 @@ export async function GET() {
                 createdAt: true,
                 role: {
                     select: {
+                        id: true,
                         name: true,
                     },
                 },

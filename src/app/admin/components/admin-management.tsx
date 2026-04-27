@@ -76,7 +76,7 @@ export function AdminManagement() {
                 fetch("/api/admin/usuarios"),
                 fetch("/api/admin/roles")
             ]);
-            
+
             if (adminsRes.ok) setAdmins(await adminsRes.json());
             if (rolesRes.ok) setRoles(await rolesRes.json());
         } catch (err) {
@@ -219,20 +219,20 @@ export function AdminManagement() {
                                     {roles
                                         .filter(role => role.name !== "Admin")
                                         .map((role) => (
-                                            <option key={role.id} value={role.id}>
+                                            <option key={role.id} value={String(role.id)}>
                                                 {role.name}
                                             </option>
                                         ))}
                                 </select>
                             </div>
-                            
+
                             {editingId && (
                                 <div className="flex items-center gap-2 py-2">
-                                    <input 
-                                        type="checkbox" 
-                                        id="active" 
-                                        checked={active} 
-                                        onChange={(e) => setActive(e.target.checked)} 
+                                    <input
+                                        type="checkbox"
+                                        id="active"
+                                        checked={active}
+                                        onChange={(e) => setActive(e.target.checked)}
                                         className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
                                     />
                                     <Label htmlFor="active" className="cursor-pointer">Acesso Ativo</Label>
@@ -290,11 +290,10 @@ export function AdminManagement() {
                                     </TableCell>
                                     <TableCell>
                                         {admin.role ? (
-                                            <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full w-fit text-xs font-semibold ${
-                                                admin.role.name === "Admin" 
-                                                ? "text-amber-600 bg-amber-50 border border-amber-200" 
-                                                : "text-blue-600 bg-blue-50"
-                                            }`}>
+                                            <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full w-fit text-xs font-semibold ${admin.role.name === "Admin"
+                                                    ? "text-amber-600 bg-amber-50 border border-amber-200"
+                                                    : "text-blue-600 bg-blue-50"
+                                                }`}>
                                                 <ShieldCheck className="h-3 w-3" />
                                                 {admin.role.name}
                                             </div>
@@ -310,14 +309,14 @@ export function AdminManagement() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-xs text-muted-foreground">
-                                        {admin.lastLogin 
+                                        {admin.lastLogin
                                             ? new Date(admin.lastLogin).toLocaleString("pt-BR", {
                                                 day: "2-digit",
                                                 month: "2-digit",
                                                 year: "numeric",
                                                 hour: "2-digit",
                                                 minute: "2-digit"
-                                              }) 
+                                            })
                                             : "Nunca logou"}
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -340,13 +339,13 @@ export function AdminManagement() {
                                                                 </div>
                                                                 <AlertDialogTitle>Remover Administrador</AlertDialogTitle>
                                                                 <AlertDialogDescription>
-                                                                    Tem certeza que deseja remover <strong>{admin.name || admin.email}</strong>? 
+                                                                    Tem certeza que deseja remover <strong>{admin.name || admin.email}</strong>?
                                                                     Esta ação não poderá ser desfeita e o usuário perderá acesso imediato.
                                                                 </AlertDialogDescription>
                                                             </AlertDialogHeader>
                                                             <AlertDialogFooter>
                                                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                                                <AlertDialogAction 
+                                                                <AlertDialogAction
                                                                     onClick={() => handleDelete(admin.id)}
                                                                     className="bg-red-600 hover:bg-red-700 text-white"
                                                                 >
