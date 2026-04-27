@@ -2,13 +2,7 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
-
-interface NavItemProps {
-    href: string;
-    icon: ReactNode;
-    children: ReactNode;
-    active?: boolean;
-}
+import { NavItemProps } from "@/src/types/components";
 
 export function NavItem({ href, icon, children, active }: NavItemProps) {
     return (

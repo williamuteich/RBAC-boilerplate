@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
+import { adminSchema } from "@/src/schemas/admin";
 
 export async function GET() {
     const session = await checkAdminApi();
@@ -50,16 +51,13 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { email, name, roleId } = body;
-
-        if (!email) {
-            return NextResponse.json({ error: "E-mail é obrigatório" }, { status: 400 });
+        
+        const validated = adminSchema.safeParse(body);
+        if (!validated.success) {
+            return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
         }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return NextResponse.json({ error: "E-mail inválido" }, { status: 400 });
-        }
+        
+        const { email, name, roleId } = validated.data;
 
         const exists = await prisma.administrator.findUnique({
             where: { email },

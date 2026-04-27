@@ -10,16 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { ShieldCheck, Eye, Plus, Pencil, Trash2, ShieldIcon, Fingerprint } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-interface ViewPermissionsProps {
-    roleName: string;
-    permissions: {
-        permission: {
-            resource: string;
-            action: string;
-        }
-    }[];
-}
+import { ViewPermissionsProps } from "@/src/types/components";
 
 const ACTION_ICONS: Record<string, any> = {
     visualizar: { icon: Eye, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },

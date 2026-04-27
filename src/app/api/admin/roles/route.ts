@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
+import { roleSchema } from "@/src/schemas/admin";
 
 export async function GET() {
     const session = await checkAdminApi();
@@ -47,15 +48,13 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { name, description, permissions } = body;
-
-        if (!name) {
-            return NextResponse.json({ error: "Nome é obrigatório" }, { status: 400 });
+        
+        const validated = roleSchema.safeParse(body);
+        if (!validated.success) {
+            return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
         }
 
-        if (!permissions || permissions.length === 0) {
-            return NextResponse.json({ error: "Selecione ao menos uma permissão" }, { status: 400 });
-        }
+        const { name, description, permissions } = validated.data;
 
         const role = await prisma.$transaction(async (tx) => {
             const newRole = await tx.adminRole.create({

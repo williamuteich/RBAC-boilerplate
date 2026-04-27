@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
+import { roleSchema } from "@/src/schemas/admin";
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await checkAdminApi();
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
@@ -36,7 +37,7 @@ export async function DELETE(
 
 export async function PUT(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await checkAdminApi();
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
@@ -57,7 +58,13 @@ export async function PUT(
         }
 
         const body = await request.json();
-        const { name, description, permissions } = body;
+        
+        const validated = roleSchema.safeParse(body);
+        if (!validated.success) {
+            return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
+        }
+
+        const { name, description, permissions } = validated.data;
 
         const role = await prisma.$transaction(async (tx) => {
             const updatedRole = await tx.adminRole.update({
