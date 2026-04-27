@@ -3,11 +3,13 @@
 import { Bell, Moon, Search } from "lucide-react";
 import { UserDropdown } from "../components/user-dropdown";
 import { Button } from "@/components/ui/button";
+import { MobileNav } from "../components/mobile-nav";
 
 export function Header() {
     return (
         <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 w-full z-10 transition-all">
             <div className="flex items-center w-full max-w-lg">
+                <MobileNav />
                 <div className="hidden md:flex items-center gap-2 bg-slate-100 rounded-full px-4 border border-transparent focus-within:bg-white focus-within:border-slate-300 focus-within:shadow-sm transition-all h-10 w-full max-w-sm">
                     <Search className="w-4 h-4 text-slate-400" />
                     <input
