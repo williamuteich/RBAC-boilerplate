@@ -24,7 +24,7 @@ export default async function UsuariosAdminPage() {
             </div>
 
             <AdminManagement
-                initialAdmins={initialAdmins}
+                initialData={initialAdmins}
                 initialRoles={initialRoles}
             />
         </div>

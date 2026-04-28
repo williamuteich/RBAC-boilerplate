@@ -23,3 +23,17 @@ export interface Role {
         }
     }[];
 }
+
+export interface AdminsResponse {
+    admins: Admin[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+}
+
+export interface AdminFilters {
+    page?: number;
+    limit?: number;
+    name?: string;
+}

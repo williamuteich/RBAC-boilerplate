@@ -1,18 +1,23 @@
 "use server";
-import { Admin, Role } from "@/src/types/dashboard/admins";
+import { Admin, Role, AdminsResponse, AdminFilters } from "@/src/types/dashboard/admins";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-export async function getAdmins(): Promise<Admin[] | null> {
+export async function getAdmins(filters: AdminFilters = { page: 1, limit: 20 }): Promise<AdminsResponse | null> {
     const cookie = (await headers()).get("cookie") || "";
-    const res = await fetch(`${API_URL}/api/admin/usuarios`, { headers: { Cookie: cookie } });
+    const params = new URLSearchParams();
+    if (filters.page) params.set("page", String(filters.page));
+    if (filters.limit) params.set("limit", String(filters.limit));
+    if (filters.name) params.set("name", filters.name);
+
+    const res = await fetch(`${API_URL}/api/admin/usuarios?${params.toString()}`, { headers: { Cookie: cookie } });
     if (res.status === 403 || res.status === 401) return null;
     if (!res.ok) throw new Error("Failed to fetch admins");
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
+    return await res.json();
 }
+
 
 export async function getRoles(): Promise<Role[] | null> {
     const cookie = (await headers()).get("cookie") || "";
