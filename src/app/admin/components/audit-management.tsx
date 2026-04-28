@@ -12,24 +12,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { 
-    History, 
-    Search, 
-    User, 
-    Calendar as CalendarIcon, 
-    FileText, 
-    ChevronLeft, 
+import {
+    Search,
+    User,
+    Calendar as CalendarIcon,
+    FileText,
+    ChevronLeft,
     ChevronRight,
     Loader2,
-    Filter
 } from "lucide-react";
 import { AuditLog, AuditLogsResponse, AuditFilters } from "@/src/types/dashboard/audit";
 import { getAuditLogs } from "@/src/services/audit";
 
-export function AuditManagement({ 
-    initialData 
-}: { 
-    initialData: AuditLogsResponse 
+export function AuditManagement({
+    initialData
+}: {
+    initialData: AuditLogsResponse
 }) {
     const [data, setData] = useState<AuditLogsResponse>(initialData);
     const [filters, setFilters] = useState<AuditFilters>({
@@ -37,7 +35,17 @@ export function AuditManagement({
         limit: 20
     });
     const [isPending, startTransition] = useTransition();
-    const [search, setSearch] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (searchTerm !== (filters.userName || "")) {
+                fetchLogs({ ...filters, userName: searchTerm || undefined, page: 1 });
+            }
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [searchTerm]);
 
     const fetchLogs = (newFilters: AuditFilters) => {
         startTransition(async () => {
@@ -72,27 +80,20 @@ export function AuditManagement({
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
-                        <History className="h-5 w-5 text-indigo-500" /> Auditoria de Ações
-                    </h2>
-                    <p className="text-sm text-muted-foreground">Monitore todas as alterações feitas no sistema.</p>
-                </div>
-
+            <div className="flex flex-col md:flex-row md:items-center justify-end gap-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <div className="relative">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                            placeholder="Filtrar recurso..." 
-                            className="pl-9 w-[200px]"
-                            value={filters.resource || ""}
-                            onChange={(e) => handleFilterChange("resource", e.target.value)}
+                        <Input
+                            placeholder="Filtrar por usuário..."
+                            className="pl-9 w-[240px] h-10 bg-white"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    
-                    <select 
-                        className="h-10 px-3 py-2 border rounded-md bg-background text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+
+                    <select
+                        className="h-10 px-3 py-2 border rounded-md bg-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 min-w-[160px]"
                         value={filters.action || ""}
                         onChange={(e) => handleFilterChange("action", e.target.value)}
                     >
@@ -105,6 +106,8 @@ export function AuditManagement({
                     {isPending && <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />}
                 </div>
             </div>
+
+
 
             <div className="rounded-xl border bg-card/50 backdrop-blur-sm overflow-hidden shadow-sm">
                 <Table>
@@ -166,18 +169,18 @@ export function AuditManagement({
                         )}
                     </TableBody>
                 </Table>
-                
+
                 {data.totalPages > 1 && (
                     <div className="p-4 border-t bg-muted/20 flex items-center justify-between">
                         <div className="text-sm text-muted-foreground">
                             Mostrando <span className="font-medium">{(data.page - 1) * 20 + 1}</span>-
-                            <span className="font-medium">{Math.min(data.page * 20, data.total)}</span> de 
+                            <span className="font-medium">{Math.min(data.page * 20, data.total)}</span> de
                             <span className="font-medium"> {data.total}</span> registros
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button 
-                                variant="outline" 
-                                size="sm" 
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 onClick={() => handlePageChange(data.page - 1)}
                                 disabled={data.page === 1 || isPending}
                             >
@@ -188,9 +191,9 @@ export function AuditManagement({
                                 <span className="text-sm text-muted-foreground">/</span>
                                 <span className="text-sm text-muted-foreground">{data.totalPages}</span>
                             </div>
-                            <Button 
-                                variant="outline" 
-                                size="sm" 
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 onClick={() => handlePageChange(data.page + 1)}
                                 disabled={data.page === data.totalPages || isPending}
                             >

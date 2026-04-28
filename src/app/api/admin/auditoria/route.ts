@@ -17,6 +17,7 @@ export async function GET(request: Request) {
     const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit") ?? "20")));
     const resource = searchParams.get("resource") || undefined;
     const action = searchParams.get("action") || undefined;
+    const userName = searchParams.get("userName") || undefined;
     const administratorId = searchParams.get("administratorId")
         ? Number(searchParams.get("administratorId"))
         : undefined;
@@ -25,6 +26,14 @@ export async function GET(request: Request) {
         ...(resource && { resource }),
         ...(action && { action: action as any }),
         ...(administratorId && { administratorId }),
+        ...(userName && {
+            administrator: {
+                name: {
+                    contains: userName,
+                    mode: "insensitive" as const,
+                },
+            },
+        }),
     };
 
     try {
