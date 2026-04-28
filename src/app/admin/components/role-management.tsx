@@ -87,7 +87,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                 <Dialog open={open} onOpenChange={(val) => { if (!val) { setEditingRole(null); setSelectedPermissions([]); setError(""); } setOpen(val); }}>
                     <DialogTrigger render={<Button className="bg-indigo-600 hover:bg-indigo-700"><Plus className="mr-2 h-4 w-4" /> Novo Cargo</Button>} />
                     <DialogContent className="sm:max-w-[500px] border-none shadow-2xl overflow-y-auto max-h-[90vh]">
-                        <form action={handleAction} className="space-y-6 py-4">
+                        <form key={editingRole?.id || "new-role"} action={handleAction} className="space-y-6 py-4">
                             <DialogHeader>
                                 <DialogTitle className="flex items-center gap-2"><ShieldAlert className="h-5 w-5" /> {editingRole ? "Editar Cargo" : "Criar Novo Cargo"}</DialogTitle>
                                 <DialogDescription>Nomeie o cargo e selecione as permissões granulares.</DialogDescription>
@@ -159,7 +159,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                     <div className="flex justify-end gap-2">
                                         {role.name !== "Admin" ? (
                                             <>
-                                                <Button variant="ghost" size="icon-sm" onClick={() => { setEditingRole(role); setSelectedPermissions(role.permissions.map(p => ({ resource: p.permission.resource, action: p.permission.action }))); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
+                                                <Button variant="ghost" size="icon-sm" onClick={() => { setEditingRole(role); setSelectedPermissions(role.permissions.map((p: any) => ({ resource: p.permission.resource, action: p.permission.action }))); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
                                                 <AlertDialog>
                                                     <AlertDialogTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending}><Trash2 className="h-4 w-4 text-red-500" /></Button>} />
                                                     <AlertDialogContent className="border-red-100">

@@ -78,7 +78,7 @@ export function AdminManagement({
                 <Dialog open={open} onOpenChange={(val) => { if (!val) { setEditingAdmin(null); setError(""); } setOpen(val); }}>
                     <DialogTrigger render={<Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200"><Plus className="mr-2 h-4 w-4" /> Novo Administrador</Button>} />
                     <DialogContent className="sm:max-w-[425px]">
-                        <form action={handleAction}>
+                        <form key={editingAdmin?.id || "new-admin"} action={handleAction}>
                             <DialogHeader>
                                 <DialogTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-blue-600" /> {editingAdmin ? "Editar Administrador" : "Novo Administrador"}</DialogTitle>
                                 <DialogDescription>Configure o acesso do administrador.</DialogDescription>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { roleSchema } from "@/src/schemas/admin";
+import { withAudit } from "@/src/lib/audit";
 
 export async function GET() {
     const session = await checkAdminApi();
@@ -36,7 +37,7 @@ export async function GET() {
     }
 }
 
-export async function POST(request: Request) {
+async function _POST(request: Request) {
     const session = await checkAdminApi();
     if (!session) {
         return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
@@ -111,3 +112,5 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
     }
 }
+
+export const POST = withAudit(_POST, { resource: "cargos" });

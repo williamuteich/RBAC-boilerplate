@@ -53,11 +53,15 @@ export const auth: NextAuthOptions = {
                 if (admin) {
                     token.id = String(admin.id);
                     token.tipo = "ADMINISTRATOR";
-                    token.permissions = admin.role
-                        ? admin.role.permissions.map(
-                            (p) => `${p.permission.resource}:${p.permission.action}`
-                        )
-                        : ["all:all"];
+                    if (admin.role?.name === "Admin") {
+                        token.permissions = ["all:all"];
+                    } else {
+                        token.permissions = admin.role
+                            ? admin.role.permissions.map(
+                                (p) => `${p.permission.resource}:${p.permission.action}`
+                            )
+                            : ["all:all"];
+                    }
                 }
             }
 

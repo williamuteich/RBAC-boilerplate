@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { roleSchema } from "@/src/schemas/admin";
+import { withAudit } from "@/src/lib/audit";
 
-export async function DELETE(
+async function _DELETE(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
@@ -35,7 +36,12 @@ export async function DELETE(
     }
 }
 
-export async function PUT(
+const getIdFromCtx = async (ctx: { params?: Promise<{ id: string }> }) =>
+    (await ctx.params!).id;
+
+export const DELETE = withAudit(_DELETE, { resource: "cargos", getResourceId: getIdFromCtx });
+
+async function _PUT(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
@@ -111,3 +117,5 @@ export async function PUT(
         return NextResponse.json({ error: "Erro ao atualizar cargo" }, { status: 500 });
     }
 }
+
+export const PUT = withAudit(_PUT, { resource: "cargos", getResourceId: getIdFromCtx });

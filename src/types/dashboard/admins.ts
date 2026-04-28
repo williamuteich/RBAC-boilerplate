@@ -1,15 +1,3 @@
-export interface Role {
-    id: number;
-    name: string;
-    description: string | null;
-    permissions: {
-        permission: {
-            resource: string;
-            action: string;
-        }
-    }[];
-}
-
 export interface Admin {
     id: number;
     email: string;
@@ -22,4 +10,16 @@ export interface Admin {
         name: string;
     } | null;
     lastLogin: string | null;
+}
+
+export interface Role {
+    id: number;
+    name: string;
+    description: string | null;
+    permissions: {
+        permission: {
+            resource: string;
+            action: string;
+        }
+    }[];
 }

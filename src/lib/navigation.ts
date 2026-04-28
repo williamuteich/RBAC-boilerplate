@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShieldCheck, Key, Calendar, UserRound } from "lucide-react";
+import { LayoutDashboard, ShieldCheck, Key, Calendar, UserRound, History } from "lucide-react";
 
 export interface NavConfig {
     title: string;
@@ -30,6 +30,13 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         section: "MAIN MENU"
     },
     {
+        title: "Auditoria",
+        href: "/admin/auditoria",
+        icon: History,
+        resource: "auditoria",
+        section: "MAIN MENU"
+    },
+    {
         title: "Calendário",
         href: "#",
         icon: Calendar,
@@ -46,7 +53,7 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
 export const PERMISSION_RESOURCES = ADMIN_NAVIGATION
     .filter(nav => nav.resource)
     .map(nav => nav.resource as string);
-export const EXTRA_RESOURCES = ["configuracoes", "relatorios"];
+export const EXTRA_RESOURCES = ["configuracoes", "relatorios", "auditoria"];
 
 export const ALL_RESOURCES = [...new Set([...PERMISSION_RESOURCES, ...EXTRA_RESOURCES])];
 export const ALL_ACTIONS = ["visualizar", "criar", "editar", "deletar"];
