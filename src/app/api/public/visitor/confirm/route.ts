@@ -3,20 +3,11 @@ import { prisma } from "@/src/lib/prisma";
 import { VisitorConfirmSchema } from "@/src/schemas/admin";
 
 export async function POST(request: Request) {
-    const origin = request.headers.get("origin");
     const body = await request.json();
-    console.log("[public/visitor/confirm] request received", {
-        origin,
-        body,
-    });
 
     const parsed = VisitorConfirmSchema.safeParse(body);
 
     if (!parsed.success) {
-        console.warn("[public/visitor/confirm] invalid payload", {
-            origin,
-            issues: parsed.error.issues,
-        });
         return NextResponse.json(
             { error: "Dados inválidos", details: parsed.error.format() },
             { status: 400 }
@@ -24,14 +15,6 @@ export async function POST(request: Request) {
     }
 
     const data = parsed.data;
-    console.log("[public/visitor/confirm] parsed payload", {
-        origin,
-        visitorId: data.visitorId,
-        gclid: data.gclid,
-        utmSource: data.utmSource,
-        utmCampaign: data.utmCampaign,
-        converted: true,
-    });
 
     try {
         const visitor = await prisma.visitor.upsert({
@@ -55,14 +38,8 @@ export async function POST(request: Request) {
             },
         });
 
-        console.log("[public/visitor/confirm] saved confirmation", {
-            visitorId: visitor.visitorId,
-            converted: visitor.converted,
-        });
-
         return NextResponse.json(visitor);
-    } catch (error) {
-        console.error("Erro ao confirmar visitante:", error);
+    } catch {
         return NextResponse.json({ error: "Erro interno" }, { status: 500 });
     }
 }
