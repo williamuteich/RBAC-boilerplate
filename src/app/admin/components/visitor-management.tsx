@@ -73,7 +73,7 @@ export function VisitorManagement({ initialData }: { initialData: VisitorsRespon
                     </div>
 
                     <select
-                        className="h-10 px-3 py-2 border rounded-md bg-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 min-w-[160px] shadow-sm cursor-pointer"
+                        className="h-10 px-3 py-2 border rounded-md bg-white text-sm outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 min-w-[160px] shadow-sm cursor-pointer"
                         value={filterConverted}
                         onChange={(e) => {
                             setFilterConverted(e.target.value);
@@ -85,7 +85,7 @@ export function VisitorManagement({ initialData }: { initialData: VisitorsRespon
                         <option value="false">Não convertidos</option>
                     </select>
 
-                    {isPending && <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />}
+                    {isPending && <Loader2 className="h-5 w-5 animate-spin text-sky-500" />}
                 </div>
             </div>
 
@@ -182,7 +182,7 @@ export function VisitorManagement({ initialData }: { initialData: VisitorsRespon
                                 <ChevronLeft className="h-4 w-4 mr-1" /> Anterior
                             </Button>
                             <div className="flex items-center gap-1 bg-white border rounded-md px-3 h-9 shadow-xs">
-                                <span className="text-sm font-bold text-indigo-600">{data.page}</span>
+                                <span className="text-sm font-bold text-sky-600">{data.page}</span>
                                 <span className="text-sm text-slate-400">/</span>
                                 <span className="text-sm font-medium text-slate-600">{data.totalPages}</span>
                             </div>

@@ -19,7 +19,7 @@ export function SidebarContent({ onClose }: { onClose?: () => void }) {
         <div className="flex flex-col h-full bg-white border-r border-slate-200 lg:border-none">
             <div className="h-20 flex items-center px-6 border-b border-transparent shrink-0">
                 <div className="flex items-center gap-3 font-semibold text-2xl text-slate-800 tracking-tight">
-                    <div className="w-8 h-8 rounded-full bg-linear-to-tr from-indigo-600 to-purple-600 flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 rounded-full bg-linear-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-sm">
                         <div className="w-3 h-3 bg-white rounded-full"></div>
                     </div>
                     GCLID Manager

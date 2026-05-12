@@ -80,12 +80,12 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-xl font-semibold flex items-center gap-2"><Key className="h-5 w-5 text-indigo-500" /> Gestão de Cargos</h2>
+                    <h2 className="text-xl font-semibold flex items-center gap-2"><Key className="h-5 w-5 text-sky-500" /> Permissões e Acessos</h2>
                     <p className="text-sm text-muted-foreground">Defina os níveis de acesso e permissões do sistema.</p>
                 </div>
 
                 <Dialog open={open} onOpenChange={(val) => { if (!val) { setEditingRole(null); setSelectedPermissions([]); setError(""); } setOpen(val); }}>
-                    <DialogTrigger render={<Button className="bg-indigo-600 hover:bg-indigo-700"><Plus className="mr-2 h-4 w-4" /> Novo Cargo</Button>} />
+                    <DialogTrigger render={<Button className="bg-sky-600 hover:bg-sky-700"><Plus className="mr-2 h-4 w-4" /> Novo Cargo</Button>} />
                     <DialogContent className="sm:max-w-[500px] border-none shadow-2xl overflow-y-auto max-h-[90vh]">
                         <form key={editingRole?.id || "new-role"} action={handleAction} className="space-y-6 py-4">
                             <DialogHeader>
@@ -115,7 +115,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                                     const isSelected = selectedPermissions.some(p => p.resource === resource && p.action === action);
                                                     return (
                                                         <button key={action} type="button" onClick={() => togglePermission(resource, action)}
-                                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${isSelected ? "bg-indigo-600 text-white shadow-sm" : "bg-white border text-zinc-600 hover:border-indigo-300"}`}>
+                                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${isSelected ? "bg-sky-600 text-white shadow-sm" : "bg-white border text-zinc-600 hover:border-sky-300"}`}>
                                                             {isSelected && <CheckCircle2 className="h-3 w-3" />}
                                                             {action.charAt(0).toUpperCase() + action.slice(1)}
                                                         </button>
@@ -130,7 +130,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                             {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
 
                             <DialogFooter>
-                                <Button type="submit" disabled={isPending} className="w-full bg-indigo-600">
+                                <Button type="submit" disabled={isPending} className="w-full bg-sky-600">
                                     {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Salvar Cargo"}
                                 </Button>
                             </DialogFooter>

@@ -93,7 +93,7 @@ export function AuditManagement({
                     </div>
 
                     <select
-                        className="h-10 px-3 py-2 border rounded-md bg-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 min-w-[160px]"
+                        className="h-10 px-3 py-2 border rounded-md bg-white text-sm outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 min-w-[160px]"
                         value={filters.action || ""}
                         onChange={(e) => handleFilterChange("action", e.target.value)}
                     >
@@ -103,7 +103,7 @@ export function AuditManagement({
                         <option value="DELETE">Exclusão</option>
                     </select>
 
-                    {isPending && <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />}
+                    {isPending && <Loader2 className="h-5 w-5 animate-spin text-sky-500" />}
                 </div>
             </div>
 

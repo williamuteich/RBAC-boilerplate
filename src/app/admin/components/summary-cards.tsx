@@ -33,11 +33,11 @@ export function DashboardSummary() {
 
     const cards = [
         {
-            title: "Administradores",
+            title: "Gerenciadores de Campanha",
             value: stats.admins,
             icon: ShieldCheck,
-            description: "Acesso total ao sistema",
-            color: "text-blue-500",
+            description: "Usuários com permissão de edição",
+            color: "text-sky-500",
         },
     ];
 

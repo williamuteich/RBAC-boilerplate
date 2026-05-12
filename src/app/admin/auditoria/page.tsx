@@ -17,7 +17,7 @@ export default async function AuditoriaPage() {
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-                    <History className="h-8 w-8 text-indigo-600" />
+                    <History className="h-8 w-8 text-sky-600" />
                     Auditoria do Sistema
                 </h1>
                 <p className="text-muted-foreground mt-2">

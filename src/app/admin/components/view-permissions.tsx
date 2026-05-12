@@ -31,7 +31,7 @@ export function ViewPermissions({ permissions, roleName }: ViewPermissionsProps)
     return (
         <Dialog>
             <DialogTrigger render={
-                <button className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-200 shadow-sm cursor-pointer">
+                <button className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-50 border border-sky-100 text-sky-600 hover:bg-sky-600 hover:text-white hover:border-sky-600 transition-all duration-200 shadow-sm cursor-pointer">
                     <Fingerprint className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
                     <span className="text-[11px] font-bold uppercase tracking-wider">Ver Acessos</span>
                 </button>
@@ -40,12 +40,12 @@ export function ViewPermissions({ permissions, roleName }: ViewPermissionsProps)
             <DialogContent className="max-w-md sm:max-w-lg border-none shadow-2xl">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-3 text-2xl font-black">
-                        <div className="p-2 rounded-lg bg-indigo-600 text-white shadow-lg shadow-indigo-200">
+                        <div className="p-2 rounded-lg bg-sky-600 text-white shadow-lg shadow-sky-200">
                             <ShieldCheck className="w-6 h-6" />
                         </div>
                         <div className="flex flex-col">
                             <span className="text-slate-900">Permissões</span>
-                            <span className="text-sm font-medium text-indigo-600">Cargo: {roleName}</span>
+                            <span className="text-sm font-medium text-sky-600">Cargo: {roleName}</span>
                         </div>
                     </DialogTitle>
                     <DialogDescription className="pt-2 text-slate-500">
@@ -62,11 +62,11 @@ export function ViewPermissions({ permissions, roleName }: ViewPermissionsProps)
                     ) : (
                         Object.entries(grouped).map(([resource, actions]) => (
                             <div key={resource} className="relative overflow-hidden p-5 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow group">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute top-0 left-0 w-1 h-full bg-sky-600 opacity-0 group-hover:opacity-100 transition-opacity" />
 
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-indigo-600" />
+                                        <div className="w-2 h-2 rounded-full bg-sky-600" />
                                         <h4 className="font-black text-slate-800 uppercase tracking-tighter text-sm">
                                             {resource}
                                         </h4>

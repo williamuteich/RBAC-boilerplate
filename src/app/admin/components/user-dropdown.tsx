@@ -24,7 +24,7 @@ export function UserDropdown() {
             <DropdownMenuTrigger className="flex items-center gap-3 outline-none hover:bg-slate-50 p-1.5 rounded-lg transition-colors cursor-pointer">
                 <Avatar className="w-9 h-9 border border-slate-200 pointer-events-none">
                     <AvatarImage src={user.image || ""} alt={user.name || "User"} />
-                    <AvatarFallback className="bg-indigo-100 text-indigo-700 font-medium">{initials}</AvatarFallback>
+                    <AvatarFallback className="bg-sky-100 text-sky-700 font-medium">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="hidden md:flex items-center gap-1.5 pointer-events-none">
                     <span className="text-sm font-medium text-slate-700">{user.name || "Administrador"}</span>
@@ -46,11 +46,11 @@ export function UserDropdown() {
                 <DropdownMenuSeparator className="bg-slate-100" />
 
                 <div className="py-1">
-                    <DropdownMenuItem className="gap-3 py-2 cursor-pointer focus:bg-slate-50 focus:text-indigo-600 rounded-md">
+                    <DropdownMenuItem className="gap-3 py-2 cursor-pointer focus:bg-slate-50 focus:text-sky-600 rounded-md">
                         <User className="w-4 h-4 text-slate-500" />
                         <span className="text-sm font-medium">Ver perfil</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="gap-3 py-2 cursor-pointer focus:bg-slate-50 focus:text-indigo-600 rounded-md">
+                    <DropdownMenuItem className="gap-3 py-2 cursor-pointer focus:bg-slate-50 focus:text-sky-600 rounded-md">
                         <Settings className="w-4 h-4 text-slate-500" />
                         <span className="text-sm font-medium">Configurações da conta</span>
                     </DropdownMenuItem>
