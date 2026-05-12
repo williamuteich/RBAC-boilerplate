@@ -22,7 +22,7 @@ export function SidebarContent({ onClose }: { onClose?: () => void }) {
                     <div className="w-8 h-8 rounded-full bg-linear-to-tr from-indigo-600 to-purple-600 flex items-center justify-center shadow-sm">
                         <div className="w-3 h-3 bg-white rounded-full"></div>
                     </div>
-                    NextAdmin
+                    RentalPro
                 </div>
             </div>
 

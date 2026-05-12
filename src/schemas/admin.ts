@@ -32,6 +32,10 @@ export const VisitorCreateSchema = z.object({
 
 export type VisitorCreateInput = z.infer<typeof VisitorCreateSchema>;
 
+export const VisitorConfirmSchema = VisitorCreateSchema;
+
+export type VisitorConfirmInput = z.infer<typeof VisitorConfirmSchema>;
+
 export const VisitorListQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(500).default(100),
