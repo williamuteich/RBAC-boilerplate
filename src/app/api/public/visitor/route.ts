@@ -7,12 +7,29 @@ export async function POST(request: Request) {
     const origin = request.headers.get("origin");
 
     const body = await request.json();
+    console.log("[public/visitor] request received", {
+        origin,
+        body,
+    });
+
     const parsed = VisitorCreateSchema.safeParse(body);
     if (!parsed.success) {
+        console.warn("[public/visitor] invalid payload", {
+            origin,
+            issues: parsed.error.issues,
+        });
         return NextResponse.json({ error: "Dados inválidos", details: parsed.error.format() }, { status: 400 });
     }
 
     const data = parsed.data;
+    console.log("[public/visitor] parsed payload", {
+        origin,
+        visitorId: data.visitorId,
+        gclid: data.gclid,
+        utmSource: data.utmSource,
+        utmCampaign: data.utmCampaign,
+        converted: data.converted ?? false,
+    });
 
     try {
         const visitor = await prisma.visitor.upsert({
@@ -35,6 +52,11 @@ export async function POST(request: Request) {
                 ip: data.ip,
                 userAgent: data.userAgent,
             },
+        });
+
+        console.log("[public/visitor] saved visitor", {
+            visitorId: visitor.visitorId,
+            converted: visitor.converted,
         });
 
         return NextResponse.json(visitor, { headers: corsHeaders(origin) });
