@@ -4,10 +4,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
   url      = env("DATABASE_URL")
+  provider = "postgresql"
 }
 
+//RBAC SYSTEM ---->
 model Administrator {
   id        Int       @id @default(autoincrement())
   email     String    @unique
@@ -78,4 +79,24 @@ enum AdminActionType {
   CREATE
   UPDATE
   DELETE
+}
+
+//RBAC SYSTEM <-----
+
+model Visitor {
+  id Int @id @default(autoincrement())
+
+  visitorId String @unique
+
+  gclid       String?
+  utmSource   String?
+  utmCampaign String?
+
+  converted Boolean @default(false)
+
+  ip        String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

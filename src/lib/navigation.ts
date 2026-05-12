@@ -23,6 +23,13 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         section: "MAIN MENU"
     },
     {
+        title: "Visitantes",
+        href: "/admin/visitantes",
+        icon: UserRound,
+        resource: "visitantes",
+        section: "MAIN MENU"
+    },
+    {
         title: "Cargos e Permissões",
         href: "/admin/cargos",
         icon: Key,

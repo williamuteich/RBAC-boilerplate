@@ -19,3 +19,32 @@ export const adminSchema = z.object({
 });
 
 export type AdminInput = z.infer<typeof adminSchema>;
+
+export const VisitorCreateSchema = z.object({
+  visitorId: z.string().min(1),
+  gclid: z.string().optional().nullable(),
+  utmSource: z.string().optional().nullable(),
+  utmCampaign: z.string().optional().nullable(),
+  converted: z.boolean().optional(),
+  ip: z.string().optional().nullable(),
+  userAgent: z.string().optional().nullable(),
+});
+
+export type VisitorCreateInput = z.infer<typeof VisitorCreateSchema>;
+
+export const VisitorListQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(500).default(100),
+  visitorId: z.string().optional(),
+  gclid: z.string().optional(),
+  converted: z.enum(["true", "false"]).optional(),
+});
+
+export type VisitorListQuery = z.infer<typeof VisitorListQuerySchema>;
+
+export const PageLimitSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(500).default(100),
+});
+
+export type PageLimit = z.infer<typeof PageLimitSchema>;
