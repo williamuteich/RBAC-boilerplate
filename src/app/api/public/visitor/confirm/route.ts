@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { VisitorConfirmSchema } from "@/src/schemas/admin";
-import { corsHeaders, preflightResponse } from "@/src/lib/cors";
 
 export async function POST(request: Request) {
     const origin = request.headers.get("origin");
@@ -61,14 +60,13 @@ export async function POST(request: Request) {
             converted: visitor.converted,
         });
 
-        return NextResponse.json(visitor, { headers: corsHeaders(origin) });
+        return NextResponse.json(visitor);
     } catch (error) {
         console.error("Erro ao confirmar visitante:", error);
-        return NextResponse.json({ error: "Erro interno" }, { status: 500, headers: corsHeaders(origin) });
+        return NextResponse.json({ error: "Erro interno" }, { status: 500 });
     }
 }
 
-export async function OPTIONS(request: Request) {
-    const origin = request.headers.get("origin");
-    return preflightResponse(origin) as any;
+export async function OPTIONS() {
+    return new NextResponse(null, { status: 204 });
 }
