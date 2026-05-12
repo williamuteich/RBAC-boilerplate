@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Role } from "./dashboard/role";
+import { Role } from "./dashboard/admins";
 
 export interface NavItemProps {
     href: string;

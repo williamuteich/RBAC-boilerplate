@@ -36,7 +36,7 @@ export function ViewPermissions({ permissions, roleName }: ViewPermissionsProps)
                     <span className="text-[11px] font-bold uppercase tracking-wider">Ver Acessos</span>
                 </button>
             } />
-            
+
             <DialogContent className="max-w-md sm:max-w-lg border-none shadow-2xl">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-3 text-2xl font-black">
@@ -63,7 +63,7 @@ export function ViewPermissions({ permissions, roleName }: ViewPermissionsProps)
                         Object.entries(grouped).map(([resource, actions]) => (
                             <div key={resource} className="relative overflow-hidden p-5 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow group">
                                 <div className="absolute top-0 left-0 w-1 h-full bg-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                
+
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full bg-indigo-600" />
@@ -75,15 +75,15 @@ export function ViewPermissions({ permissions, roleName }: ViewPermissionsProps)
                                         {actions.length} {actions.length === 1 ? 'AÇÃO' : 'AÇÕES'}
                                     </Badge>
                                 </div>
-                                
+
                                 <div className="flex flex-wrap gap-2">
                                     {actions.map(action => {
                                         const config = ACTION_ICONS[action] || { icon: ShieldIcon, color: "text-slate-600", bg: "bg-slate-50", border: "border-slate-100" };
                                         const Icon = config.icon;
-                                        
+
                                         return (
-                                            <div 
-                                                key={action} 
+                                            <div
+                                                key={action}
                                                 className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-bold border ${config.bg} ${config.color} ${config.border} transition-transform hover:scale-105 cursor-default`}
                                             >
                                                 <Icon className="w-3 h-3" />
