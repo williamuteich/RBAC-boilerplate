@@ -65,7 +65,7 @@ export function VisitorManagement({ initialData }: { initialData: VisitorsRespon
                     <div className="relative">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
-                            placeholder="Procurar por ID ou GCLID..."
+                            placeholder="Procurar por visitorId ou GCLID..."
                             className="pl-9 w-[320px] h-10 bg-white shadow-sm"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}

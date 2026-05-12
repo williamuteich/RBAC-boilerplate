@@ -18,9 +18,9 @@ export default async function VisitantesPage() {
             <div>
                 <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
                     <UserRound className="h-8 w-8 text-indigo-600" />
-                    Visitantes
+                    Visitantes e Conversões
                 </h1>
-                <p className="text-muted-foreground mt-2">Lista de visitantes gerados pelo site (GCLID, UTM e conversões).</p>
+                <p className="text-muted-foreground mt-2">Lista de visitantes capturados pelo site e confirmados via QR code, com GCLID e UTMs.</p>
             </div>
 
             <VisitorManagement initialData={data} />

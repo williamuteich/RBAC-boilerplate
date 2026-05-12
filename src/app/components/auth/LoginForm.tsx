@@ -7,9 +7,9 @@ export function LoginForm() {
     <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-zinc-50">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-zinc-900 mb-2">Painel Administrativo</h2>
+          <h2 className="text-3xl font-bold text-zinc-900 mb-2">Acesso ao Painel</h2>
           <p className="text-zinc-500 text-sm mb-8">
-            Acesse o painel central utilizando sua conta Google autorizada.
+            Entre com sua conta Google autorizada para gerenciar visitantes, gclid e conversões.
           </p>
           
           <div className="bg-white p-8 rounded-2xl shadow-sm border border-zinc-100">
@@ -28,7 +28,7 @@ export function LoginForm() {
             </button>
             
             <p className="mt-6 text-xs text-center text-zinc-400">
-              Apenas e-mails autorizados possuem acesso a este painel.
+              Apenas e-mails autorizados possuem acesso a esta plataforma.
             </p>
           </div>
         </div>

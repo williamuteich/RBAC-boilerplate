@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RentalPro - Gestão de Locadoras de Equipamentos",
-  description: "Sistema completo para gestão de estoque, locações e clientes da sua locadora.",
+  title: "GCLID Manager - Plataforma de Conversões",
+  description: "Plataforma para capturar, confirmar e acompanhar visitantes, gclid e conversões.",
 };
 
 import { Providers } from "./components/providers";
