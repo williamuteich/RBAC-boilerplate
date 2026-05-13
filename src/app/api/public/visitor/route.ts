@@ -12,6 +12,14 @@ export async function POST(request: Request) {
 
     const data = parsed.data;
 
+    const forwardedFor = request.headers.get("x-forwarded-for");
+    const ip = (request as any).ip || 
+               request.headers.get("cf-connecting-ip") ||
+               (forwardedFor ? forwardedFor.split(',')[0].trim() : null) || 
+               request.headers.get("x-real-ip") || 
+               data.ip || 
+               "0.0.0.0";
+
     try {
         const visitor = await prisma.visitor.upsert({
             where: { visitorId: data.visitorId },
@@ -20,7 +28,7 @@ export async function POST(request: Request) {
                 utmSource: data.utmSource,
                 utmCampaign: data.utmCampaign,
                 converted: data.converted === true ? true : undefined,
-                ip: data.ip,
+                ip: ip,
                 userAgent: data.userAgent,
                 updatedAt: new Date(),
             },
@@ -30,7 +38,7 @@ export async function POST(request: Request) {
                 utmSource: data.utmSource,
                 utmCampaign: data.utmCampaign,
                 converted: data.converted === true,
-                ip: data.ip,
+                ip: ip,
                 userAgent: data.userAgent,
             },
         });
