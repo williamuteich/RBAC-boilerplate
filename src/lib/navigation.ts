@@ -1,9 +1,9 @@
-import { LayoutDashboard, ShieldCheck, Key, Calendar, UserRound, History } from "lucide-react";
+import { LayoutDashboard, ShieldCheck, Key, Calendar, UserRound, History, LucideIcon } from "lucide-react";
 
 export interface NavConfig {
     title: string;
     href: string;
-    icon: any;
+    icon: LucideIcon;
     resource?: string;
     section: "MAIN MENU" | "SISTEMA";
 }

@@ -49,7 +49,7 @@ async function _POST(request: Request) {
 
     try {
         const body = await request.json();
-        
+
         const validated = roleSchema.safeParse(body);
         if (!validated.success) {
             return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });

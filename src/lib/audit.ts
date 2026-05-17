@@ -12,7 +12,7 @@ type RouteHandler<Ctx extends AnyContext = AnyContext> = (
 interface AuditOptions<Ctx extends AnyContext = AnyContext> {
     resource: string;
     getResourceId?: (ctx: Ctx) => Promise<string | undefined> | string | undefined;
-    getResourceName?: (data: any) => string | undefined;
+    getResourceName?: (data: unknown) => string | undefined;
 }
 
 const METHOD_TO_ACTION: Record<string, AdminActionType | undefined> = {
@@ -44,7 +44,7 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                 let resourceName: string | undefined;
                 try {
                     const data = await response.clone().json();
-                    resourceName = options.getResourceName ? options.getResourceName(data) : (data.name || data.email);
+                    resourceName = options.getResourceName ? options.getResourceName(data) : ((data as Record<string, unknown>)?.name as string || (data as Record<string, unknown>)?.email as string);
                 } catch (e) { }
 
                 prisma.logAdmin

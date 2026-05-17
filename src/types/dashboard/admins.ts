@@ -12,16 +12,18 @@ export interface Admin {
     lastLogin: string | null;
 }
 
+export interface PermissionToRole {
+    permission: {
+        resource: string;
+        action: string;
+    };
+}
+
 export interface Role {
     id: number;
     name: string;
     description: string | null;
-    permissions: {
-        permission: {
-            resource: string;
-            action: string;
-        }
-    }[];
+    permissions: PermissionToRole[];
 }
 
 export interface AdminsResponse {

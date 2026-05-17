@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
+import { AdminActionType } from "@/generated/prisma/client";
 
 export async function GET(request: Request) {
     const session = await checkAdminApi();
@@ -24,7 +25,7 @@ export async function GET(request: Request) {
 
     const where = {
         ...(resource && { resource }),
-        ...(action && { action: action as any }),
+        ...(action && { action: action as AdminActionType }),
         ...(administratorId && { administratorId }),
         ...(userName && {
             administrator: {

@@ -11,8 +11,9 @@ import {
 import { ShieldCheck, Eye, Plus, Pencil, Trash2, ShieldIcon, Fingerprint } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ViewPermissionsProps } from "@/src/types/components";
+import { LucideIcon } from "lucide-react";
 
-const ACTION_ICONS: Record<string, any> = {
+const ACTION_ICONS: Record<string, { icon: LucideIcon; color: string; bg: string; border: string }> = {
     visualizar: { icon: Eye, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
     criar: { icon: Plus, color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-100" },
     editar: { icon: Pencil, color: "text-amber-600", bg: "bg-amber-50", border: "border-amber-100" },

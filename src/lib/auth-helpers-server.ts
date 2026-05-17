@@ -28,7 +28,7 @@ export async function requirePermission(resource: string, action: string) {
     if (!session || session.user.tipo !== "ADMINISTRATOR") {
         redirect("/");
     }
-    if (!hasPermission(session as any, resource, action)) {
+    if (!hasPermission(session, resource, action)) {
         redirect("/admin/unauthorized");
     }
     return session;

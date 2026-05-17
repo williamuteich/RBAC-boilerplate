@@ -1,5 +1,7 @@
+import { Session } from "next-auth";
+
 export function hasPermission(
-    session: any,
+    session: Session,
     resource: string,
     action: string
 ): boolean {

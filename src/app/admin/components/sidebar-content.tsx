@@ -32,7 +32,7 @@ export function SidebarContent({ onClose }: { onClose?: () => void }) {
 
                     const visibleItems = sectionItems.filter(item => {
                         if (!item.resource) return true;
-                        return hasPermission(session as any, item.resource, "visualizar");
+                        return hasPermission(session, item.resource, "visualizar");
                     });
 
                     if (visibleItems.length === 0) return null;

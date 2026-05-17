@@ -7,8 +7,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 export async function getRoles(): Promise<Role[] | null> {
     const cookie = (await headers()).get("cookie") || "";
-    const res = await fetch(`${API_URL}/api/admin/roles`, { 
-        headers: { Cookie: cookie } 
+    const res = await fetch(`${API_URL}/api/admin/roles`, {
+        headers: { Cookie: cookie }
     });
     if (res.status === 403 || res.status === 401) return null;
     if (!res.ok) throw new Error("Failed to fetch roles");
@@ -16,7 +16,7 @@ export async function getRoles(): Promise<Role[] | null> {
     return Array.isArray(data) ? data : [];
 }
 
-export async function createRole(data: { name: string; description: string; permissions: any[] }): Promise<{ success: boolean; error?: string }> {
+export async function createRole(data: { name: string; description: string; permissions: { resource: string; action: string }[] }): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/roles`, {
         method: "POST",
@@ -30,13 +30,13 @@ export async function createRole(data: { name: string; description: string; perm
     if (res.status === 403) return { success: false, error: "Sem permissão" };
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao criar cargo" };
-    
+
     // Atualiza a página automaticamente
     revalidatePath("/admin/cargos");
     return { success: true };
 }
 
-export async function updateRole(id: number, data: { name: string; description: string; permissions: any[] }): Promise<{ success: boolean; error?: string }> {
+export async function updateRole(id: number, data: { name: string; description: string; permissions: { resource: string; action: string }[] }): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/roles/${id}`, {
         method: "PUT",
@@ -50,7 +50,7 @@ export async function updateRole(id: number, data: { name: string; description: 
     if (res.status === 403) return { success: false, error: "Sem permissão" };
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao atualizar cargo" };
-    
+
     revalidatePath("/admin/cargos");
     return { success: true };
 }
@@ -65,7 +65,7 @@ export async function deleteRole(id: number): Promise<{ success: boolean; error?
     if (res.status === 403) return { success: false, error: "Sem permissão" };
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao excluir cargo" };
-    
+
     revalidatePath("/admin/cargos");
     return { success: true };
 }

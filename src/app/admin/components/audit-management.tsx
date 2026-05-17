@@ -61,7 +61,7 @@ export function AuditManagement({
         fetchLogs({ ...filters, page: newPage });
     };
 
-    const handleFilterChange = (key: keyof AuditFilters, value: any) => {
+    const handleFilterChange = (key: keyof AuditFilters, value: string | undefined) => {
         fetchLogs({ ...filters, [key]: value, page: 1 });
     };
 

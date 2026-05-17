@@ -34,7 +34,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { Role } from "@/src/types/dashboard/admins";
+import { Role, PermissionToRole } from "@/src/types/dashboard/admins";
 import { ALL_RESOURCES, ALL_ACTIONS } from "@/src/lib/navigation";
 import { ViewPermissions } from "./view-permissions";
 import { createRole, updateRole, deleteRole } from "@/src/services/roles";
@@ -55,7 +55,6 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
         });
     };
 
-    // Definindo a Action explicitamente como void para evitar erro de tipagem
     const handleAction = (formData: FormData) => {
         if (selectedPermissions.length === 0) {
             setError("Selecione permissões");
@@ -92,7 +91,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                 <DialogTitle className="flex items-center gap-2"><ShieldAlert className="h-5 w-5" /> {editingRole ? "Editar Cargo" : "Criar Novo Cargo"}</DialogTitle>
                                 <DialogDescription>Nomeie o cargo e selecione as permissões granulares.</DialogDescription>
                             </DialogHeader>
-                            
+
                             <div className="space-y-4">
                                 <div className="space-y-2">
                                     <Label>Nome do Cargo</Label>
@@ -159,7 +158,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                     <div className="flex justify-end gap-2">
                                         {role.name !== "Admin" ? (
                                             <>
-                                                <Button variant="ghost" size="icon-sm" onClick={() => { setEditingRole(role); setSelectedPermissions(role.permissions.map((p: any) => ({ resource: p.permission.resource, action: p.permission.action }))); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
+                                                <Button variant="ghost" size="icon-sm" onClick={() => { setEditingRole(role); setSelectedPermissions(role.permissions.map((p: PermissionToRole) => ({ resource: p.permission.resource, action: p.permission.action }))); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
                                                 <AlertDialog>
                                                     <AlertDialogTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending}><Trash2 className="h-4 w-4 text-red-500" /></Button>} />
                                                     <AlertDialogContent className="border-red-100">
