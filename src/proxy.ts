@@ -7,17 +7,19 @@ export function proxy(request: NextRequest) {
 
     if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
         const token = request.cookies.get("next-auth.session-token") || request.cookies.get("__Secure-next-auth.session-token");
-        console.log("está acessando a rota", pathname);
-        console.log("o token é", token);
+
         if (!token) {
             redirectUrl.pathname = "/";
+            request.cookies.delete("next-auth.session-token")
+
             if (pathname.startsWith("/api/")) {
                 return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
             }
+
             return NextResponse.redirect(redirectUrl);
         }
     }
-    console.log("liberando a rota", pathname);
+
     return NextResponse.next();
 }
 
