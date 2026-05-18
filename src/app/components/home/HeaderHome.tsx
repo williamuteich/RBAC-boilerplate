@@ -50,7 +50,7 @@ export function HeaderHome() {
                         width={160}
                         height={40}
                         className="object-contain"
-                        style={{ width: "160px", height: "40px" }}
+                        style={{ width: "auto", height: "40px" }}
                         priority
                     />
                 </Link>
