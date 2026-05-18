@@ -1,3 +1,5 @@
+import Link from "next/link";
+import Image from "next/image";
 import { Clock } from "lucide-react";
 
 export function FooterHome() {
@@ -8,7 +10,17 @@ export function FooterHome() {
             <div className="container mx-auto px-4">
                 <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between text-center md:text-left">
                     <div className="flex flex-col items-center md:items-start gap-4 md:gap-0">
-                        <img src="/logoFooter.png" alt="Uteich Odontologia" className="h-20 w-20 md:h-28 md:w-28 object-contain" />
+                        <Link href="/" className="flex shrink-0 items-center gap-2">
+                            <Image
+                                src="/logoFooter.png"
+                                alt="Uteich Odontologia"
+                                width={112}
+                                height={112}
+                                className="object-contain"
+                                style={{ width: "112px", height: "112px" }}
+                                priority
+                            />
+                        </Link>
                         <div className="flex items-center gap-2 text-[11px] text-primary-foreground/70 bg-white/5 px-3 py-1.5 rounded-full">
                             <Clock className="w-3 h-3 text-primary-soft shrink-0" />
                             <span>Seg-Sex: 8h-20h | Sáb: 9h-18h</span>
