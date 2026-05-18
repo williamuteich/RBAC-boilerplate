@@ -7,17 +7,18 @@ export function FooterHome() {
         <footer className="bg-primary-deep text-primary-foreground pt-10 pb-32 md:pb-10 relative overflow-hidden">
             <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] bg-size-[18px_18px]" />
 
-            <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-[1050px] px-4">
                 <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between text-center md:text-left">
                     <div className="flex flex-col items-center md:items-start gap-4 md:gap-0">
-                        <Link href="/" className="flex shrink-0 items-center gap-2">
+                        <Link href="/" className="flex shrink-0 items-center gap-2 mb-5">
                             <Image
                                 src="/logoFooter.png"
                                 alt="Uteich Odontologia"
-                                width={112}
-                                height={112}
-                                className="object-contain"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                width={90}
+                                height={28}
+                                className="h-7 w-auto object-contain"
+                                style={{ width: "auto", height: "auto" }}
+                                priority
                             />
                         </Link>
                         <div className="flex items-center gap-2 text-[11px] text-primary-foreground/70 bg-white/5 px-3 py-1.5 rounded-full">
