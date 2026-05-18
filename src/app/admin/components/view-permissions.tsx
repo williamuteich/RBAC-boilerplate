@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { ShieldCheck, Eye, Plus, Pencil, Trash2, ShieldIcon, Fingerprint } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { ViewPermissionsProps } from "@/src/types/components";
+import { ViewPermissionsProps } from "@/src/types/dashboard/components";
 import { LucideIcon } from "lucide-react";
 
 const ACTION_ICONS: Record<string, { icon: LucideIcon; color: string; bg: string; border: string }> = {
