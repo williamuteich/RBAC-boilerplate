@@ -17,8 +17,7 @@ export function FooterHome() {
                                 width={112}
                                 height={112}
                                 className="object-contain"
-                                style={{ width: "auto", height: "112px" }}
-                                priority
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                         </Link>
                         <div className="flex items-center gap-2 text-[11px] text-primary-foreground/70 bg-white/5 px-3 py-1.5 rounded-full">

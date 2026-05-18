@@ -8,6 +8,7 @@ import BannerCarousel from "./components/home/BannerCarousel";
 import { ServicesHome } from "./components/home/Services";
 import { AboutHome } from "./components/home/About";
 import DepoimentsHome from "./components/home/Depoiments";
+import { CardAgendaHome } from "./components/home/CardAgenda";
 
 export default async function LoginPage() {
   const session = await getServerSession(auth);
@@ -24,6 +25,7 @@ export default async function LoginPage() {
       <ServicesHome />
       <AboutHome />
       <DepoimentsHome />
+      <CardAgendaHome />
       <FooterHome />
     </main>
   );

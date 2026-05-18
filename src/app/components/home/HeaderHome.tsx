@@ -47,11 +47,10 @@ export function HeaderHome() {
                     <Image
                         src="/logoHeader.png"
                         alt="Uteich Odontologia"
-                        width={160}
-                        height={40}
+                        width={72}
+                        height={25}
                         className="object-contain"
-                        style={{ width: "auto", height: "40px" }}
-                        priority
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 </Link>
 
