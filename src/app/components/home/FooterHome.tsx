@@ -11,14 +11,10 @@ export function FooterHome() {
                 <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between text-center md:text-left">
                     <div className="flex flex-col items-center md:items-start gap-4 md:gap-0">
                         <Link href="/" className="flex shrink-0 items-center gap-2 mb-5">
-                            <Image
+                            <img
                                 src="/logoFooter.png"
                                 alt="Uteich Odontologia"
-                                width={90}
-                                height={28}
-                                className="h-7 w-auto object-contain"
-                                style={{ width: "auto", height: "auto" }}
-                                priority
+                                className="h-14 w-auto object-contain"
                             />
                         </Link>
                         <div className="flex items-center gap-2 text-[11px] text-primary-foreground/70 bg-white/5 px-3 py-1.5 rounded-full">

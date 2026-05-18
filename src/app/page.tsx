@@ -9,6 +9,8 @@ import { ServicesHome } from "./components/home/Services";
 import { AboutHome } from "./components/home/About";
 import DepoimentsHome from "./components/home/Depoiments";
 import { CardAgendaHome } from "./components/home/CardAgenda";
+import { WhatsAppButton } from "./components/home/WhatsappButton";
+import { MobileContactBar } from "./components/home/MobileContactBar";
 
 export default async function LoginPage() {
   const session = await getServerSession(auth);
@@ -27,6 +29,8 @@ export default async function LoginPage() {
       <DepoimentsHome />
       <CardAgendaHome />
       <FooterHome />
+      <WhatsAppButton />
+      <MobileContactBar />
     </main>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -44,14 +43,10 @@ export function HeaderHome() {
         <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur">
             <div className="mx-auto flex max-w-[1050px] items-center justify-between px-4 h-[58px]">
                 <Link href="/" className="flex shrink-0 items-center gap-2">
-                    <Image
+                    <img
                         src="/logoHeader.png"
                         alt="Uteich Odontologia"
-                        width={64}
-                        height={25}
-                        className="object-contain"
-                        style={{ width: "auto", height: "auto" }}
-                        priority
+                        className="h-10 w-auto object-contain"
                     />
                 </Link>
 
