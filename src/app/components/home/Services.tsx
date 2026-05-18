@@ -1,8 +1,78 @@
 "use client";
 
-import { AlertCircle, ChevronRight, ClipboardCheck, Crown, Smile, Sparkles, Stethoscope, Target, Wrench } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { ServiceType } from "@/src/types/home/services";
+
+// Custom Premium Dental SVG Icons
+const EmergênciaIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 8v8M8 12h8" strokeWidth={2} />
+        <path d="M12 12l2.5-2.5" />
+    </svg>
+);
+
+const AvaliacaoIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="10" cy="10" r="5" />
+        <path d="M13.5 13.5L20 20" />
+        <path d="M8 8a2 2 0 0 1 2-2" />
+        <path d="M16 7l2 2 4-4" strokeWidth={2} className="text-cyan-500" />
+    </svg>
+);
+
+const ClinicoGeralIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 5a2 2 0 0 0-2 2v3a7 7 0 0 0 14 0V7a2 2 0 0 0-2-2h-3a2 2 0 0 0-2 2v3a2 2 0 0 1-4 0V7a2 2 0 0 0-2-2H4z" />
+        <path d="M16 10c0 4 3 6 3 6s3-2 3-6" />
+        <circle cx="19" cy="18" r="2" />
+    </svg>
+);
+
+const ImplanteIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 5c1-1 3-1 4 0l2 1 2-1c1-1 3-1 4 0v4c0 3-1.5 5-4 5H10C7.5 14 6 12 6 9V5z" fill="currentColor" fillOpacity={0.1} />
+        <path d="M12 14v6" strokeWidth={2} />
+        <path d="M10 16h4M10 18h4" />
+        <path d="M8 21h8" strokeWidth={1.5} />
+    </svg>
+);
+
+const OrtodontiaIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 6c0-2 2-2 3-2s3 1 4 3v5c0 3-1.5 5-3.5 5S4 15 4 12V6z" />
+        <path d="M13 7c1-2 3-2 4-2s3 1 3 3v4c0 3-1.5 5-3.5 5s-3.5-2-3.5-5V7z" />
+        <rect x="6.5" y="9" width="3" height="3" rx="0.5" fill="currentColor" fillOpacity={0.2} />
+        <rect x="14.5" y="9" width="3" height="3" rx="0.5" fill="currentColor" fillOpacity={0.2} />
+        <path d="M2 10.5h20" strokeWidth={2} className="text-teal-500" />
+    </svg>
+);
+
+const CanalIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 5c1-1 3-1 4 0l2 1 2-1c1-1 3-1 4 0v4c0 2.5-1.5 4.5-3.5 6l-0.5 4.5c0 .5-.5 1-1 1s-1-.5-1-1v-4.5c-2.5 0-4 1.5-4 4v0c0 .5-.5 1-1 1s-1-.5-1-1v-5c-2.5-1.5-3-3.5-3-6V5z" />
+        <path d="M12 8v5" className="text-emerald-500" strokeWidth={1.5} />
+        <path d="M12 13c.5.5.5 1.5.5 2.5" className="text-emerald-500" />
+        <path d="M12 13c-.5.5-.5 1.5-.5 2.5" className="text-emerald-500" />
+    </svg>
+);
+
+const EsteticaIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 6c1-1 3-1 4 0l2 1 2-1c1-1 3-1 4 0v4c0 3-1.5 5.5-3.5 7l-0.5 3c0 .5-.5.5-1 .5s-1 0-1-.5l-0.5-3c-2-1.5-3.5-4-3.5-7V6z" fill="currentColor" fillOpacity={0.1} />
+        <path d="M19 3l1 2.5L22.5 6 20 7l-1 2.5L18 7l-2.5-1 2.5-1z" fill="currentColor" className="text-amber-500" stroke="none" />
+        <path d="M4 11l0.8 2 2 .8-2 0.8-0.8 2-0.8-2-2-.8 2-0.8z" fill="currentColor" className="text-amber-500" stroke="none" />
+    </svg>
+);
+
+const ExtracaoIcon = ({ className }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 6c1-1 3-1 4 0l2 1 2-1c1-1 3-1 4 0v4c0 3-1.5 5.5-3.5 7l-0.5 3c0 .5-.5.5-1 .5s-1 0-1-.5l-0.5-3c-2-1.5-3.5-4-3.5-7V6z" />
+        <path d="M12 6a4 4 0 0 1 4 4" strokeWidth={2.5} className="text-violet-500" />
+        <circle cx="16" cy="7" r="0.75" fill="currentColor" />
+    </svg>
+);
 
 const services: ServiceType[] = [
     {
@@ -73,14 +143,14 @@ const services: ServiceType[] = [
 
 export function ServicesHome() {
     const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-        AlertCircle,
-        ClipboardCheck,
-        Stethoscope,
-        Crown,
-        Smile,
-        Target,
-        Sparkles,
-        Wrench,
+        AlertCircle: EmergênciaIcon,
+        ClipboardCheck: AvaliacaoIcon,
+        Stethoscope: ClinicoGeralIcon,
+        Crown: ImplanteIcon,
+        Smile: CanalIcon,
+        Target: OrtodontiaIcon,
+        Sparkles: EsteticaIcon,
+        Wrench: ExtracaoIcon,
     };
 
     const accentMap: Record<string, {
@@ -198,7 +268,7 @@ export function ServicesHome() {
                     className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                     {services.map((service: ServiceType) => {
-                        const Icon = iconMap[service.icon] || Stethoscope;
+                        const Icon = iconMap[service.icon] || ClinicoGeralIcon;
                         const isEmergency = service.id === 'emergencia';
                         const accent = accentMap[service.id] || accentMap.avaliacao;
 
@@ -211,7 +281,7 @@ export function ServicesHome() {
                                             ? 'bg-red-500 text-white'
                                             : accent.chip
                                             }`}>
-                                            <Icon className="h-5 w-5" />
+                                            <Icon className="h-7 w-7" />
                                         </div>
                                         <span className={`text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-none ${isEmergency ? 'bg-red-50 text-red-700' : accent.badge}`}>
                                             Aprox. {service.duration} min
