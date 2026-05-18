@@ -17,7 +17,7 @@ export function FooterHome() {
                                 width={112}
                                 height={112}
                                 className="object-contain"
-                                style={{ width: "112px", height: "112px" }}
+                                style={{ width: "auto", height: "112px" }}
                                 priority
                             />
                         </Link>

@@ -5,5 +5,4 @@ export type BannerCarouselType = {
     ctaLabel: string;
     ctaHref: string;
     icon: React.ComponentType<{ className?: string }>;
-    background: string;
 };
