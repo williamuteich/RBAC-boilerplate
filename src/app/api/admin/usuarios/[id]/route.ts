@@ -19,7 +19,7 @@ async function _DELETE(
 
     try {
         const adminToDelete = await prisma.administrator.findUnique({
-            where: { id: Number(id) },
+            where: { id },
             include: { role: true }
         });
 
@@ -28,7 +28,7 @@ async function _DELETE(
         }
 
         await prisma.administrator.delete({
-            where: { id: Number(id) },
+            where: { id },
         });
         return NextResponse.json({ success: true });
     } catch (error) {
@@ -57,7 +57,7 @@ async function _PUT(
 
     try {
         const adminToUpdate = await prisma.administrator.findUnique({
-            where: { id: Number(id) },
+            where: { id },
             include: { role: true }
         });
 
@@ -75,11 +75,11 @@ async function _PUT(
         const { email, name, roleId, active } = validated.data;
 
         const admin = await prisma.administrator.update({
-            where: { id: Number(id) },
+            where: { id },
             data: {
                 email,
                 name,
-                roleId: roleId ? Number(roleId) : null,
+                roleId: roleId ?? null,
                 active,
             },
         });

@@ -1,15 +1,15 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Administrator {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   email     String    @unique
   name      String?
   password  String?
@@ -19,13 +19,13 @@ model Administrator {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  roleId    Int?
+  roleId    String?   @db.ObjectId
   role      AdminRole? @relation(fields: [roleId], references: [id])
   logAdmins LogAdmin[]
 }
 
 model AdminRole {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String   @unique
   description String?
   createdAt   DateTime @default(now())
@@ -36,7 +36,7 @@ model AdminRole {
 }
 
 model AdminPermission {
-  id          Int     @id @default(autoincrement())
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
   resource    String
   action      String
   description String?
@@ -47,9 +47,9 @@ model AdminPermission {
 }
 
 model AdminRolePermission {
-  id                Int      @id @default(autoincrement())
-  adminRoleId       Int
-  adminPermissionId Int
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  adminRoleId       String   @db.ObjectId
+  adminPermissionId String   @db.ObjectId
   createdAt         DateTime @default(now())
 
   role       AdminRole       @relation(fields: [adminRoleId], references: [id], onDelete: Cascade)
@@ -59,12 +59,12 @@ model AdminRolePermission {
 }
 
 model LogAdmin {
-  id Int @id @default(autoincrement())
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  administratorId Int
+  administratorId String        @db.ObjectId
   administrator   Administrator @relation(fields: [administratorId], references: [id], onDelete: Cascade)
 
-  action       AdminActionType
+  action       String
   resource     String?
   resourceId   String?
   resourceName String?
@@ -72,10 +72,4 @@ model LogAdmin {
   url String?
 
   createdAt DateTime @default(now())
-}
-
-enum AdminActionType {
-  CREATE
-  UPDATE
-  DELETE
 }

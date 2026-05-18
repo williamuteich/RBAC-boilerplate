@@ -136,7 +136,7 @@ export function AuditManagement({
                                             <span className="font-medium text-slate-800 flex items-center gap-1.5">
                                                 <User className="h-3 w-3 text-slate-400" /> {log.administrator.name || "Sem nome"}
                                             </span>
-                                            <span className="text-[10px] text-muted-foreground">{log.administrator.role?.name || "Sem cargo"}</span>
+                                            <span className="text-[10px] text-muted-foreground">{log.administrator.role?.name || "Master"}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>{getActionBadge(log.action)}</TableCell>

@@ -199,7 +199,11 @@ export function AdminManagement({
                                             <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full w-fit text-[11px] font-bold tracking-tight shadow-sm ${admin.role.name === "Admin" ? "text-amber-700 bg-amber-50 border border-amber-200" : "text-blue-700 bg-blue-50 border border-blue-100"}`}>
                                                 <ShieldCheck className="h-3 w-3" /> {admin.role.name}
                                             </div>
-                                        ) : <span className="text-xs text-muted-foreground">-</span>}
+                                        ) : (
+                                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full w-fit text-[11px] font-bold tracking-tight shadow-sm text-purple-700 bg-purple-50 border border-purple-200">
+                                                <ShieldCheck className="h-3 w-3 text-purple-500" /> Master
+                                            </div>
+                                        )}
                                     </TableCell>
                                     <TableCell><Badge variant={admin.active ? "default" : "secondary"} className={admin.active ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-200/50" : ""}>{admin.active ? "Ativo" : "Inativo"}</Badge></TableCell>
                                     <TableCell className="text-xs text-muted-foreground">{admin.lastLogin ? new Date(admin.lastLogin).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "Nunca logou"}</TableCell>

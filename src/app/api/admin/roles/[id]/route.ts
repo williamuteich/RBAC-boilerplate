@@ -19,7 +19,7 @@ async function _DELETE(
 
     try {
         const roleToDelete = await prisma.adminRole.findUnique({
-            where: { id: Number(id) }
+            where: { id }
         });
 
         if (roleToDelete?.name === "Admin") {
@@ -27,7 +27,7 @@ async function _DELETE(
         }
 
         await prisma.adminRole.delete({
-            where: { id: Number(id) },
+            where: { id },
         });
         return NextResponse.json({ success: true });
     } catch (error) {
@@ -56,7 +56,7 @@ async function _PUT(
 
     try {
         const roleToUpdate = await prisma.adminRole.findUnique({
-            where: { id: Number(id) }
+            where: { id }
         });
 
         if (roleToUpdate?.name === "Admin") {
@@ -74,13 +74,13 @@ async function _PUT(
 
         const role = await prisma.$transaction(async (tx) => {
             const updatedRole = await tx.adminRole.update({
-                where: { id: Number(id) },
+                where: { id },
                 data: { name, description },
             });
 
             if (permissions) {
                 await tx.adminRolePermission.deleteMany({
-                    where: { adminRoleId: Number(id) },
+                    where: { adminRoleId: id },
                 });
 
                 for (const perm of permissions) {

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi } from "@/src/lib/auth-helpers-server";
-import { AdminActionType } from "@/generated/prisma/client";
 
 type AnyContext = { params?: Promise<Record<string, string>> };
 type RouteHandler<Ctx extends AnyContext = AnyContext> = (
@@ -15,11 +14,11 @@ interface AuditOptions<Ctx extends AnyContext = AnyContext> {
     getResourceName?: (data: unknown) => string | undefined;
 }
 
-const METHOD_TO_ACTION: Record<string, AdminActionType | undefined> = {
-    POST: AdminActionType.CREATE,
-    PUT: AdminActionType.UPDATE,
-    PATCH: AdminActionType.UPDATE,
-    DELETE: AdminActionType.DELETE,
+const METHOD_TO_ACTION: Record<string, string | undefined> = {
+    POST: "CREATE",
+    PUT: "UPDATE",
+    PATCH: "UPDATE",
+    DELETE: "DELETE",
 };
 
 export function withAudit<Ctx extends AnyContext = AnyContext>(
@@ -36,7 +35,7 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
             const session = await checkAdminApi();
 
             if (session?.user?.id) {
-                const adminId = Number(session.user.id);
+                const administratorId = session.user.id; // already a string (ObjectId)
                 const resourceId = options.getResourceId
                     ? await options.getResourceId(ctx)
                     : undefined;
@@ -44,13 +43,16 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                 let resourceName: string | undefined;
                 try {
                     const data = await response.clone().json();
-                    resourceName = options.getResourceName ? options.getResourceName(data) : ((data as Record<string, unknown>)?.name as string || (data as Record<string, unknown>)?.email as string);
-                } catch (e) { }
+                    resourceName = options.getResourceName
+                        ? options.getResourceName(data)
+                        : ((data as Record<string, unknown>)?.name as string ||
+                          (data as Record<string, unknown>)?.email as string);
+                } catch (_e) {}
 
                 prisma.logAdmin
                     .create({
                         data: {
-                            administratorId: adminId,
+                            administratorId,
                             action,
                             resource: options.resource,
                             resourceId: resourceId ?? null,
@@ -67,4 +69,3 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
         return response;
     };
 }
-

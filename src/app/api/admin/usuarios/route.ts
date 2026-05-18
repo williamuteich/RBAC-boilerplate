@@ -99,7 +99,7 @@ async function _POST(request: Request) {
             data: {
                 email,
                 name,
-                roleId: roleId ? Number(roleId) : null,
+                roleId: roleId ?? null,
             },
             select: {
                 id: true,

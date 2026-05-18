@@ -2,7 +2,7 @@ import { PrismaClient } from '../generated/prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  const resources = ["usuarios", "cargos", "configuracoes", "relatorios"];
+  const resources = ["usuarios", "cargos", "configuracoes", "relatorios", "auditoria"];
   const actions = ["visualizar", "criar", "editar", "deletar"];
 
   console.log('📦 Criando permissões...');
