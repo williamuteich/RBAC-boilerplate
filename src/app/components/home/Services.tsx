@@ -4,7 +4,6 @@ import { ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { ServiceType } from "@/src/types/home/services";
 
-// Custom Premium Dental SVG Icons
 const EmergênciaIcon = ({ className }: { className?: string }) => (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
