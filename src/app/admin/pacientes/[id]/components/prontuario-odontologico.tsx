@@ -149,50 +149,51 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
     return (
         <div className="w-full flex flex-col gap-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full">
-                <div className="bg-linear-to-br from-blue-500/10 to-indigo-500/5 border border-blue-100 rounded-md p-4 flex items-center gap-4 shadow-sm">
-                    <div className="w-10 h-10 rounded-md bg-blue-600/10 flex items-center justify-center text-blue-600 shrink-0">
-                        <User className="h-5 w-5" />
+                <div className="bg-white border border-slate-200/80 rounded-sm p-4 flex items-center gap-3.5 shadow-xs transition-all hover:border-slate-300">
+                    <div className="w-9 h-9 rounded-sm bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                        <User className="h-4.5 w-4.5" />
                     </div>
-                    <div>
-                        <p className="text-xs text-muted-foreground font-medium">Idade / CPF</p>
-                        <p className="text-sm font-semibold text-slate-800 mt-0.5">
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Idade / CPF</p>
+                        <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">
                             {calcIdade(paciente.dataNascimento)} anos
                         </p>
-                        <p className="text-xs text-slate-500 font-mono">{paciente.cpf}</p>
+                        <p className="text-[11px] font-semibold text-slate-500 font-mono mt-px">{paciente.cpf}</p>
                     </div>
                 </div>
 
-                <div className="bg-linear-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-100 rounded-md p-4 flex items-center gap-4 shadow-sm">
-                    <div className="w-10 h-10 rounded-md bg-emerald-600/10 flex items-center justify-center text-emerald-600 shrink-0">
-                        <HeartPulse className="h-5 w-5" />
+                <div className="bg-white border border-slate-200/80 rounded-sm p-4 flex items-center gap-3.5 shadow-xs transition-all hover:border-slate-300">
+                    <div className="w-9 h-9 rounded-sm bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                        <HeartPulse className="h-4.5 w-4.5" />
                     </div>
-                    <div>
-                        <p className="text-xs text-muted-foreground font-medium">Status do Prontuário</p>
-                        <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 border-emerald-200 mt-1 font-semibold rounded-sm">
-                            Ativo & Estável
-                        </Badge>
-                    </div>
-                </div>
-
-                <div className="bg-linear-to-br from-amber-500/10 to-orange-500/5 border border-amber-100 rounded-md p-4 flex items-center gap-4 shadow-sm">
-                    <div className="w-10 h-10 rounded-md bg-amber-600/10 flex items-center justify-center text-amber-600 shrink-0">
-                        <Calendar className="h-5 w-5" />
-                    </div>
-                    <div>
-                        <p className="text-xs text-muted-foreground font-medium">Próxima Consulta</p>
-                        <p className="text-sm font-semibold text-slate-800 mt-0.5">28 Mai 2026, às 14:00</p>
-                        <p className="text-xs text-slate-500">Limpeza & Profilaxia</p>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status do Prontuário</p>
+                        <div className="mt-1 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse"></span>
+                            <span className="text-xs font-bold text-slate-700">Ativo & Estável</span>
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-linear-to-br from-purple-500/10 to-pink-500/5 border border-purple-100 rounded-md p-4 flex items-center gap-4 shadow-sm">
-                    <div className="w-10 h-10 rounded-md bg-purple-600/10 flex items-center justify-center text-purple-600 shrink-0">
-                        <DollarSign className="h-5 w-5" />
+                <div className="bg-white border border-slate-200/80 rounded-sm p-4 flex items-center gap-3.5 shadow-xs transition-all hover:border-slate-300">
+                    <div className="w-9 h-9 rounded-sm bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                        <Calendar className="h-4.5 w-4.5" />
                     </div>
-                    <div>
-                        <p className="text-xs text-muted-foreground font-medium">Planos & Orçamentos</p>
-                        <p className="text-sm font-semibold text-slate-800 mt-0.5">R$ 2.450,00</p>
-                        <p className="text-xs text-emerald-600 font-medium">R$ 1.200,00 pago</p>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Próxima Consulta</p>
+                        <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">28 Mai 2026 • 14:00</p>
+                        <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">Limpeza & Profilaxia</p>
+                    </div>
+                </div>
+
+                <div className="bg-white border border-slate-200/80 rounded-sm p-4 flex items-center gap-3.5 shadow-xs transition-all hover:border-slate-300">
+                    <div className="w-9 h-9 rounded-sm bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                        <DollarSign className="h-4.5 w-4.5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Planos & Orçamentos</p>
+                        <p className="text-sm font-bold text-slate-800 mt-0.5">R$ 2.450,00</p>
+                        <p className="text-[11px] font-semibold text-emerald-600 mt-px">R$ 1.200,00 pago</p>
                     </div>
                 </div>
             </div>

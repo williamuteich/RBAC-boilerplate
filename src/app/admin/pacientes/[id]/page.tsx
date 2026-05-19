@@ -27,12 +27,12 @@ export default async function ProntuarioPage({ params }: { params: Promise<{ id:
 
     return (
         <div className="flex flex-col gap-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex flex-row items-center gap-3 bg-white p-4 sm:p-6 rounded-lg border shadow-sm w-full">
+            <div className="flex flex-row items-center gap-3 bg-white p-4 sm:p-6 rounded-sm border border-slate-200/80 shadow-xs w-full">
                 <Link
                     href="/admin/pacientes"
                     className={cn(
                         buttonVariants({ variant: "outline", size: "icon" }),
-                        "h-9 w-9 rounded-md shrink-0"
+                        "h-9 w-9 rounded-sm shrink-0"
                     )}
                     title="Voltar para a lista de pacientes"
                 >
@@ -52,7 +52,7 @@ export default async function ProntuarioPage({ params }: { params: Promise<{ id:
                         ></span>
                     </div>
                     <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5 flex items-center gap-1">
-                        <User className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                        <User className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                         <span className="hidden sm:inline">Prontuário Odontológico</span>
                     </p>
                 </div>
