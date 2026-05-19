@@ -93,7 +93,7 @@ export default function OdontogramaTab() {
                         className={cn("transition-all duration-300", fillClass)}
                     />
                 </svg>
-                <span className={cn("w-2 h-2 rounded-full mt-2", conf.color)}></span>
+                <span className={cn("w-2.5 h-2.5 rounded-full mt-2", conf.color)}></span>
             </button>
         );
     };

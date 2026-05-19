@@ -65,6 +65,13 @@ export interface Budget {
   status: string;
 }
 
+export interface ProntuarioContainerProps {
+  paciente: Paciente;
+  initialHistory: HistoricoPatient[];
+  patientId: string;
+  initialTab: string;
+}
+
 export interface OdontogramaTabProps {
   teeth: Record<number, ToothInfo>;
   selectedTooth: number | null;

@@ -98,7 +98,7 @@ export default function CadastroTab({ paciente }: { paciente: Paciente }) {
         setFields(prev => ({ ...prev, zipCode: maskCEP(e.target.value) }));
     };
 
-    const handleSubmit = (e: React.InputEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         startTransition(async () => {

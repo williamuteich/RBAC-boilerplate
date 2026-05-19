@@ -5,19 +5,13 @@ import { User, Calendar, Stethoscope, Activity, HeartPulse, ChevronLeft } from "
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { Paciente, HistoricoPatient } from "@/src/types/dashboard/pacientes";
+import { ProntuarioContainerProps } from "@/src/types/dashboard/pacientes";
 
-import OdontogramaTab from "./odontograma-tab";
-import EvolucaoList from "./evolucao-list";
-import AgendamentosTab from "./agendamentos-tab";
-import CadastroTab from "./cadastro-tab";
-
-interface ProntuarioContainerProps {
-    paciente: Paciente;
-    initialHistory: HistoricoPatient[];
-    patientId: string;
-    initialTab: string;
-}
+import OdontogramaTab from "./odontograma/odontograma-tab";
+import EvolucaoList from "./evolucao/evolucao-list";
+import AgendamentosTab from "./agendamentos/agendamentos-tab";
+import CadastroTab from "./cadastro/cadastro-tab";
+import AnamneseTab from "./anamnese/anamnese-tab";
 
 export default function ProntuarioContainer({
     paciente,
@@ -139,6 +133,19 @@ export default function ProntuarioContainer({
                 </button>
 
                 <button
+                    onClick={() => handleTabChange("anamnese")}
+                    className={cn(
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative cursor-pointer",
+                        activeTab === "anamnese"
+                            ? "bg-blue-600 text-white shadow-sm font-semibold"
+                            : "text-slate-600 hover:bg-slate-50 bg-white"
+                    )}
+                >
+                    <HeartPulse className="h-4 w-4" />
+                    Anamnese & Saúde
+                </button>
+
+                <button
                     onClick={() => handleTabChange("agendamentos")}
                     className={cn(
                         "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative cursor-pointer",
@@ -174,6 +181,7 @@ export default function ProntuarioContainer({
                         apiUrl={`/api/admin/pacientes/${patientId}/historico`}
                     />
                 )}
+                {activeTab === "anamnese" && <AnamneseTab patientId={patientId} />}
                 {activeTab === "agendamentos" && <AgendamentosTab />}
                 {activeTab === "cadastro" && <CadastroTab paciente={paciente} />}
             </div>
