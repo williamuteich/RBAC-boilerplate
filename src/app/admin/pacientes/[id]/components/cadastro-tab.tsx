@@ -18,19 +18,19 @@ export default function CadastroTab({
 }: CadastroTabProps) {
     const [cepLoading, setCepLoading] = useState(false);
     const [fields, setFields] = useState({
-        nomeCompleto: paciente.nomeCompleto || "",
+        name: paciente.name || "",
         cpf: paciente.cpf || "",
-        dataNascimento: paciente.dataNascimento
-            ? new Date(paciente.dataNascimento).toISOString().split("T")[0]
+        birthDate: paciente.birthDate
+            ? new Date(paciente.birthDate).toISOString().split("T")[0]
             : "",
-        telefone: paciente.telefone || "",
-        cep: paciente.cep || "",
-        estado: paciente.estado || "",
-        cidade: paciente.cidade || "",
-        rua: paciente.rua || "",
-        numero: paciente.numero || "",
-        complemento: paciente.complemento || "",
-        ativo: paciente.ativo ?? true
+        phone: paciente.phone || "",
+        zipCode: paciente.zipCode || "",
+        state: paciente.state || "",
+        city: paciente.city || "",
+        street: paciente.street || "",
+        number: paciente.number || "",
+        complement: paciente.complement || "",
+        active: paciente.active ?? true
     });
 
     const maskCPF = (value: string) => {
@@ -57,7 +57,7 @@ export default function CadastroTab({
     };
 
     const handleCepBlur = async () => {
-        const val = fields.cep;
+        const val = fields.zipCode;
         if (!val) return;
         setCepLoading(true);
         try {
@@ -68,9 +68,9 @@ export default function CadastroTab({
                 if (!data.erro) {
                     setFields(prev => ({
                         ...prev,
-                        estado: data.uf || "",
-                        cidade: data.localidade || "",
-                        rua: data.logradouro || ""
+                        state: data.uf || "",
+                        city: data.localidade || "",
+                        street: data.logradouro || ""
                     }));
                 }
             }
@@ -90,12 +90,12 @@ export default function CadastroTab({
         setFields(prev => ({ ...prev, cpf: maskCPF(e.target.value) }));
     };
 
-    const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFields(prev => ({ ...prev, telefone: maskPhone(e.target.value) }));
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFields(prev => ({ ...prev, phone: maskPhone(e.target.value) }));
     };
 
-    const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFields(prev => ({ ...prev, cep: maskCEP(e.target.value) }));
+    const handleZipCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFields(prev => ({ ...prev, zipCode: maskCEP(e.target.value) }));
     };
 
     return (
@@ -134,11 +134,11 @@ export default function CadastroTab({
 
                     <div className="space-y-4">
                         <div className="space-y-1.5">
-                            <Label htmlFor="nomeCompleto" className="text-sm font-medium">Nome Completo</Label>
+                            <Label htmlFor="name" className="text-sm font-medium">Nome Completo</Label>
                             <Input
-                                id="nomeCompleto"
-                                name="nomeCompleto"
-                                value={fields.nomeCompleto}
+                                id="name"
+                                name="name"
+                                value={fields.name}
                                 onChange={handleChange}
                                 placeholder="João da Silva"
                                 required
@@ -161,15 +161,15 @@ export default function CadastroTab({
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="dataNascimento" className="text-sm font-medium flex items-center gap-1.5">
+                                <Label htmlFor="birthDate" className="text-sm font-medium flex items-center gap-1.5">
                                     <CalendarDays className="h-4 w-4 text-slate-500" />
                                     Nascimento
                                 </Label>
                                 <Input
-                                    id="dataNascimento"
-                                    name="dataNascimento"
+                                    id="birthDate"
+                                    name="birthDate"
                                     type="date"
-                                    value={fields.dataNascimento}
+                                    value={fields.birthDate}
                                     onChange={handleChange}
                                     required
                                     className="h-10 bg-white rounded-md"
@@ -178,15 +178,15 @@ export default function CadastroTab({
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="telefone" className="text-sm font-medium flex items-center gap-1.5">
+                            <Label htmlFor="phone" className="text-sm font-medium flex items-center gap-1.5">
                                 <Phone className="h-4 w-4 text-slate-500" />
                                 Telefone / WhatsApp
                             </Label>
                             <Input
-                                id="telefone"
-                                name="telefone"
-                                value={fields.telefone}
-                                onChange={handleTelefoneChange}
+                                id="phone"
+                                name="phone"
+                                value={fields.phone}
+                                onChange={handlePhoneChange}
                                 placeholder="(51) 99999-9999"
                                 required
                                 className="h-10 bg-white rounded-md"
@@ -196,13 +196,13 @@ export default function CadastroTab({
                         <div className="flex items-center gap-2 pt-4">
                             <input
                                 type="checkbox"
-                                name="ativo"
-                                id="ativo"
-                                checked={fields.ativo}
+                                name="active"
+                                id="active"
+                                checked={fields.active}
                                 onChange={handleChange}
                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                             />
-                            <Label htmlFor="ativo" className="text-sm font-medium text-slate-700 cursor-pointer select-none">
+                            <Label htmlFor="active" className="text-sm font-medium text-slate-700 cursor-pointer select-none">
                                 Paciente com cadastro ativo
                             </Label>
                         </div>
@@ -223,13 +223,13 @@ export default function CadastroTab({
                     <div className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <Label htmlFor="cep" className="text-sm font-medium">CEP</Label>
+                                <Label htmlFor="zipCode" className="text-sm font-medium">CEP</Label>
                                 <div className="relative">
                                     <Input
-                                        id="cep"
-                                        name="cep"
-                                        value={fields.cep}
-                                        onChange={handleCepChange}
+                                        id="zipCode"
+                                        name="zipCode"
+                                        value={fields.zipCode}
+                                        onChange={handleZipCodeChange}
                                         onBlur={handleCepBlur}
                                         placeholder="00000-000"
                                         required
@@ -242,11 +242,11 @@ export default function CadastroTab({
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="estado" className="text-sm font-medium">Estado (UF)</Label>
+                                <Label htmlFor="state" className="text-sm font-medium">Estado (UF)</Label>
                                 <Input
-                                    id="estado"
-                                    name="estado"
-                                    value={fields.estado}
+                                    id="state"
+                                    name="state"
+                                    value={fields.state}
                                     onChange={handleChange}
                                     placeholder="RS"
                                     maxLength={2}
@@ -257,11 +257,11 @@ export default function CadastroTab({
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="cidade" className="text-sm font-medium">Cidade</Label>
+                            <Label htmlFor="city" className="text-sm font-medium">Cidade</Label>
                             <Input
-                                id="cidade"
-                                name="cidade"
-                                value={fields.cidade}
+                                id="city"
+                                name="city"
+                                value={fields.city}
                                 onChange={handleChange}
                                 placeholder="Porto Alegre"
                                 required
@@ -270,11 +270,11 @@ export default function CadastroTab({
                         </div>
 
                         <div className="space-y-1.5">
-                            <Label htmlFor="rua" className="text-sm font-medium">Rua / Logradouro</Label>
+                            <Label htmlFor="street" className="text-sm font-medium">Rua / Logradouro</Label>
                             <Input
-                                id="rua"
-                                name="rua"
-                                value={fields.rua}
+                                id="street"
+                                name="street"
+                                value={fields.street}
                                 onChange={handleChange}
                                 placeholder="Rua das Flores"
                                 required
@@ -284,11 +284,11 @@ export default function CadastroTab({
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <Label htmlFor="numero" className="text-sm font-medium">Número</Label>
+                                <Label htmlFor="number" className="text-sm font-medium">Número</Label>
                                 <Input
-                                    id="numero"
-                                    name="numero"
-                                    value={fields.numero}
+                                    id="number"
+                                    name="number"
+                                    value={fields.number}
                                     onChange={handleChange}
                                     placeholder="123"
                                     required
@@ -297,11 +297,11 @@ export default function CadastroTab({
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="complemento" className="text-sm font-medium">Complemento</Label>
+                                <Label htmlFor="complement" className="text-sm font-medium">Complemento</Label>
                                 <Input
-                                    id="complemento"
-                                    name="complemento"
-                                    value={fields.complemento}
+                                    id="complement"
+                                    name="complement"
+                                    value={fields.complement}
                                     onChange={handleChange}
                                     placeholder="Apto 2B"
                                     className="h-10 bg-white rounded-md"

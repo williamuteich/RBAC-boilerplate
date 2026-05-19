@@ -41,14 +41,14 @@ export default async function ProntuarioPage({ params }: { params: Promise<{ id:
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                         <h1 className="text-xl md:text-3xl font-extrabold tracking-tight text-slate-900 truncate">
-                            {paciente.nomeCompleto}
+                            {paciente.name}
                         </h1>
                         <span
                             className={cn(
                                 "w-2.5 h-2.5 rounded-full shadow-sm animate-pulse shrink-0",
-                                paciente.ativo ? "bg-emerald-500" : "bg-rose-500"
+                                paciente.active ? "bg-emerald-500" : "bg-rose-500"
                             )}
-                            title={paciente.ativo ? "Paciente Ativo" : "Paciente Inativo"}
+                            title={paciente.active ? "Paciente Ativo" : "Paciente Inativo"}
                         ></span>
                     </div>
                     <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5 flex items-center gap-1">

@@ -10,7 +10,7 @@ export async function getPacientes(filters: PacienteFilters = { page: 1, limit: 
     const params = new URLSearchParams();
     if (filters.page) params.set("page", String(filters.page));
     if (filters.limit) params.set("limit", String(filters.limit));
-    if (filters.nome) params.set("nome", filters.nome);
+    if (filters.name) params.set("name", filters.name);
     if (filters.cpf) params.set("cpf", filters.cpf);
 
     const query = params.toString();

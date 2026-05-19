@@ -38,10 +38,10 @@ async function _PUT(request: Request, ctx: Ctx) {
             return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
         }
 
-        const { dataNascimento, ...rest } = validated.data;
+        const { birthDate, ...rest } = validated.data;
         const paciente = await prisma.paciente.update({
             where: { id },
-            data: { ...rest, dataNascimento: new Date(dataNascimento) },
+            data: { ...rest, birthDate: new Date(birthDate) },
         });
 
         return NextResponse.json(paciente);
@@ -61,12 +61,20 @@ async function _DELETE(_req: Request, ctx: Ctx) {
 
     const id = await getId(ctx);
     try {
-        await prisma.paciente.delete({ where: { id } });
-        return NextResponse.json({ success: true });
+        const deletedPaciente = await prisma.paciente.delete({ where: { id } });
+        return NextResponse.json(deletedPaciente);
     } catch {
         return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });
     }
 }
 
-export const PUT = withAudit(_PUT, { resource: "pacientes", getResourceId: getId });
-export const DELETE = withAudit(_DELETE, { resource: "pacientes", getResourceId: getId });
+export const PUT = withAudit(_PUT, {
+    resource: "pacientes",
+    getResourceId: getId,
+    getResourceName: (data: any) => data.name,
+});
+export const DELETE = withAudit(_DELETE, {
+    resource: "pacientes",
+    getResourceId: getId,
+    getResourceName: (data: any) => data.name,
+});

@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
     Plus, Loader2, Trash2, Pencil, Search, ChevronLeft, ChevronRight,
-    AlertTriangle, User, Phone, MapPin, FileText, ClipboardPlus, CalendarDays, X
+    AlertTriangle, User, Phone, MapPin, FileText, CalendarDays
 } from "lucide-react";
 import { Paciente, PacientesResponse, PacienteFilters } from "@/src/types/dashboard/pacientes";
 import {
@@ -69,21 +69,22 @@ function PacienteForm({
 }) {
     const [cepLoading, setCepLoading] = useState(false);
     const [addressFields, setAddressFields] = useState({
-        estado: editing?.estado || "",
-        cidade: editing?.cidade || "",
-        rua: editing?.rua || "",
+        state: editing?.state || "",
+        city: editing?.city || "",
+        street: editing?.street || "",
     });
     const [masks, setMasks] = useState({
         cpf: editing?.cpf || "",
-        telefone: editing?.telefone || "",
-        cep: editing?.cep || "",
+        phone: editing?.phone || "",
+        zipCode: editing?.zipCode || "",
     });
 
     const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
         setCepLoading(true);
         const data = await fetchCep(e.target.value);
         if (data) {
-            setAddressFields({ estado: data.uf, cidade: data.localidade, rua: data.logradouro });
+            setAddressFields({ state: data.uf, city: data.localidade, street: data.logradouro });
+            setMasks(prev => ({ ...prev, zipCode: maskCEP(e.target.value) }));
         }
         setCepLoading(false);
     };
@@ -106,7 +107,7 @@ function PacienteForm({
             <div className="grid grid-cols-2 gap-3">
                 <div className="col-span-2 space-y-1">
                     <Label className="text-xs flex items-center gap-1"><User className="h-3 w-3" /> Nome Completo</Label>
-                    <Input name="nomeCompleto" defaultValue={editing?.nomeCompleto || ""} placeholder="João da Silva" required />
+                    <Input name="name" defaultValue={editing?.name || ""} placeholder="João da Silva" required />
                 </div>
                 <div className="space-y-1">
                     <Label className="text-xs">CPF</Label>
@@ -114,11 +115,11 @@ function PacienteForm({
                 </div>
                 <div className="space-y-1">
                     <Label className="text-xs flex items-center gap-1"><CalendarDays className="h-3 w-3" /> Data de Nascimento</Label>
-                    <Input name="dataNascimento" type="date" defaultValue={editing?.dataNascimento ? new Date(editing.dataNascimento).toISOString().split("T")[0] : ""} required />
+                    <Input name="birthDate" type="date" defaultValue={editing?.birthDate ? new Date(editing.birthDate).toISOString().split("T")[0] : ""} required />
                 </div>
                 <div className="col-span-2 space-y-1">
                     <Label className="text-xs flex items-center gap-1"><Phone className="h-3 w-3" /> Telefone</Label>
-                    <Input name="telefone" value={masks.telefone} onChange={e => handleMaskChange(e, maskPhone, 'telefone')} placeholder="(51) 99999-9999" required />
+                    <Input name="phone" value={masks.phone} onChange={e => handleMaskChange(e, maskPhone, 'phone')} placeholder="(51) 99999-9999" required />
                 </div>
             </div>
 
@@ -130,37 +131,37 @@ function PacienteForm({
                     <div className="space-y-1">
                         <Label className="text-xs">CEP</Label>
                         <div className="relative">
-                            <Input name="cep" value={masks.cep} onChange={e => handleMaskChange(e, maskCEP, 'cep')} placeholder="00000-000" onBlur={handleCepBlur} required />
+                            <Input name="zipCode" value={masks.zipCode} onChange={e => handleMaskChange(e, maskCEP, 'zipCode')} placeholder="00000-000" onBlur={handleCepBlur} required />
                             {cepLoading && <Loader2 className="absolute right-2 top-2.5 h-4 w-4 animate-spin text-blue-500" />}
                         </div>
                     </div>
                     <div className="space-y-1">
                         <Label className="text-xs">Estado (UF)</Label>
-                        <Input name="estado" value={addressFields.estado} onChange={e => setAddressFields(p => ({ ...p, estado: e.target.value }))} placeholder="RS" required />
+                        <Input name="state" value={addressFields.state} onChange={e => setAddressFields(p => ({ ...p, state: e.target.value }))} placeholder="RS" required />
                     </div>
                     <div className="col-span-2 space-y-1">
                         <Label className="text-xs">Cidade</Label>
-                        <Input name="cidade" value={addressFields.cidade} onChange={e => setAddressFields(p => ({ ...p, cidade: e.target.value }))} placeholder="Porto Alegre" required />
+                        <Input name="city" value={addressFields.city} onChange={e => setAddressFields(p => ({ ...p, city: e.target.value }))} placeholder="Porto Alegre" required />
                     </div>
                     <div className="col-span-2 space-y-1">
                         <Label className="text-xs">Rua / Logradouro</Label>
-                        <Input name="rua" value={addressFields.rua} onChange={e => setAddressFields(p => ({ ...p, rua: e.target.value }))} placeholder="Rua das Flores" required />
+                        <Input name="street" value={addressFields.street} onChange={e => setAddressFields(p => ({ ...p, street: e.target.value }))} placeholder="Rua das Flores" required />
                     </div>
                     <div className="space-y-1">
                         <Label className="text-xs">Número</Label>
-                        <Input name="numero" defaultValue={editing?.numero || ""} placeholder="123" required />
+                        <Input name="number" defaultValue={editing?.number || ""} placeholder="123" required />
                     </div>
                     <div className="space-y-1">
                         <Label className="text-xs">Complemento</Label>
-                        <Input name="complemento" defaultValue={editing?.complemento || ""} placeholder="Apto 2B" />
+                        <Input name="complement" defaultValue={editing?.complement || ""} placeholder="Apto 2B" />
                     </div>
                 </div>
             </div>
 
             {editing && (
                 <div className="flex items-center gap-2 pt-1">
-                    <input name="ativo" type="checkbox" id="ativo" defaultChecked={editing.ativo} className="h-4 w-4 rounded border-gray-300 text-blue-600" />
-                    <Label htmlFor="ativo" className="cursor-pointer text-sm">Paciente Ativo</Label>
+                    <input name="active" type="checkbox" id="active" defaultChecked={editing.active} className="h-4 w-4 rounded border-gray-300 text-blue-600" />
+                    <Label htmlFor="active" className="cursor-pointer text-sm">Paciente Ativo</Label>
                 </div>
             )}
 
@@ -188,14 +189,14 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
             if (searchTerm) {
                 fetchPacientes({
                     ...filters,
-                    nome: isCpf ? undefined : searchTerm,
+                    name: isCpf ? undefined : searchTerm,
                     cpf: isCpf ? searchTerm : undefined,
                     page: 1
                 });
             } else {
                 fetchPacientes({
                     ...filters,
-                    nome: undefined,
+                    name: undefined,
                     cpf: undefined,
                     page: 1
                 });
@@ -214,20 +215,20 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
     const handleAction = (formData: FormData) => {
         startTransition(async () => {
             const payload: any = {
-                nomeCompleto: formData.get("nomeCompleto") as string,
+                name: formData.get("name") as string,
                 cpf: formData.get("cpf") as string,
-                dataNascimento: formData.get("dataNascimento") as string,
-                telefone: formData.get("telefone") as string,
-                cep: formData.get("cep") as string,
-                estado: formData.get("estado") as string,
-                cidade: formData.get("cidade") as string,
-                rua: formData.get("rua") as string,
-                numero: formData.get("numero") as string,
-                complemento: formData.get("complemento") as string || undefined,
+                birthDate: formData.get("birthDate") as string,
+                phone: formData.get("phone") as string,
+                zipCode: formData.get("zipCode") as string,
+                state: formData.get("state") as string,
+                city: formData.get("city") as string,
+                street: formData.get("street") as string,
+                number: formData.get("number") as string,
+                complement: formData.get("complement") as string || undefined,
             };
 
             if (editing) {
-                payload.ativo = formData.get("ativo") === "on";
+                payload.active = formData.get("active") === "on";
             }
 
             const res = editing
@@ -245,9 +246,9 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
         });
     };
 
-    const calcIdade = (dataNascimento: string) => {
+    const calcIdade = (birthDate: string) => {
         const hoje = new Date();
-        const nasc = new Date(dataNascimento);
+        const nasc = new Date(birthDate);
         let idade = hoje.getFullYear() - nasc.getFullYear();
         const m = hoje.getMonth() - nasc.getMonth();
         if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
@@ -256,7 +257,6 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
 
     return (
         <div className="space-y-4">
-
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <div className="relative">
@@ -314,16 +314,16 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
                             data.pacientes.map((paciente) => (
                                 <TableRow key={paciente.id} className={`hover:bg-muted/30 transition-opacity ${isPending ? "opacity-50" : ""}`}>
                                     <TableCell>
-                                        <div className="font-medium text-slate-800">{paciente.nomeCompleto}</div>
+                                        <div className="font-medium text-slate-800">{paciente.name}</div>
                                     </TableCell>
                                     <TableCell className="text-sm text-slate-500 font-mono">{maskCPF(paciente.cpf)}</TableCell>
-                                    <TableCell className="text-sm">{calcIdade(paciente.dataNascimento)} anos</TableCell>
-                                    <TableCell className="text-sm">{maskPhone(paciente.telefone)}</TableCell>
-                                    <TableCell className="text-sm">{paciente.cidade}/{paciente.estado}</TableCell>
+                                    <TableCell className="text-sm">{calcIdade(paciente.birthDate)} anos</TableCell>
+                                    <TableCell className="text-sm">{maskPhone(paciente.phone)}</TableCell>
+                                    <TableCell className="text-sm">{paciente.city}/{paciente.state}</TableCell>
                                     <TableCell>
-                                        <Badge variant={paciente.ativo ? "default" : "secondary"}
-                                            className={paciente.ativo ? "bg-emerald-500/10 text-emerald-600 border-emerald-200/50" : ""}>
-                                            {paciente.ativo ? "Ativo" : "Inativo"}
+                                        <Badge variant={paciente.active ? "default" : "secondary"}
+                                            className={paciente.active ? "bg-emerald-500/10 text-emerald-600 border-emerald-200/50" : ""}>
+                                            {paciente.active ? "Ativo" : "Inativo"}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -354,7 +354,7 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
                                                         </div>
                                                         <AlertDialogTitle>Remover Paciente?</AlertDialogTitle>
                                                         <AlertDialogDescription>
-                                                            Todos os prontuários de <strong>{paciente.nomeCompleto}</strong> serão excluídos permanentemente.
+                                                            Todos os prontuários de <strong>{paciente.name}</strong> serão excluídos permanentemente.
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>

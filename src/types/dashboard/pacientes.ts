@@ -2,17 +2,17 @@ import { FormEvent } from "react";
 
 export interface Paciente {
   id: string;
-  nomeCompleto: string;
+  name: string;
   cpf: string;
-  dataNascimento: string;
-  telefone: string;
-  cep: string;
-  estado: string;
-  cidade: string;
-  rua: string;
-  numero: string;
-  complemento?: string | null;
-  ativo: boolean;
+  birthDate: string;
+  phone: string;
+  zipCode: string;
+  state: string;
+  city: string;
+  street: string;
+  number: string;
+  complement?: string | null;
+  active: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -28,7 +28,7 @@ export interface PacientesResponse {
 export interface PacienteFilters {
   page?: number;
   limit?: number;
-  nome?: string;
+  name?: string;
   cpf?: string;
 }
 

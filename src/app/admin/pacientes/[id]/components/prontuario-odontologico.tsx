@@ -111,17 +111,17 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
 
         startTransition(async () => {
             const payload: Partial<Paciente> = {
-                nomeCompleto: formData.get("nomeCompleto") as string,
+                name: formData.get("name") as string,
                 cpf: formData.get("cpf") as string,
-                dataNascimento: formData.get("dataNascimento") as string,
-                telefone: formData.get("telefone") as string,
-                cep: formData.get("cep") as string,
-                estado: formData.get("estado") as string,
-                cidade: formData.get("cidade") as string,
-                rua: formData.get("rua") as string,
-                numero: formData.get("numero") as string,
-                complemento: (formData.get("complemento") as string) || null,
-                ativo: formData.get("ativo") === "on",
+                birthDate: formData.get("birthDate") as string,
+                phone: formData.get("phone") as string,
+                zipCode: formData.get("zipCode") as string,
+                state: formData.get("state") as string,
+                city: formData.get("city") as string,
+                street: formData.get("street") as string,
+                number: formData.get("number") as string,
+                complement: (formData.get("complement") as string) || null,
+                active: formData.get("active") === "on",
             };
 
             const res = await updatePaciente(paciente.id, payload);
@@ -136,10 +136,10 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
         });
     };
 
-    const calcIdade = (dataNascimento: string) => {
-        if (!dataNascimento) return 0;
+    const calcIdade = (birthDate: string) => {
+        if (!birthDate) return 0;
         const hoje = new Date();
-        const nasc = new Date(dataNascimento);
+        const nasc = new Date(birthDate);
         let idade = hoje.getFullYear() - nasc.getFullYear();
         const m = hoje.getMonth() - nasc.getMonth();
         if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
@@ -156,7 +156,7 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                     <div className="min-w-0">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Idade / CPF</p>
                         <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">
-                            {calcIdade(paciente.dataNascimento)} anos
+                            {calcIdade(paciente.birthDate)} anos
                         </p>
                         <p className="text-[11px] font-semibold text-slate-500 font-mono mt-px">{paciente.cpf}</p>
                     </div>

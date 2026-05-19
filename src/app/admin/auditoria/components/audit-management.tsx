@@ -147,9 +147,8 @@ export function AuditManagement({
                                     </TableCell>
                                     <TableCell>
                                         <span className="font-semibold text-slate-900">
-                                            {log.resourceName || "-"}
+                                            {log.resourceName || log.resourceId || "-"}
                                         </span>
-                                        {log.resourceId && <span className="ml-2 text-[10px] text-muted-foreground font-mono">#{log.resourceId}</span>}
                                     </TableCell>
                                     <TableCell className="hidden md:table-cell">
                                         <span className="text-xs text-muted-foreground font-mono">{log.url}</span>

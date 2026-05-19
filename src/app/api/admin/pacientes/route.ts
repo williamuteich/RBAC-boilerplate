@@ -15,32 +15,32 @@ export async function GET(request: Request) {
     const validated = pacienteQuerySchema.safeParse(Object.fromEntries(searchParams.entries()));
     if (!validated.success) return NextResponse.json({ error: "Parâmetros inválidos" }, { status: 400 });
 
-    const { page, limit, nome, cpf } = validated.data;
+    const { page, limit, name, cpf } = validated.data;
 
     const where = {
-        ...(nome && { nomeCompleto: { contains: nome, mode: "insensitive" as const } }),
+        ...(name && { name: { contains: name, mode: "insensitive" as const } }),
         ...(cpf && { cpf: { contains: cpf } }),
     };
 
     const [pacientes, total] = await Promise.all([
         prisma.paciente.findMany({
             where,
-            orderBy: { nomeCompleto: "asc" },
+            orderBy: { name: "asc" },
             skip: (page - 1) * limit,
             take: limit,
             select: {
                 id: true,
-                nomeCompleto: true,
+                name: true,
                 cpf: true,
-                dataNascimento: true,
-                telefone: true,
-                cep: true,
-                estado: true,
-                cidade: true,
-                rua: true,
-                numero: true,
-                complemento: true,
-                ativo: true,
+                birthDate: true,
+                phone: true,
+                zipCode: true,
+                state: true,
+                city: true,
+                street: true,
+                number: true,
+                complement: true,
+                active: true,
                 createdAt: true,
                 updatedAt: true,
             },
@@ -71,9 +71,9 @@ async function _POST(request: Request) {
             return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
         }
 
-        const { dataNascimento, ...rest } = validated.data;
+        const { birthDate, ...rest } = validated.data;
         const paciente = await prisma.paciente.create({
-            data: { ...rest, dataNascimento: new Date(dataNascimento) },
+            data: { ...rest, birthDate: new Date(birthDate) },
         });
 
         return NextResponse.json(paciente, { status: 201 });
@@ -84,4 +84,7 @@ async function _POST(request: Request) {
     }
 }
 
-export const POST = withAudit(_POST, { resource: "pacientes" });
+export const POST = withAudit(_POST, {
+    resource: "pacientes",
+    getResourceName: (data: any) => data.name,
+});
