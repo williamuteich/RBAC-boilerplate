@@ -24,6 +24,7 @@ import {
     getPacientes, createPaciente, updatePaciente, deletePaciente
 } from "@/src/services/pacientes";
 import Link from "next/link";
+import { toast, ToastContainer } from "react-toastify";
 
 async function fetchCep(cep: string) {
     const clean = cep.replace(/\D/g, "");
@@ -238,12 +239,13 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
                 : await createPaciente(payload);
 
             if (res.success) {
+                toast.success("Paciente salvo com sucesso!");
                 setOpen(false);
                 setEditing(null);
                 setError("");
                 fetchPacientes(filters);
             } else {
-                setError(res.error || "Erro ao salvar");
+                toast.error(res.error || "Erro ao salvar");
             }
         });
     };
@@ -259,6 +261,7 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
 
     return (
         <div className="space-y-4">
+            <ToastContainer position="top-right" autoClose={3000} theme="colored" />
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <div className="relative">

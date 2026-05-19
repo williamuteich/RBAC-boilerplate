@@ -89,11 +89,15 @@ async function _POST(request: Request, ctx: Ctx) {
 }
 
 export const POST = withAudit(_POST, {
-    resource: "pacientes",
+    resource: "paciente/evoluções",
     getResourceId: getId,
     getResourceName: async (data: any) => {
         const p = await prisma.patient.findUnique({ where: { id: data.patientId }, select: { name: true } });
         return p?.name || "Paciente Desconhecido";
+    },
+    getUrl: async (ctx) => {
+        const params = await ctx.params;
+        return `/admin/pacientes/${params.id}?tab=evolucao`;
     }
 });
 
@@ -129,11 +133,15 @@ async function _PUT(request: Request, ctx: Ctx) {
 }
 
 export const PUT = withAudit(_PUT, {
-    resource: "pacientes",
+    resource: "paciente/evoluções",
     getResourceId: getId,
     getResourceName: async (data: any) => {
         const p = await prisma.patient.findUnique({ where: { id: data.patientId }, select: { name: true } });
         return p?.name || "Paciente Desconhecido";
+    },
+    getUrl: async (ctx) => {
+        const params = await ctx.params;
+        return `/admin/pacientes/${params.id}?tab=evolucao`;
     }
 });
 
@@ -164,11 +172,15 @@ async function _DELETE(request: Request, ctx: Ctx) {
 }
 
 export const DELETE = withAudit(_DELETE, {
-    resource: "pacientes",
+    resource: "paciente/evoluções",
     getResourceId: getId,
     getResourceName: async (data: any) => {
         const p = await prisma.patient.findUnique({ where: { id: data.patientId }, select: { name: true } });
         return p?.name || "Paciente Desconhecido";
+    },
+    getUrl: async (ctx) => {
+        const params = await ctx.params;
+        return `/admin/pacientes/${params.id}?tab=evolucao`;
     }
 });
 

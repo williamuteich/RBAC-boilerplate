@@ -12,6 +12,7 @@ interface AuditOptions<Ctx extends AnyContext = AnyContext> {
     resource: string;
     getResourceId?: (ctx: Ctx) => Promise<string | undefined> | string | undefined;
     getResourceName?: (data: any) => Promise<string | undefined> | string | undefined;
+    getUrl?: (ctx: Ctx, data: any) => Promise<string | undefined> | string | undefined;
 }
 
 const METHOD_TO_ACTION: Record<string, string | undefined> = {
@@ -41,13 +42,18 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                     : undefined;
 
                 let resourceName: string | undefined;
+                let data: any = null;
                 try {
-                    const data = await response.clone().json();
+                    data = await response.clone().json();
                     resourceName = options.getResourceName
                         ? await options.getResourceName(data)
                         : ((data as Record<string, unknown>)?.name as string ||
                             (data as Record<string, unknown>)?.email as string);
                 } catch (_e) { }
+
+                const resolvedUrl = options.getUrl
+                    ? await options.getUrl(ctx, data)
+                    : `/${options.resource}`;
 
                 prisma.logAdmin
                     .create({
@@ -57,7 +63,7 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                             resource: options.resource,
                             resourceId: resourceId ?? null,
                             resourceName: resourceName ?? null,
-                            url: `/${options.resource}`,
+                            url: resolvedUrl ?? `/${options.resource}`,
                         },
                     })
                     .catch((err) =>
