@@ -27,7 +27,6 @@ export default async function ProntuarioPage({ params }: { params: Promise<{ id:
 
     return (
         <div className="flex flex-col gap-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header section with back button and details */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border shadow-sm w-full">
                 <div className="flex items-center gap-4">
                     <Link
@@ -67,7 +66,6 @@ export default async function ProntuarioPage({ params }: { params: Promise<{ id:
                 </div>
             </div>
 
-            {/* Core interactive prontuário dashboard tabs component */}
             <div className="w-full">
                 <ProntuarioOdontologico paciente={paciente} />
             </div>

@@ -1,23 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Stethoscope, HelpCircle, Info, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ToothStatus, OdontogramaTabProps } from "@/src/types/dashboard/pacientes";
 
 const upperTeethRight = [18, 17, 16, 15, 14, 13, 12, 11];
 const upperTeethLeft = [21, 22, 23, 24, 25, 26, 27, 28];
 const lowerTeethLeft = [38, 37, 36, 35, 34, 33, 32, 31];
 const lowerTeethRight = [41, 42, 43, 44, 45, 46, 47, 48];
-
-export type ToothStatus = "healthy" | "cavity" | "restored" | "extracted" | "missing";
-
-export interface ToothInfo {
-    id: number;
-    status: ToothStatus;
-    notes: string;
-}
 
 export const statusConfig = {
     healthy: { label: "Saudável", color: "bg-emerald-500", border: "border-emerald-500", text: "text-emerald-700", bgLight: "bg-emerald-50/60" },
@@ -26,14 +18,6 @@ export const statusConfig = {
     extracted: { label: "Implante", color: "bg-amber-500", border: "border-amber-500", text: "text-amber-700", bgLight: "bg-amber-50/60" },
     missing: { label: "Ausente", color: "bg-slate-400", border: "border-slate-400", text: "text-slate-700", bgLight: "bg-slate-50" },
 };
-
-interface OdontogramaTabProps {
-    teeth: Record<number, ToothInfo>;
-    selectedTooth: number | null;
-    setSelectedTooth: (id: number | null) => void;
-    onStatusUpdate: (status: ToothStatus) => void;
-    onNoteUpdate: (notes: string) => void;
-}
 
 export default function OdontogramaTab({
     teeth,
@@ -93,7 +77,6 @@ export default function OdontogramaTab({
 
     return (
         <div className="flex flex-col lg:flex-row gap-8 w-full">
-            {/* Interactive Odontogram Map */}
             <div className="flex-1 space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
@@ -119,7 +102,6 @@ export default function OdontogramaTab({
                     <div className="absolute top-3 left-4 text-xs font-semibold text-slate-400 tracking-wider">SUPERIOR (ARCADA SUPERIOR)</div>
                     <div className="absolute bottom-3 left-4 text-xs font-semibold text-slate-400 tracking-wider">INFERIOR (ARCADA INFERIOR)</div>
 
-                    {/* ARCADA SUPERIOR */}
                     <div className="flex flex-col items-center gap-2 w-full max-w-2xl">
                         <div className="flex flex-wrap justify-center gap-2 sm:gap-3 w-full">
                             <div className="flex gap-1.5 sm:gap-2">
@@ -127,7 +109,7 @@ export default function OdontogramaTab({
                                     <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
                                 ))}
                             </div>
-                            <div className="w-[1px] bg-slate-300 self-stretch my-2"></div>
+                            <div className="w-px bg-slate-300 self-stretch my-2"></div>
                             <div className="flex gap-1.5 sm:gap-2">
                                 {upperTeethLeft.map((t) => (
                                     <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
@@ -136,10 +118,8 @@ export default function OdontogramaTab({
                         </div>
                     </div>
 
-                    {/* Divider Line */}
                     <div className="w-full max-w-2xl border-t border-dashed border-slate-200"></div>
 
-                    {/* ARCADA INFERIOR */}
                     <div className="flex flex-col items-center gap-2 w-full max-w-2xl">
                         <div className="flex flex-wrap justify-center gap-2 sm:gap-3 w-full">
                             <div className="flex gap-1.5 sm:gap-2">
@@ -147,7 +127,7 @@ export default function OdontogramaTab({
                                     <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
                                 ))}
                             </div>
-                            <div className="w-[1px] bg-slate-300 self-stretch my-2"></div>
+                            <div className="w-px bg-slate-300 self-stretch my-2"></div>
                             <div className="flex gap-1.5 sm:gap-2">
                                 {lowerTeethRight.map((t) => (
                                     <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
@@ -167,7 +147,6 @@ export default function OdontogramaTab({
                 </div>
             </div>
 
-            {/* Tooth details pane */}
             <div className="w-full lg:w-[320px] bg-slate-50 border rounded-2xl p-5 flex flex-col gap-5 self-stretch shadow-sm">
                 {selectedTooth !== null ? (
                     <div className="space-y-4 animate-in fade-in duration-300">
@@ -179,10 +158,10 @@ export default function OdontogramaTab({
                                     {[18, 17, 16, 26, 27, 28, 38, 37, 36, 46, 47, 48].includes(selectedTooth)
                                         ? "Molar"
                                         : [15, 14, 24, 25, 34, 35, 44, 45].includes(selectedTooth)
-                                        ? "Pré-Molar"
-                                        : [13, 23, 33, 43].includes(selectedTooth)
-                                        ? "Canino"
-                                        : "Incisivo"}
+                                            ? "Pré-Molar"
+                                            : [13, 23, 33, 43].includes(selectedTooth)
+                                                ? "Canino"
+                                                : "Incisivo"}
                                 </p>
                             </div>
                             <Badge className={cn("font-medium py-1 px-2.5 border", statusConfig[teeth[selectedTooth]?.status || "healthy"].bgLight, statusConfig[teeth[selectedTooth]?.status || "healthy"].text)}>
@@ -190,7 +169,6 @@ export default function OdontogramaTab({
                             </Badge>
                         </div>
 
-                        {/* Action Selector */}
                         <div className="space-y-2">
                             <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Alterar Estado do Dente</Label>
                             <div className="grid grid-cols-1 gap-2">
