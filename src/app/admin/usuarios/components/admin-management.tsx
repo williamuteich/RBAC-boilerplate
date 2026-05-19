@@ -35,19 +35,9 @@ import {
     ChevronLeft,
     ChevronRight
 } from "lucide-react";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Admin, Role, AdminsResponse, AdminFilters } from "@/src/types/dashboard/admins";
 import { createAdmin, updateAdmin, deleteAdmin, getAdmins } from "@/src/services/administrator";
+import { DeleteDialogGeneric } from "@/src/app/components/delete-dialog-generic";
 
 export function AdminManagement({
     initialData,
@@ -212,27 +202,15 @@ export function AdminManagement({
                                             {admin.email !== "williamuteich14@gmail.com" ? (
                                                 <>
                                                     <Button variant="ghost" size="icon-sm" onClick={() => { setEditingAdmin(admin); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
-                                                    <AlertDialog>
-                                                        <AlertDialogTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending}><Trash2 className="h-4 w-4 text-red-500" /></Button>} />
-                                                        <AlertDialogContent className="border-red-100">
-                                                            <AlertDialogHeader>
-                                                                <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-2"><AlertTriangle className="h-6 w-6 text-red-600" /></div>
-                                                                <AlertDialogTitle>Remover Administrador</AlertDialogTitle>
-                                                                <AlertDialogDescription>Remover <strong>{admin.name || admin.email}</strong>?</AlertDialogDescription>
-                                                            </AlertDialogHeader>
-                                                            <AlertDialogFooter>
-                                                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                                                <AlertDialogAction disabled={isPending} onClick={() => startTransition(async () => {
-                                                                    const res = await deleteAdmin(admin.id);
-                                                                    if (res.success) {
-                                                                        fetchAdmins(filters);
-                                                                    } else {
-                                                                        setError(res.error || "Erro ao excluir");
-                                                                    }
-                                                                })} className="bg-red-600 hover:bg-red-700 text-white">Sim, excluir</AlertDialogAction>
-                                                            </AlertDialogFooter>
-                                                        </AlertDialogContent>
-                                                    </AlertDialog>
+                                                    <DeleteDialogGeneric
+                                                        id={String(admin.id)}
+                                                        onDelete={async (idStr) => deleteAdmin(Number(idStr))}
+                                                        onSuccess={() => fetchAdmins(filters)}
+                                                        title="Remover Administrador"
+                                                        description={`Remover ${admin.name || admin.email}?`}
+                                                        successMessage="Administrador removido com sucesso!"
+                                                        errorMessage="Erro ao excluir administrador."
+                                                    />
                                                 </>
                                             ) : <div className="px-2 py-1 text-[10px] font-bold text-amber-600 uppercase tracking-widest border border-amber-200 rounded bg-amber-50">Sistema</div>}
                                         </div>

@@ -80,19 +80,8 @@ export interface OdontogramaTabProps {
   onNoteUpdate: (notes: string) => void;
 }
 
-export interface EvolucaoTabProps {
-  evolution: HistoricoPatient[];
-  newEvolutionText: string;
-  onTextChange: (val: string) => void;
-  onSubmit: (e: FormEvent) => void;
-}
-
 export interface AgendamentosTabProps {
   appointments: Appointment[];
-}
-
-export interface FinanceiroTabProps {
-  budgets: Budget[];
 }
 
 export interface CadastroTabProps {
@@ -118,4 +107,27 @@ export interface HistoricoPatientResponse {
   page: number;
   totalPages: number;
   limit: number;
+}
+
+
+
+export interface CreatePacienteDialogProps {
+  onCreateSuccess: () => void;
+}
+
+export interface PacienteHistoricoDialogProps {
+  paciente: Paciente | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export interface DeleteDialogGenericProps {
+  id: string;
+  onDelete: (id: string) => Promise<{ success: boolean; error?: string }>;
+  onSuccess: () => void;
+  title: string;
+  description: string;
+  successMessage?: string;
+  errorMessage?: string;
+  triggerButton?: React.ReactElement;
 }

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { CalendarDays, ClipboardList, Clock, Pencil, Activity, Plus, Trash2 } from "lucide-react";
 import { EvolucaoListProps, HistoricoPatient } from "@/src/types/dashboard/pacientes";
-
+import { DeleteDialogGeneric } from "@/src/app/components/delete-dialog-generic";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -29,7 +29,6 @@ interface EvolucaoItemProps {
 
 function EvolucaoItem({ evolucao, apiUrl, onUpdate, onDelete }: EvolucaoItemProps) {
     const [editOpen, setEditOpen] = useState(false);
-    const [deleteOpen, setDeleteOpen] = useState(false);
     const [description, setDescription] = useState(evolucao.description);
     const [isPending, setIsPending] = useState(false);
 
@@ -62,24 +61,15 @@ function EvolucaoItem({ evolucao, apiUrl, onUpdate, onDelete }: EvolucaoItemProp
         }
     };
 
-    const handleDeleteConfirm = async () => {
-        setIsPending(true);
+    const handleDelete = async (id: string) => {
         try {
-            const res = await fetch(`${apiUrl}?historyId=${evolucao.id}`, {
+            const res = await fetch(`${apiUrl}?historyId=${id}`, {
                 method: "DELETE"
             });
             const result = await res.json();
-            if (res.ok) {
-                toast.success("Registro clínico excluído com sucesso!");
-                setDeleteOpen(false);
-                onDelete(evolucao.id);
-            } else {
-                toast.error(result.error || "Erro ao excluir registro.");
-            }
+            return { success: res.ok, error: result.error };
         } catch (err) {
-            toast.error("Erro interno ao processar a exclusão.");
-        } finally {
-            setIsPending(false);
+            return { success: false, error: "Erro interno ao processar a exclusão." };
         }
     };
 
@@ -170,8 +160,15 @@ function EvolucaoItem({ evolucao, apiUrl, onUpdate, onDelete }: EvolucaoItemProp
                         </DialogContent>
                     </Dialog>
 
-                    <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-                        <DialogTrigger render={
+                    <DeleteDialogGeneric
+                        id={evolucao.id}
+                        onDelete={handleDelete}
+                        onSuccess={() => onDelete(evolucao.id)}
+                        title="Confirmar Exclusão"
+                        description="Esta ação é irreversível e removerá permanentemente o relato da linha do tempo do paciente."
+                        successMessage="Registro clínico excluído com sucesso!"
+                        errorMessage="Erro ao excluir registro."
+                        triggerButton={
                             <button
                                 type="button"
                                 className="p-1.5 text-slate-400 hover:text-red-650 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
@@ -179,48 +176,8 @@ function EvolucaoItem({ evolucao, apiUrl, onUpdate, onDelete }: EvolucaoItemProp
                             >
                                 <Trash2 className="h-3.5 w-3.5" />
                             </button>
-                        } />
-                        <DialogContent className="sm:max-w-md">
-                            <DialogHeader className="bg-red-50/30 -mx-6 -mt-6 p-5 border-b rounded-t-lg">
-                                <DialogTitle className="flex items-center gap-2 text-slate-900 font-bold">
-                                    <Trash2 className="h-5 w-5 text-red-650" />
-                                    Confirmar Exclusão
-                                </DialogTitle>
-                                <DialogDescription className="text-xs text-slate-400 mt-1">
-                                    Atenção: esta ação não poderá ser desfeita.
-                                </DialogDescription>
-                            </DialogHeader>
-
-                            <div className="py-4 space-y-2">
-                                <p className="text-sm text-slate-700 leading-relaxed font-semibold">
-                                    Tem certeza absoluta que deseja remover este registro clínico?
-                                </p>
-                                <p className="text-xs text-slate-400 leading-normal">
-                                    Esta ação é irreversível e removerá permanentemente o relato da linha do tempo do paciente.
-                                </p>
-                            </div>
-
-                            <DialogFooter className="bg-slate-50/55 -mx-6 -mb-6 p-5 border-t flex justify-end gap-3 rounded-b-lg">
-                                <DialogClose render={
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        className="h-9 text-xs cursor-pointer"
-                                    >
-                                        Cancelar
-                                    </Button>
-                                } />
-                                <Button
-                                    type="button"
-                                    onClick={handleDeleteConfirm}
-                                    disabled={isPending}
-                                    className="bg-red-600 hover:bg-red-700 h-9 text-xs text-white font-bold cursor-pointer"
-                                >
-                                    {isPending ? "Excluindo..." : "Sim, Excluir Registro"}
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                        }
+                    />
 
                 </div>
             </div>

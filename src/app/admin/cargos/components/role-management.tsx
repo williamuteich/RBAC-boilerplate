@@ -21,23 +21,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Loader2, ShieldAlert, Key, CheckCircle2, Pencil, Trash2, AlertTriangle } from "lucide-react";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
+import { Plus, Loader2, ShieldAlert, Key, CheckCircle2, Pencil, Trash2 } from "lucide-react";
 import { Role, PermissionToRole } from "@/src/types/dashboard/admins";
 import { ALL_RESOURCES, ALL_ACTIONS } from "@/src/lib/navigation";
 import { ViewPermissions } from "./view-permissions";
 import { createRole, updateRole, deleteRole } from "@/src/services/roles";
+import { DeleteDialogGeneric } from "@/src/app/components/delete-dialog-generic";
 
 export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
     const [isPending, startTransition] = useTransition();
@@ -159,23 +148,15 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                         {role.name !== "Admin" ? (
                                             <>
                                                 <Button variant="ghost" size="icon-sm" onClick={() => { setEditingRole(role); setSelectedPermissions(role.permissions.map((p: PermissionToRole) => ({ resource: p.permission.resource, action: p.permission.action }))); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending}><Trash2 className="h-4 w-4 text-red-500" /></Button>} />
-                                                    <AlertDialogContent className="border-red-100">
-                                                        <AlertDialogHeader>
-                                                            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-2"><AlertTriangle className="h-6 w-6 text-red-600" /></div>
-                                                            <AlertDialogTitle>Remover Cargo</AlertDialogTitle>
-                                                            <AlertDialogDescription>Remover <strong>{role.name}</strong>?</AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                                            <AlertDialogAction disabled={isPending} onClick={() => startTransition(async () => {
-                                                                const res = await deleteRole(role.id);
-                                                                if (!res.success) setError(res.error || "Erro ao excluir");
-                                                            })} className="bg-red-600 hover:bg-red-700 text-white">Sim, excluir</AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
+                                                <DeleteDialogGeneric
+                                                    id={String(role.id)}
+                                                    onDelete={async (idStr) => deleteRole(Number(idStr))}
+                                                    onSuccess={() => { }}
+                                                    title="Remover Cargo"
+                                                    description={`Remover ${role.name}?`}
+                                                    successMessage="Cargo removido com sucesso!"
+                                                    errorMessage="Erro ao excluir cargo."
+                                                />
                                             </>
                                         ) : <div className="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest border border-slate-200 rounded bg-slate-50">Sistema</div>}
                                     </div>
