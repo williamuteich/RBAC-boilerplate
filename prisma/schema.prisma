@@ -73,3 +73,20 @@ model LogAdmin {
 
   createdAt DateTime @default(now())
 }
+
+model Paciente {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  nomeCompleto String
+  cpf         String   @unique
+  dataNascimento DateTime
+  telefone    String
+  cep         String
+  estado      String
+  cidade      String
+  rua         String
+  numero      String
+  complemento String?
+  ativo       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
