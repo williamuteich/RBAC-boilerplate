@@ -25,7 +25,7 @@ export function SidebarContent({
         <div className="flex h-full flex-col border-r border-slate-200/80 bg-white">
             <div className="flex h-20 items-center px-6 shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 shadow-sm">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-linear-to-br from-blue-600 to-cyan-500 shadow-sm">
                         <div className="h-3 w-3 rounded-full bg-white" />
                     </div>
 
@@ -74,9 +74,9 @@ export function SidebarContent({
                                             item.href === "/admin"
                                                 ? pathname === "/admin"
                                                 : pathname === item.href ||
-                                                  pathname?.startsWith(
-                                                      `${item.href}/`
-                                                  );
+                                                pathname?.startsWith(
+                                                    `${item.href}/`
+                                                );
 
                                         return (
                                             <div
