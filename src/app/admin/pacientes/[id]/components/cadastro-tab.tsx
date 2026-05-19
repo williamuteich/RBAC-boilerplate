@@ -1,21 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Loader2, User, Phone, MapPin, CalendarDays, Save, CheckCircle, AlertCircle } from "lucide-react";
-import { CadastroTabProps } from "@/src/types/dashboard/pacientes";
+import { Paciente } from "@/src/types/dashboard/pacientes";
+import { updatePaciente } from "@/src/services/pacientes";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export default function CadastroTab({
-    paciente,
-    onSubmit,
-    isPending,
-    success,
-    error
-}: CadastroTabProps) {
+export default function CadastroTab({ paciente }: { paciente: Paciente }) {
+    const router = useRouter();
+    const [isPending, startTransition] = useTransition();
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState("");
+    
     const [cepLoading, setCepLoading] = useState(false);
     const [fields, setFields] = useState({
         name: paciente.name || "",
@@ -98,8 +99,40 @@ export default function CadastroTab({
         setFields(prev => ({ ...prev, zipCode: maskCEP(e.target.value) }));
     };
 
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError("");
+        setSuccess(false);
+
+        startTransition(async () => {
+            const payload: Partial<Paciente> = {
+                name: fields.name,
+                cpf: fields.cpf,
+                birthDate: fields.birthDate,
+                phone: fields.phone,
+                zipCode: fields.zipCode,
+                state: fields.state,
+                city: fields.city,
+                street: fields.street,
+                number: fields.number,
+                complement: fields.complement || null,
+                active: fields.active,
+            };
+
+            const res = await updatePaciente(paciente.id, payload);
+
+            if (res.success) {
+                setSuccess(true);
+                router.refresh();
+                setTimeout(() => setSuccess(false), 4500);
+            } else {
+                setError(res.error || "Erro ao salvar alterações");
+            }
+        });
+    };
+
     return (
-        <form onSubmit={onSubmit} className="space-y-8 w-full animate-in fade-in duration-500">
+        <form onSubmit={handleSubmit} className="space-y-8 w-full animate-in fade-in duration-500">
             {success && (
                 <div className="flex items-center gap-3 p-4 text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md animate-in fade-in slide-in-from-top-2 duration-300">
                     <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />

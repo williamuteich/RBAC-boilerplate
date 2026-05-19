@@ -1,12 +1,23 @@
-import { User, ChevronLeft } from "lucide-react";
+import { User, ChevronLeft, Calendar, Stethoscope, Activity, HeartPulse } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { getPaciente } from "@/src/services/pacientes";
-import ProntuarioOdontologico from "./components/prontuario-odontologico";
 import { cn } from "@/lib/utils";
 
-export default async function ProntuarioPage({ params }: { params: Promise<{ id: string }> }) {
+import OdontogramaTab from "./components/odontograma-tab";
+import EvolucaoTab from "./components/evolucao-tab";
+import AgendamentosTab from "./components/agendamentos-tab";
+import CadastroTab from "./components/cadastro-tab";
+
+export default async function ProntuarioPage({
+    params,
+    searchParams
+}: {
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ tab?: string }>;
+}) {
     const { id } = await params;
+    const { tab = "odontograma" } = await searchParams;
     const paciente = await getPaciente(id);
 
     if (!paciente) {
@@ -24,6 +35,16 @@ export default async function ProntuarioPage({ params }: { params: Promise<{ id:
             </div>
         );
     }
+
+    const calcIdade = (birthDate: string) => {
+        if (!birthDate) return 0;
+        const hoje = new Date();
+        const nasc = new Date(birthDate);
+        let idade = hoje.getFullYear() - nasc.getFullYear();
+        const m = hoje.getMonth() - nasc.getMonth();
+        if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+        return idade;
+    };
 
     return (
         <div className="flex flex-col gap-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -58,8 +79,100 @@ export default async function ProntuarioPage({ params }: { params: Promise<{ id:
                 </div>
             </div>
 
-            <div className="w-full">
-                <ProntuarioOdontologico paciente={paciente} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 w-full">
+                <div className="bg-white border border-slate-200/80 rounded-sm p-4 flex items-center gap-3.5 shadow-xs transition-all hover:border-slate-300">
+                    <div className="w-9 h-9 rounded-sm bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                        <User className="h-4.5 w-4.5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Identificação Básica</p>
+                        <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">{calcIdade(paciente.birthDate)} anos</p>
+                        <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">CPF {paciente.cpf}</p>
+                    </div>
+                </div>
+
+                <div className="bg-white border border-slate-200/80 rounded-sm p-4 flex items-center gap-3.5 shadow-xs transition-all hover:border-slate-300">
+                    <div className="w-9 h-9 rounded-sm bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                        <HeartPulse className="h-4.5 w-4.5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status do Paciente</p>
+                        <p className="text-sm font-bold text-slate-800 mt-0.5">{paciente.active ? "Cadastro Ativo" : "Inativo"}</p>
+                        <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">Último Acesso: Hoje</p>
+                    </div>
+                </div>
+
+                <div className="bg-white border border-slate-200/80 rounded-sm p-4 flex items-center gap-3.5 shadow-xs transition-all hover:border-slate-300">
+                    <div className="w-9 h-9 rounded-sm bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                        <Calendar className="h-4.5 w-4.5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Próxima Consulta</p>
+                        <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">28 Mai 2026 • 14:00</p>
+                        <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">Limpeza & Profilaxia</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-wrap gap-1 border-b pb-px w-full mt-2">
+                <Link
+                    href="?tab=odontograma"
+                    className={cn(
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
+                        tab === "odontograma"
+                            ? "bg-blue-600 text-white shadow-sm font-semibold"
+                            : "text-slate-600 hover:bg-slate-50 bg-white"
+                    )}
+                >
+                    <Stethoscope className="h-4 w-4" />
+                    Odontograma Interativo 3D
+                </Link>
+
+                <Link
+                    href="?tab=evolucao"
+                    className={cn(
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
+                        tab === "evolucao"
+                            ? "bg-blue-600 text-white shadow-sm font-semibold"
+                            : "text-slate-600 hover:bg-slate-50 bg-white"
+                    )}
+                >
+                    <Activity className="h-4 w-4" />
+                    Evolução & Procedimentos
+                </Link>
+
+                <Link
+                    href="?tab=agendamentos"
+                    className={cn(
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
+                        tab === "agendamentos"
+                            ? "bg-blue-600 text-white shadow-sm font-semibold"
+                            : "text-slate-600 hover:bg-slate-50 bg-white"
+                    )}
+                >
+                    <Calendar className="h-4 w-4" />
+                    Agendamentos
+                </Link>
+
+                <Link
+                    href="?tab=cadastro"
+                    className={cn(
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
+                        tab === "cadastro"
+                            ? "bg-blue-600 text-white shadow-sm font-semibold"
+                            : "text-slate-600 hover:bg-slate-50 bg-white"
+                    )}
+                >
+                    <User className="h-4 w-4" />
+                    Ficha Cadastral
+                </Link>
+            </div>
+
+            <div className="w-full bg-white rounded-md border p-4 sm:p-6 shadow-sm">
+                {tab === "odontograma" && <OdontogramaTab />}
+                {tab === "evolucao" && <EvolucaoTab />}
+                {tab === "agendamentos" && <AgendamentosTab />}
+                {tab === "cadastro" && <CadastroTab paciente={paciente} />}
             </div>
         </div>
     );

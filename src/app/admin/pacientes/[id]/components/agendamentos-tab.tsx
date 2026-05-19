@@ -4,9 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Plus, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AgendamentosTabProps } from "@/src/types/dashboard/pacientes";
 
-export default function AgendamentosTab({ appointments }: AgendamentosTabProps) {
+const initialAppointments = [
+    { id: 1, date: "2026-05-28", time: "14:00", type: "Limpeza & Profilaxia", doctor: "Dra. Letícia Uteich", status: "Confirmado", price: "R$ 220,00" },
+    { id: 2, date: "2026-06-15", time: "10:30", type: "Restauração Resina (Dente 14)", doctor: "Dr. William Uteich", status: "Agendado", price: "R$ 350,00" },
+    { id: 3, date: "2026-04-10", time: "09:00", type: "Avaliação Geral", doctor: "Dra. Letícia Uteich", status: "Realizado", price: "R$ 150,00" },
+];
+
+export default function AgendamentosTab() {
     return (
         <div className="space-y-6 w-full animate-in fade-in duration-500">
             <div className="flex items-center justify-between">
@@ -16,7 +21,7 @@ export default function AgendamentosTab({ appointments }: AgendamentosTabProps) 
                         Histórico de Agendamentos & Consultas
                     </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                        Agenda de consultas futures e histórico de visitas anteriores do paciente.
+                        Agenda de consultas futuras e histórico de visitas anteriores do paciente.
                     </p>
                 </div>
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 rounded-md">
@@ -25,7 +30,7 @@ export default function AgendamentosTab({ appointments }: AgendamentosTabProps) 
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {appointments.map((appt) => (
+                {initialAppointments.map((appt) => (
                     <div
                         key={appt.id}
                         className="bg-slate-50/50 border hover:border-slate-300 hover:bg-white rounded-md p-5 transition-all duration-300 flex flex-col gap-4 shadow-sm"

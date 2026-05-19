@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Stethoscope, HelpCircle, Info, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ToothStatus, OdontogramaTabProps } from "@/src/types/dashboard/pacientes";
+import { ToothStatus, ToothInfo } from "@/src/types/dashboard/pacientes";
 
 const upperTeethRight = [18, 17, 16, 15, 14, 13, 12, 11];
 const upperTeethLeft = [21, 22, 23, 24, 25, 26, 27, 28];
@@ -19,13 +20,45 @@ export const statusConfig = {
     missing: { label: "Ausente", color: "bg-slate-400", border: "border-slate-400", text: "text-slate-700", bgLight: "bg-slate-50" },
 };
 
-export default function OdontogramaTab({
-    teeth,
-    selectedTooth,
-    setSelectedTooth,
-    onStatusUpdate,
-    onNoteUpdate
-}: OdontogramaTabProps) {
+export default function OdontogramaTab() {
+    const [teeth, setTeeth] = useState<Record<number, ToothInfo>>(() => {
+        const initial: Record<number, ToothInfo> = {};
+        const allTeeth = [...upperTeethRight, ...upperTeethLeft, ...lowerTeethLeft, ...lowerTeethRight];
+        allTeeth.forEach(t => {
+            let status: ToothStatus = "healthy";
+            let notes = "";
+            if (t === 16) { status = "cavity"; notes = "Cárie oclusal detectada"; }
+            else if (t === 14) { status = "restored"; notes = "Restauração de resina oclusal realizada"; }
+            else if (t === 36) { status = "extracted"; notes = "Implante osseointegrado instalado em 2024"; }
+            else if (t === 38 || t === 48) { status = "missing"; notes = "Dente do siso não erupcionado / ausente"; }
+            initial[t] = { id: t, status, notes };
+        });
+        return initial;
+    });
+
+    const [selectedTooth, setSelectedTooth] = useState<number | null>(16);
+
+    const handleToothStatusUpdate = (status: ToothStatus) => {
+        if (selectedTooth === null) return;
+        setTeeth(prev => ({
+            ...prev,
+            [selectedTooth]: {
+                ...prev[selectedTooth],
+                status
+            }
+        }));
+    };
+
+    const handleToothNoteUpdate = (notes: string) => {
+        if (selectedTooth === null) return;
+        setTeeth(prev => ({
+            ...prev,
+            [selectedTooth]: {
+                ...prev[selectedTooth],
+                notes
+            }
+        }));
+    };
 
     const ToothSvg = ({ toothId, active }: { toothId: number; active: boolean }) => {
         const info = teeth[toothId];
@@ -166,7 +199,7 @@ export default function OdontogramaTab({
                                     <button
                                         key={key}
                                         type="button"
-                                        onClick={() => onStatusUpdate(key as ToothStatus)}
+                                        onClick={() => handleToothStatusUpdate(key as ToothStatus)}
                                         className={cn(
                                             "flex items-center gap-3 p-2.5 rounded-md border text-sm transition-all duration-300 font-medium",
                                             teeth[selectedTooth]?.status === key
@@ -189,7 +222,7 @@ export default function OdontogramaTab({
                             <textarea
                                 id="toothNotes"
                                 value={teeth[selectedTooth]?.notes || ""}
-                                onChange={(e) => onNoteUpdate(e.target.value)}
+                                onChange={(e) => handleToothNoteUpdate(e.target.value)}
                                 placeholder="Descreva problemas, procedimentos futuros ou tratamentos realizados..."
                                 className="w-full h-24 rounded-md border bg-white p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all placeholder:text-slate-400"
                             />
