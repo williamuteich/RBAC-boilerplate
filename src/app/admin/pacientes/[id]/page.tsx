@@ -170,7 +170,7 @@ export default async function ProntuarioPage({
 
             <div className="w-full bg-white rounded-md border p-4 sm:p-6 shadow-sm">
                 {tab === "odontograma" && <OdontogramaTab />}
-                {tab === "evolucao" && <EvolucaoTab />}
+                {tab === "evolucao" && <EvolucaoTab patientId={id} />}
                 {tab === "agendamentos" && <AgendamentosTab />}
                 {tab === "cadastro" && <CadastroTab paciente={paciente} />}
             </div>

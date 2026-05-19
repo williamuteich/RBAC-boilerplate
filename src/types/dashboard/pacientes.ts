@@ -40,11 +40,9 @@ export interface ToothInfo {
   notes: string;
 }
 
-export interface EvolutionItem {
-  id: number;
-  date: string;
-  text: string;
-  author: string;
+export interface EvolucaoListProps {
+  initialItems: HistoricoPatient[];
+  patientId: string;
 }
 
 export interface Appointment {
@@ -95,4 +93,21 @@ export interface CadastroTabProps {
   isPending: boolean;
   success: boolean;
   error: string;
+}
+
+export interface HistoricoPatient {
+  id: string;
+  patient: Paciente;
+  patientId: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface HistoricoPatientResponse {
+  historico: HistoricoPatient[];
+  total: number;
+  page: number;
+  totalPages: number;
+  limit: number;
 }

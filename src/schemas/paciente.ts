@@ -28,3 +28,10 @@ export const pacienteQuerySchema = z.object({
 });
 
 export type PacienteQueryInput = z.infer<typeof pacienteQuerySchema>;
+
+export const evolutionSchema = z.object({
+  patientId: z.string().min(1, "Paciente é obrigatório"),
+  description: z.string().min(3, "Evolução é obrigatória"),
+});
+
+export type EvolutionInput = z.infer<typeof evolutionSchema>;

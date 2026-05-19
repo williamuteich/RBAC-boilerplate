@@ -11,7 +11,7 @@ type RouteHandler<Ctx extends AnyContext = AnyContext> = (
 interface AuditOptions<Ctx extends AnyContext = AnyContext> {
     resource: string;
     getResourceId?: (ctx: Ctx) => Promise<string | undefined> | string | undefined;
-    getResourceName?: (data: unknown) => string | undefined;
+    getResourceName?: (data: any) => Promise<string | undefined> | string | undefined;
 }
 
 const METHOD_TO_ACTION: Record<string, string | undefined> = {
@@ -44,7 +44,7 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                 try {
                     const data = await response.clone().json();
                     resourceName = options.getResourceName
-                        ? options.getResourceName(data)
+                        ? await options.getResourceName(data)
                         : ((data as Record<string, unknown>)?.name as string ||
                             (data as Record<string, unknown>)?.email as string);
                 } catch (_e) { }
