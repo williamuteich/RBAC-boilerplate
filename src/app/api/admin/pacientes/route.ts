@@ -60,13 +60,13 @@ export async function GET(request: Request) {
     };
 
     const [pacientes, total] = await Promise.all([
-        prisma.paciente.findMany({
+        prisma.patient.findMany({
             where,
             orderBy: { name: "asc" },
             skip: (page - 1) * limit,
             take: limit,
         }),
-        prisma.paciente.count({ where }),
+        prisma.patient.count({ where }),
     ]);
 
     const decryptedPacientes = await Promise.all(pacientes.map(p => decryptData(p)));
@@ -98,7 +98,7 @@ async function _POST(request: Request) {
 
         const encryptedBody = await encryptData(rest);
 
-        const paciente = await prisma.paciente.create({
+        const paciente = await prisma.patient.create({
             data: {
                 ...encryptedBody,
                 birthDate: new Date(birthDate),

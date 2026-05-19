@@ -50,7 +50,7 @@ export async function GET(_req: Request, ctx: Ctx) {
     }
 
     const id = await getId(ctx);
-    const paciente = await prisma.paciente.findUnique({
+    const paciente = await prisma.patient.findUnique({
         where: { id },
     });
 
@@ -77,7 +77,7 @@ async function _PUT(request: Request, ctx: Ctx) {
 
         const encryptedBody = await encryptData(rest);
 
-        const paciente = await prisma.paciente.update({
+        const paciente = await prisma.patient.update({
             where: { id },
             data: {
                 ...encryptedBody,
@@ -103,7 +103,7 @@ async function _DELETE(_req: Request, ctx: Ctx) {
 
     const id = await getId(ctx);
     try {
-        const deletedPaciente = await prisma.paciente.delete({ where: { id } });
+        const deletedPaciente = await prisma.patient.delete({ where: { id } });
         return NextResponse.json(await decryptData(deletedPaciente));
     } catch {
         return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });

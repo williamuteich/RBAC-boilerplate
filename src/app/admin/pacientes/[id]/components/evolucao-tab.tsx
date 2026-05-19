@@ -1,16 +1,15 @@
-"use client";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Activity, Plus } from "lucide-react";
 
-export default function EvolucaoTab() {
+export default async function EvolucaoTab() {
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    async function onSubmit(formData: FormData) {
+        "use server";
+        console.log(formData)
 
-    };
+    }
 
     return (
         <div className="space-y-6 w-full animate-in fade-in duration-500">
@@ -24,19 +23,24 @@ export default function EvolucaoTab() {
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-slate-50 border rounded-md p-4 flex flex-col gap-3">
+            <form action={onSubmit} className="bg-slate-50 border rounded-md p-4 flex flex-col gap-3">
                 <Label htmlFor="evolText" className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Nova Evolução Clínica</Label>
                 <div className="flex gap-3">
                     <Input
                         id="evolText"
+                        name="evolText"
                         placeholder="Ex: Realizada profilaxia completa com jato de bicarbonato e aplicação tópica de flúor..."
                         className="bg-white h-11 rounded-md"
                     />
                     <Button type="submit" className="bg-blue-600 hover:bg-blue-700 h-11 px-5 rounded-md shrink-0 flex items-center gap-2">
-                        <Plus className="h-4 w-4" /> Gravar
+                        <Plus className="h-4 w-4" /> Salvar
                     </Button>
                 </div>
             </form>
+
+            {/**
+             * Renderizar evoluções existentes
+             */}
 
         </div>
     );

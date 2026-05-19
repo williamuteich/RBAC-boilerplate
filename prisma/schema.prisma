@@ -74,7 +74,7 @@ model LogAdmin {
   createdAt DateTime @default(now())
 }
 
-model Paciente {
+model Patient {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   name           String
   cpf            String   @unique
@@ -89,4 +89,15 @@ model Paciente {
   active         Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  history        PatientHistory[]
+}
+
+model PatientHistory {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  patientId   String   @db.ObjectId
+  patient     Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
