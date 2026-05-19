@@ -35,7 +35,7 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
             const session = await checkAdminApi();
 
             if (session?.user?.id) {
-                const administratorId = session.user.id; // already a string (ObjectId)
+                const administratorId = session.user.id;
                 const resourceId = options.getResourceId
                     ? await options.getResourceId(ctx)
                     : undefined;
@@ -46,8 +46,8 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                     resourceName = options.getResourceName
                         ? options.getResourceName(data)
                         : ((data as Record<string, unknown>)?.name as string ||
-                          (data as Record<string, unknown>)?.email as string);
-                } catch (_e) {}
+                            (data as Record<string, unknown>)?.email as string);
+                } catch (_e) { }
 
                 prisma.logAdmin
                     .create({
