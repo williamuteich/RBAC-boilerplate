@@ -71,10 +71,12 @@ export function SidebarContent({
                                 <div className="space-y-1">
                                     {visibleItems.map(item => {
                                         const isActive =
-                                            pathname === item.href ||
-                                            pathname?.startsWith(
-                                                `${item.href}/`
-                                            );
+                                            item.href === "/admin"
+                                                ? pathname === "/admin"
+                                                : pathname === item.href ||
+                                                  pathname?.startsWith(
+                                                      `${item.href}/`
+                                                  );
 
                                         return (
                                             <div

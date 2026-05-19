@@ -9,19 +9,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Settings, LogOut, ChevronDown } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import { Session } from "next-auth";
 
-export function UserDropdown() {
-    const { data: session } = useSession();
-
-    if (!session) return null;
-
+export function UserDropdown({ session }: { session: Session }) {
     const user = session.user;
     const initials = user.name ? user.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() : "AD";
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-3 outline-none hover:bg-slate-50 p-1.5 rounded-lg transition-colors cursor-pointer">
+            <DropdownMenuTrigger className="flex items-center gap-3 outline-none hover:bg-slate-50 p-1.5 rounded-lg transition-colors cursor-pointer select-none">
                 <Avatar className="w-9 h-9 border border-slate-200 pointer-events-none">
                     <AvatarImage src={user.image || ""} alt={user.name || "User"} />
                     <AvatarFallback className="bg-indigo-100 text-indigo-700 font-medium">{initials}</AvatarFallback>
