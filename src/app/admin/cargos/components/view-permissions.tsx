@@ -91,7 +91,7 @@ export function ViewPermissions({
             <DialogContent className="w-[95vw] max-w-xl rounded-3xl border border-slate-200 bg-white p-0 shadow-2xl">
                 <DialogHeader className="border-b border-slate-100 px-5 py-4">
                     <DialogTitle className="flex items-center gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-600 to-violet-600 text-white">
                             <ShieldCheck className="h-5 w-5" />
                         </div>
 

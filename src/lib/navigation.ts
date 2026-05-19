@@ -1,14 +1,7 @@
-import { LayoutDashboard, ShieldCheck, Key, CalendarDays, UserRound, History, LucideIcon, Users } from "lucide-react";
+import { LayoutDashboard, Siren, ShieldCheck, Key, CalendarDays, UserRound, History, LucideIcon, Users } from "lucide-react";
+import { NavConfig } from "../types/dashboard/navigation";
 
 export type NavSection = "CLÍNICA" | "ADMINISTRAÇÃO" | "SISTEMA";
-
-export interface NavConfig {
-    title: string;
-    href: string;
-    icon: LucideIcon;
-    resource?: string;
-    section: NavSection;
-}
 
 export const ADMIN_NAVIGATION: NavConfig[] = [
     {
@@ -29,6 +22,13 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         href: "/admin/pacientes",
         icon: Users,
         resource: "pacientes",
+        section: "CLÍNICA"
+    },
+    {
+        title: "Emergência",
+        href: "/admin/emergencia",
+        icon: Siren,
+        resource: "emergencia",
         section: "CLÍNICA"
     },
 
