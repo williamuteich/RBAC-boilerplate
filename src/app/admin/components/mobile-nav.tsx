@@ -9,9 +9,12 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { SidebarContent } from "./sidebar-content";
+import { useSession } from "next-auth/react";
+import { SkeletonSidebar } from "../sidebar";
 
 export function MobileNav() {
     const [open, setOpen] = useState(false);
+    const { data: session } = useSession();
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -23,7 +26,13 @@ export function MobileNav() {
                 }
             />
             <SheetContent side="left" className="p-0 w-72 border-none">
-                <SidebarContent onClose={() => setOpen(false)} />
+                {open && (
+                    session ? (
+                        <SidebarContent session={session} onClose={() => setOpen(false)} />
+                    ) : (
+                        <SkeletonSidebar />
+                    )
+                )}
             </SheetContent>
         </Sheet>
     );

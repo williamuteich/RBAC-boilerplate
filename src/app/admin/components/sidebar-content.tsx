@@ -1,61 +1,106 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { NavItem } from "./nav-item";
+import { Session } from "next-auth";
 import { hasPermission } from "@/src/lib/auth-helpers";
 import { ADMIN_NAVIGATION } from "@/src/lib/navigation";
-import React from "react";
 
-export function SidebarContent({ onClose }: { onClose?: () => void }) {
+export function SidebarContent({
+    session,
+    onClose,
+}: {
+    session: Session;
+    onClose?: () => void;
+}) {
     const pathname = usePathname();
-    const { data: session } = useSession();
 
-    if (!session) return null;
-
-    const sections = ["CLÍNICA", "ADMINISTRAÇÃO", "SISTEMA"] as const;
+    const sections = [
+        "CLÍNICA",
+        "ADMINISTRAÇÃO",
+        "SISTEMA",
+    ] as const;
 
     return (
-        <div className="flex flex-col h-full bg-white border-r border-slate-200 lg:border-none">
-            <div className="h-20 flex items-center px-6 border-b border-transparent shrink-0">
-                <div className="flex items-center gap-3 font-semibold text-2xl text-slate-800 tracking-tight">
-                    <div className="w-8 h-8 rounded-full bg-linear-to-tr from-indigo-600 to-purple-600 flex items-center justify-center shadow-sm">
-                        <div className="w-3 h-3 bg-white rounded-full"></div>
+        <div className="flex h-full flex-col border-r border-slate-200/80 bg-white">
+            <div className="flex h-20 items-center px-6 shrink-0">
+                <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-600 to-violet-600 shadow-sm">
+                        <div className="h-3 w-3 rounded-full bg-white" />
                     </div>
-                    NextAdmin
+
+                    <div className="flex flex-col leading-tight">
+                        <span className="text-[15px] font-semibold tracking-tight text-slate-800">
+                            NextAdmin
+                        </span>
+
+                        <span className="text-xs text-slate-400">
+                            Painel administrativo
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto py-3 px-3 flex flex-col gap-1 custom-scrollbar">
-                {sections.map(section => {
-                    const sectionItems = ADMIN_NAVIGATION.filter(item => item.section === section);
+            <div className="flex-1 overflow-y-auto px-3 py-4 custom-scrollbar">
+                <div className="space-y-6">
+                    {sections.map(section => {
+                        const sectionItems = ADMIN_NAVIGATION.filter(
+                            item => item.section === section
+                        );
 
-                    const visibleItems = sectionItems.filter(item => {
-                        if (!item.resource) return true;
-                        return hasPermission(session, item.resource, "visualizar");
-                    });
+                        const visibleItems = sectionItems.filter(item => {
+                            if (!item.resource) return true;
 
-                    if (visibleItems.length === 0) return null;
+                            return hasPermission(
+                                session,
+                                item.resource,
+                                "visualizar"
+                            );
+                        });
 
-                    return (
-                        <React.Fragment key={section}>
-                            <div className="text-[11px] font-semibold text-slate-400 mb-2 px-3 tracking-wider mt-4 uppercase">
-                                {section}
-                            </div>
-                            {visibleItems.map(item => (
-                                <div key={item.title} onClick={onClose}>
-                                    <NavItem
-                                        href={item.href}
-                                        icon={<item.icon strokeWidth={2.5} size={18} />}
-                                        active={pathname === item.href}
-                                    >
-                                        {item.title}
-                                    </NavItem>
+                        if (visibleItems.length === 0) {
+                            return null;
+                        }
+
+                        return (
+                            <section key={section} className="space-y-2">
+                                <div className="px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                                    {section}
                                 </div>
-                            ))}
-                        </React.Fragment>
-                    );
-                })}
+
+                                <div className="space-y-1">
+                                    {visibleItems.map(item => {
+                                        const isActive =
+                                            pathname === item.href ||
+                                            pathname?.startsWith(
+                                                `${item.href}/`
+                                            );
+
+                                        return (
+                                            <div
+                                                key={item.title}
+                                                onClick={onClose}
+                                            >
+                                                <NavItem
+                                                    href={item.href}
+                                                    icon={
+                                                        <item.icon
+                                                            size={18}
+                                                            strokeWidth={2.2}
+                                                        />
+                                                    }
+                                                    active={isActive}
+                                                >
+                                                    {item.title}
+                                                </NavItem>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </section>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
