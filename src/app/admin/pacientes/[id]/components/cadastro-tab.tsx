@@ -17,16 +17,20 @@ export default function CadastroTab({
     error
 }: CadastroTabProps) {
     const [cepLoading, setCepLoading] = useState(false);
-    const [addressFields, setAddressFields] = useState({
+    const [fields, setFields] = useState({
+        nomeCompleto: paciente.nomeCompleto || "",
+        cpf: paciente.cpf || "",
+        dataNascimento: paciente.dataNascimento
+            ? new Date(paciente.dataNascimento).toISOString().split("T")[0]
+            : "",
+        telefone: paciente.telefone || "",
+        cep: paciente.cep || "",
         estado: paciente.estado || "",
         cidade: paciente.cidade || "",
         rua: paciente.rua || "",
-    });
-
-    const [masks, setMasks] = useState({
-        cpf: paciente.cpf || "",
-        telefone: paciente.telefone || "",
-        cep: paciente.cep || "",
+        numero: paciente.numero || "",
+        complemento: paciente.complemento || "",
+        ativo: paciente.ativo ?? true
     });
 
     const maskCPF = (value: string) => {
@@ -52,8 +56,8 @@ export default function CadastroTab({
             .replace(/(-\d{3})\d+?$/, "$1");
     };
 
-    const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
-        const val = e.target.value;
+    const handleCepBlur = async () => {
+        const val = fields.cep;
         if (!val) return;
         setCepLoading(true);
         try {
@@ -62,29 +66,42 @@ export default function CadastroTab({
                 const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
                 const data = await res.json();
                 if (!data.erro) {
-                    setAddressFields({
-                        estado: data.uf,
-                        cidade: data.localidade,
-                        rua: data.logradouro,
-                    });
+                    setFields(prev => ({
+                        ...prev,
+                        estado: data.uf || "",
+                        cidade: data.localidade || "",
+                        rua: data.logradouro || ""
+                    }));
                 }
             }
         } catch {}
         setCepLoading(false);
     };
 
-    const handleMaskChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        maskFn: (val: string) => string,
-        field: keyof typeof masks
-    ) => {
-        setMasks((prev) => ({ ...prev, [field]: maskFn(e.target.value) }));
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = e.target;
+        setFields(prev => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value
+        }));
+    };
+
+    const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFields(prev => ({ ...prev, cpf: maskCPF(e.target.value) }));
+    };
+
+    const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFields(prev => ({ ...prev, telefone: maskPhone(e.target.value) }));
+    };
+
+    const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFields(prev => ({ ...prev, cep: maskCEP(e.target.value) }));
     };
 
     return (
         <form onSubmit={onSubmit} className="space-y-8 w-full animate-in fade-in duration-500">
             {success && (
-                <div className="flex items-center gap-3 p-4 text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex items-center gap-3 p-4 text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md animate-in fade-in slide-in-from-top-2 duration-300">
                     <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />
                     <div>
                         <p className="font-semibold">Alterações salvas com sucesso!</p>
@@ -94,7 +111,7 @@ export default function CadastroTab({
             )}
 
             {error && (
-                <div className="flex items-center gap-3 p-4 text-red-700 bg-red-50 border border-red-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex items-center gap-3 p-4 text-red-700 bg-red-50 border border-red-200 rounded-md animate-in fade-in slide-in-from-top-2 duration-300">
                     <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
                     <div>
                         <p className="font-semibold">Erro ao salvar</p>
@@ -121,10 +138,11 @@ export default function CadastroTab({
                             <Input
                                 id="nomeCompleto"
                                 name="nomeCompleto"
-                                defaultValue={paciente.nomeCompleto}
+                                value={fields.nomeCompleto}
+                                onChange={handleChange}
                                 placeholder="João da Silva"
                                 required
-                                className="h-10 bg-white"
+                                className="h-10 bg-white rounded-md"
                             />
                         </div>
 
@@ -134,11 +152,11 @@ export default function CadastroTab({
                                 <Input
                                     id="cpf"
                                     name="cpf"
-                                    value={masks.cpf}
-                                    onChange={(e) => handleMaskChange(e, maskCPF, "cpf")}
+                                    value={fields.cpf}
+                                    onChange={handleCpfChange}
                                     placeholder="000.000.000-00"
                                     required
-                                    className="h-10 bg-white"
+                                    className="h-10 bg-white rounded-md"
                                 />
                             </div>
 
@@ -151,13 +169,10 @@ export default function CadastroTab({
                                     id="dataNascimento"
                                     name="dataNascimento"
                                     type="date"
-                                    defaultValue={
-                                        paciente.dataNascimento
-                                            ? new Date(paciente.dataNascimento).toISOString().split("T")[0]
-                                            : ""
-                                    }
+                                    value={fields.dataNascimento}
+                                    onChange={handleChange}
                                     required
-                                    className="h-10 bg-white"
+                                    className="h-10 bg-white rounded-md"
                                 />
                             </div>
                         </div>
@@ -170,11 +185,11 @@ export default function CadastroTab({
                             <Input
                                 id="telefone"
                                 name="telefone"
-                                value={masks.telefone}
-                                onChange={(e) => handleMaskChange(e, maskPhone, "telefone")}
+                                value={fields.telefone}
+                                onChange={handleTelefoneChange}
                                 placeholder="(51) 99999-9999"
                                 required
-                                className="h-10 bg-white"
+                                className="h-10 bg-white rounded-md"
                             />
                         </div>
 
@@ -183,7 +198,8 @@ export default function CadastroTab({
                                 type="checkbox"
                                 name="ativo"
                                 id="ativo"
-                                defaultChecked={paciente.ativo}
+                                checked={fields.ativo}
+                                onChange={handleChange}
                                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                             />
                             <Label htmlFor="ativo" className="text-sm font-medium text-slate-700 cursor-pointer select-none">
@@ -212,12 +228,12 @@ export default function CadastroTab({
                                     <Input
                                         id="cep"
                                         name="cep"
-                                        value={masks.cep}
-                                        onChange={(e) => handleMaskChange(e, maskCEP, "cep")}
+                                        value={fields.cep}
+                                        onChange={handleCepChange}
                                         onBlur={handleCepBlur}
                                         placeholder="00000-000"
                                         required
-                                        className="h-10 bg-white"
+                                        className="h-10 bg-white rounded-md"
                                     />
                                     {cepLoading && (
                                         <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-blue-500" />
@@ -230,14 +246,12 @@ export default function CadastroTab({
                                 <Input
                                     id="estado"
                                     name="estado"
-                                    value={addressFields.estado}
-                                    onChange={(e) =>
-                                        setAddressFields((p) => ({ ...p, estado: e.target.value.toUpperCase() }))
-                                    }
+                                    value={fields.estado}
+                                    onChange={handleChange}
                                     placeholder="RS"
                                     maxLength={2}
                                     required
-                                    className="h-10 bg-white"
+                                    className="h-10 bg-white rounded-md"
                                 />
                             </div>
                         </div>
@@ -247,11 +261,11 @@ export default function CadastroTab({
                             <Input
                                 id="cidade"
                                 name="cidade"
-                                value={addressFields.cidade}
-                                onChange={(e) => setAddressFields((p) => ({ ...p, cidade: e.target.value }))}
+                                value={fields.cidade}
+                                onChange={handleChange}
                                 placeholder="Porto Alegre"
                                 required
-                                className="h-10 bg-white"
+                                className="h-10 bg-white rounded-md"
                             />
                         </div>
 
@@ -260,11 +274,11 @@ export default function CadastroTab({
                             <Input
                                 id="rua"
                                 name="rua"
-                                value={addressFields.rua}
-                                onChange={(e) => setAddressFields((p) => ({ ...p, rua: e.target.value }))}
+                                value={fields.rua}
+                                onChange={handleChange}
                                 placeholder="Rua das Flores"
                                 required
-                                className="h-10 bg-white"
+                                className="h-10 bg-white rounded-md"
                             />
                         </div>
 
@@ -274,10 +288,11 @@ export default function CadastroTab({
                                 <Input
                                     id="numero"
                                     name="numero"
-                                    defaultValue={paciente.numero}
+                                    value={fields.numero}
+                                    onChange={handleChange}
                                     placeholder="123"
                                     required
-                                    className="h-10 bg-white"
+                                    className="h-10 bg-white rounded-md"
                                 />
                             </div>
 
@@ -286,9 +301,10 @@ export default function CadastroTab({
                                 <Input
                                     id="complemento"
                                     name="complemento"
-                                    defaultValue={paciente.complemento || ""}
+                                    value={fields.complemento}
+                                    onChange={handleChange}
                                     placeholder="Apto 2B"
-                                    className="h-10 bg-white"
+                                    className="h-10 bg-white rounded-md"
                                 />
                             </div>
                         </div>
@@ -299,14 +315,14 @@ export default function CadastroTab({
             <div className="border-t pt-6 flex items-center justify-end gap-3">
                 <Link
                     href="/admin/pacientes"
-                    className={cn(buttonVariants({ variant: "outline" }), "h-11 px-6 flex items-center justify-center")}
+                    className={cn(buttonVariants({ variant: "outline" }), "h-11 px-6 rounded-md flex items-center justify-center")}
                 >
                     Cancelar
                 </Link>
                 <Button
                     type="submit"
                     disabled={isPending}
-                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200 h-11 px-6 min-w-[160px] flex items-center justify-center gap-2"
+                    className="bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200 h-11 px-6 rounded-md min-w-[160px] flex items-center justify-center gap-2"
                 >
                     {isPending ? (
                         <>

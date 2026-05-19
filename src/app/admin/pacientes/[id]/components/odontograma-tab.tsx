@@ -47,7 +47,7 @@ export default function OdontogramaTab({
                 type="button"
                 onClick={() => setSelectedTooth(toothId)}
                 className={cn(
-                    "flex flex-col items-center p-2 rounded-xl transition-all duration-300 relative border",
+                    "flex flex-col items-center p-2 rounded-md transition-all duration-300 relative border",
                     active
                         ? "border-blue-600 bg-blue-50/50 shadow-md shadow-blue-50/80 scale-110 z-10"
                         : "border-transparent hover:bg-slate-50 hover:scale-105"
@@ -90,7 +90,7 @@ export default function OdontogramaTab({
                     </div>
                     <div className="hidden sm:flex flex-wrap gap-2">
                         {Object.entries(statusConfig).map(([key, value]) => (
-                            <div key={key} className="flex items-center gap-1.5 text-xs bg-slate-50 border px-2 py-1 rounded-lg">
+                            <div key={key} className="flex items-center gap-1.5 text-xs bg-slate-50 border px-2 py-1 rounded-md">
                                 <span className={cn("w-2.5 h-2.5 rounded-full", value.color)}></span>
                                 <span className="text-slate-600">{value.label}</span>
                             </div>
@@ -98,7 +98,7 @@ export default function OdontogramaTab({
                     </div>
                 </div>
 
-                <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-6 flex flex-col items-center justify-center gap-10 select-none shadow-inner min-h-[350px] relative overflow-hidden">
+                <div className="bg-slate-50/50 border border-slate-100 rounded-md p-6 flex flex-col items-center justify-center gap-10 select-none shadow-inner min-h-[350px] relative overflow-hidden">
                     <div className="absolute top-3 left-4 text-xs font-semibold text-slate-400 tracking-wider">SUPERIOR (ARCADA SUPERIOR)</div>
                     <div className="absolute bottom-3 left-4 text-xs font-semibold text-slate-400 tracking-wider">INFERIOR (ARCADA INFERIOR)</div>
 
@@ -139,15 +139,15 @@ export default function OdontogramaTab({
 
                 <div className="flex sm:hidden flex-wrap justify-center gap-2 pt-2">
                     {Object.entries(statusConfig).map(([key, value]) => (
-                        <div key={key} className="flex items-center gap-1 text-[11px] bg-slate-50 border px-2 py-1 rounded-lg">
-                            <span className={cn("w-2 h-2 rounded-full", value.color)}></span>
+                        <div key={key} className="flex items-center gap-1 text-[11px] bg-slate-50 border px-2 py-1 rounded-md">
+                            <span className={cn("w-2.5 h-2.5 rounded-full", value.color)}></span>
                             <span className="text-slate-600">{value.label}</span>
                         </div>
                     ))}
                 </div>
             </div>
 
-            <div className="w-full lg:w-[320px] bg-slate-50 border rounded-2xl p-5 flex flex-col gap-5 self-stretch shadow-sm">
+            <div className="w-full lg:w-[320px] bg-slate-50 border rounded-md p-5 flex flex-col gap-5 self-stretch shadow-sm">
                 {selectedTooth !== null ? (
                     <div className="space-y-4 animate-in fade-in duration-300">
                         <div className="flex items-center justify-between border-b pb-3">
@@ -164,7 +164,7 @@ export default function OdontogramaTab({
                                                 : "Incisivo"}
                                 </p>
                             </div>
-                            <Badge className={cn("font-medium py-1 px-2.5 border", statusConfig[teeth[selectedTooth]?.status || "healthy"].bgLight, statusConfig[teeth[selectedTooth]?.status || "healthy"].text)}>
+                            <Badge className={cn("font-medium py-1 px-2.5 border rounded-sm", statusConfig[teeth[selectedTooth]?.status || "healthy"].bgLight, statusConfig[teeth[selectedTooth]?.status || "healthy"].text)}>
                                 {statusConfig[teeth[selectedTooth]?.status || "healthy"].label}
                             </Badge>
                         </div>
@@ -178,7 +178,7 @@ export default function OdontogramaTab({
                                         type="button"
                                         onClick={() => onStatusUpdate(key as ToothStatus)}
                                         className={cn(
-                                            "flex items-center gap-3 p-2.5 rounded-xl border text-sm transition-all duration-300 font-medium",
+                                            "flex items-center gap-3 p-2.5 rounded-md border text-sm transition-all duration-300 font-medium",
                                             teeth[selectedTooth]?.status === key
                                                 ? "bg-white border-blue-600 shadow-sm text-blue-700"
                                                 : "bg-white/60 border-slate-100 hover:border-slate-300 text-slate-600"
@@ -201,11 +201,11 @@ export default function OdontogramaTab({
                                 value={teeth[selectedTooth]?.notes || ""}
                                 onChange={(e) => onNoteUpdate(e.target.value)}
                                 placeholder="Descreva problemas, procedimentos futuros ou tratamentos realizados..."
-                                className="w-full h-24 rounded-xl border bg-white p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all placeholder:text-slate-400"
+                                className="w-full h-24 rounded-md border bg-white p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all placeholder:text-slate-400"
                             />
                         </div>
 
-                        <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3 flex gap-2.5">
+                        <div className="bg-blue-50/50 border border-blue-100 rounded-md p-3 flex gap-2.5">
                             <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
                             <p className="text-[11px] text-blue-700 leading-normal">
                                 Alterações no Odontograma são salvas localmente nesta sessão para demonstração do front-end.

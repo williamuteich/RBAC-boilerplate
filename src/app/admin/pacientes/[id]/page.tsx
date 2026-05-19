@@ -27,42 +27,34 @@ export default async function ProntuarioPage({ params }: { params: Promise<{ id:
 
     return (
         <div className="flex flex-col gap-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border shadow-sm w-full">
-                <div className="flex items-center gap-4">
-                    <Link
-                        href="/admin/pacientes"
-                        className={cn(
-                            buttonVariants({ variant: "outline", size: "icon" }),
-                            "h-10 w-10 rounded-xl"
-                        )}
-                        title="Voltar para a lista de pacientes"
-                    >
-                        <ChevronLeft className="h-5 w-5" />
-                    </Link>
-                    <div>
-                        <div className="flex items-center gap-2.5">
-                            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-                                {paciente.nomeCompleto}
-                            </h1>
-                            <span
-                                className={cn(
-                                    "w-3 h-3 rounded-full shadow-sm animate-pulse shrink-0",
-                                    paciente.ativo ? "bg-emerald-500" : "bg-rose-500"
-                                )}
-                                title={paciente.ativo ? "Paciente Ativo" : "Paciente Inativo"}
-                            ></span>
-                        </div>
-                        <p className="text-sm font-semibold text-slate-500 mt-1 flex items-center gap-1.5">
-                            <User className="h-4 w-4 text-blue-500" />
-                            Prontuário Odontológico • CPF: <span className="font-mono text-xs">{paciente.cpf}</span>
-                        </p>
+            <div className="flex flex-row items-center gap-3 bg-white p-4 sm:p-6 rounded-lg border shadow-sm w-full">
+                <Link
+                    href="/admin/pacientes"
+                    className={cn(
+                        buttonVariants({ variant: "outline", size: "icon" }),
+                        "h-9 w-9 rounded-md shrink-0"
+                    )}
+                    title="Voltar para a lista de pacientes"
+                >
+                    <ChevronLeft className="h-4 w-4" />
+                </Link>
+                <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <h1 className="text-xl md:text-3xl font-extrabold tracking-tight text-slate-900 truncate">
+                            {paciente.nomeCompleto}
+                        </h1>
+                        <span
+                            className={cn(
+                                "w-2.5 h-2.5 rounded-full shadow-sm animate-pulse shrink-0",
+                                paciente.ativo ? "bg-emerald-500" : "bg-rose-500"
+                            )}
+                            title={paciente.ativo ? "Paciente Ativo" : "Paciente Inativo"}
+                        ></span>
                     </div>
-                </div>
-
-                <div className="flex items-center gap-2 self-end sm:self-center">
-                    <span className={cn("text-xs font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider", paciente.ativo ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-rose-50 text-rose-700 border border-rose-200")}>
-                        {paciente.ativo ? "Cadastro Ativo" : "Cadastro Inativo"}
-                    </span>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5 flex items-center gap-1">
+                        <User className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                        <span className="hidden sm:inline">Prontuário Odontológico</span>
+                    </p>
                 </div>
             </div>
 

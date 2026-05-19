@@ -16,10 +16,10 @@ export default function AgendamentosTab({ appointments }: AgendamentosTabProps) 
                         Histórico de Agendamentos & Consultas
                     </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                        Agenda de consultas futuras e histórico de visitas anteriores do paciente.
+                        Agenda de consultas futures e histórico de visitas anteriores do paciente.
                     </p>
                 </div>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 rounded-md">
                     <Plus className="mr-1 h-3.5 w-3.5" /> Novo Agendamento
                 </Button>
             </div>
@@ -28,13 +28,13 @@ export default function AgendamentosTab({ appointments }: AgendamentosTabProps) 
                 {appointments.map((appt) => (
                     <div
                         key={appt.id}
-                        className="bg-slate-50/50 border hover:border-slate-300 hover:bg-white rounded-2xl p-5 transition-all duration-300 flex flex-col gap-4 shadow-sm"
+                        className="bg-slate-50/50 border hover:border-slate-300 hover:bg-white rounded-md p-5 transition-all duration-300 flex flex-col gap-4 shadow-sm"
                     >
                         <div className="flex items-start justify-between">
                             <div className="space-y-1">
                                 <Badge
                                     className={cn(
-                                        "font-medium",
+                                        "font-medium rounded-sm",
                                         appt.status === "Confirmado"
                                             ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                                             : appt.status === "Agendado"

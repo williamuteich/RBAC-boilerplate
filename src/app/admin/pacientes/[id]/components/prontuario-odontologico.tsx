@@ -148,10 +148,10 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
 
     return (
         <div className="w-full flex flex-col gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
-                <div className="bg-linear-to-br from-blue-500/10 to-indigo-500/5 border border-blue-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
-                    <div className="w-12 h-12 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-600">
-                        <User className="h-6 w-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                <div className="bg-linear-to-br from-blue-500/10 to-indigo-500/5 border border-blue-100 rounded-md p-4 flex items-center gap-4 shadow-sm">
+                    <div className="w-10 h-10 rounded-md bg-blue-600/10 flex items-center justify-center text-blue-600 shrink-0">
+                        <User className="h-5 w-5" />
                     </div>
                     <div>
                         <p className="text-xs text-muted-foreground font-medium">Idade / CPF</p>
@@ -162,21 +162,21 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                     </div>
                 </div>
 
-                <div className="bg-linear-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-600/10 flex items-center justify-center text-emerald-600">
-                        <HeartPulse className="h-6 w-6" />
+                <div className="bg-linear-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-100 rounded-md p-4 flex items-center gap-4 shadow-sm">
+                    <div className="w-10 h-10 rounded-md bg-emerald-600/10 flex items-center justify-center text-emerald-600 shrink-0">
+                        <HeartPulse className="h-5 w-5" />
                     </div>
                     <div>
                         <p className="text-xs text-muted-foreground font-medium">Status do Prontuário</p>
-                        <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 border-emerald-200 mt-1 font-semibold">
+                        <Badge className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 border-emerald-200 mt-1 font-semibold rounded-sm">
                             Ativo & Estável
                         </Badge>
                     </div>
                 </div>
 
-                <div className="bg-linear-to-br from-amber-500/10 to-orange-500/5 border border-amber-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
-                    <div className="w-12 h-12 rounded-xl bg-amber-600/10 flex items-center justify-center text-amber-600">
-                        <Calendar className="h-6 w-6" />
+                <div className="bg-linear-to-br from-amber-500/10 to-orange-500/5 border border-amber-100 rounded-md p-4 flex items-center gap-4 shadow-sm">
+                    <div className="w-10 h-10 rounded-md bg-amber-600/10 flex items-center justify-center text-amber-600 shrink-0">
+                        <Calendar className="h-5 w-5" />
                     </div>
                     <div>
                         <p className="text-xs text-muted-foreground font-medium">Próxima Consulta</p>
@@ -185,9 +185,9 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                     </div>
                 </div>
 
-                <div className="bg-linear-to-br from-purple-500/10 to-pink-500/5 border border-purple-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
-                    <div className="w-12 h-12 rounded-xl bg-purple-600/10 flex items-center justify-center text-purple-600">
-                        <DollarSign className="h-6 w-6" />
+                <div className="bg-linear-to-br from-purple-500/10 to-pink-500/5 border border-purple-100 rounded-md p-4 flex items-center gap-4 shadow-sm">
+                    <div className="w-10 h-10 rounded-md bg-purple-600/10 flex items-center justify-center text-purple-600 shrink-0">
+                        <DollarSign className="h-5 w-5" />
                     </div>
                     <div>
                         <p className="text-xs text-muted-foreground font-medium">Planos & Orçamentos</p>
@@ -197,12 +197,12 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 border-b pb-1 w-full mt-2">
+            <div className="flex flex-wrap gap-1 border-b pb-px w-full mt-2">
                 <button
                     type="button"
                     onClick={() => setActiveTab("odontograma")}
                     className={cn(
-                        "px-4 py-2.5 rounded-t-xl text-sm font-medium transition-all duration-300 flex items-center gap-2 relative",
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
                         activeTab === "odontograma"
                             ? "bg-blue-600 text-white shadow-sm"
                             : "text-slate-600 hover:bg-slate-50"
@@ -216,7 +216,7 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                     type="button"
                     onClick={() => setActiveTab("evolucao")}
                     className={cn(
-                        "px-4 py-2.5 rounded-t-xl text-sm font-medium transition-all duration-300 flex items-center gap-2 relative",
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
                         activeTab === "evolucao"
                             ? "bg-blue-600 text-white shadow-sm"
                             : "text-slate-600 hover:bg-slate-50"
@@ -230,7 +230,7 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                     type="button"
                     onClick={() => setActiveTab("agendamentos")}
                     className={cn(
-                        "px-4 py-2.5 rounded-t-xl text-sm font-medium transition-all duration-300 flex items-center gap-2 relative",
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
                         activeTab === "agendamentos"
                             ? "bg-blue-600 text-white shadow-sm"
                             : "text-slate-600 hover:bg-slate-50"
@@ -244,7 +244,7 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                     type="button"
                     onClick={() => setActiveTab("financeiro")}
                     className={cn(
-                        "px-4 py-2.5 rounded-t-xl text-sm font-medium transition-all duration-300 flex items-center gap-2 relative",
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
                         activeTab === "financeiro"
                             ? "bg-blue-600 text-white shadow-sm"
                             : "text-slate-600 hover:bg-slate-50"
@@ -258,7 +258,7 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                     type="button"
                     onClick={() => setActiveTab("cadastro")}
                     className={cn(
-                        "px-4 py-2.5 rounded-t-xl text-sm font-medium transition-all duration-300 flex items-center gap-2 relative",
+                        "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative",
                         activeTab === "cadastro"
                             ? "bg-blue-600 text-white shadow-sm"
                             : "text-slate-600 hover:bg-slate-50"
@@ -269,7 +269,7 @@ export default function ProntuarioOdontologico({ paciente }: { paciente: Pacient
                 </button>
             </div>
 
-            <div className="w-full bg-white rounded-2xl border p-6 md:p-8 shadow-sm">
+            <div className="w-full bg-white rounded-md border p-4 sm:p-6 shadow-sm">
                 {activeTab === "odontograma" && (
                     <OdontogramaTab
                         teeth={teeth}

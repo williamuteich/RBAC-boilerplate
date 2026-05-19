@@ -19,7 +19,7 @@ export default function FinanceiroTab({ budgets }: FinanceiroTabProps) {
                         Controle de planos de tratamento, parcelamentos e orçamentos aprovados.
                     </p>
                 </div>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs h-9 rounded-md">
                     <Plus className="mr-1 h-3.5 w-3.5" /> Novo Orçamento
                 </Button>
             </div>
@@ -33,7 +33,7 @@ export default function FinanceiroTab({ budgets }: FinanceiroTabProps) {
                     return (
                         <div
                             key={budget.id}
-                            className="bg-slate-50/50 border hover:border-slate-300 hover:bg-white rounded-2xl p-5 transition-all duration-300 flex flex-col gap-4 shadow-sm"
+                            className="bg-slate-50/50 border hover:border-slate-300 hover:bg-white rounded-md p-5 transition-all duration-300 flex flex-col gap-4 shadow-sm"
                         >
                             <div className="flex justify-between items-start">
                                 <div>
@@ -43,7 +43,7 @@ export default function FinanceiroTab({ budgets }: FinanceiroTabProps) {
                                 </div>
                                 <Badge
                                     className={cn(
-                                        "font-medium",
+                                        "font-medium rounded-sm",
                                         budget.status === "Concluído"
                                             ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                                             : "bg-amber-50 text-amber-700 border-amber-100"
