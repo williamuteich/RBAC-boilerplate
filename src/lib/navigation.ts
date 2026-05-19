@@ -1,11 +1,13 @@
-import { LayoutDashboard, ShieldCheck, Key, Calendar, UserRound, History, LucideIcon } from "lucide-react";
+import { LayoutDashboard, ShieldCheck, Key, CalendarDays, UserRound, History, LucideIcon, Users } from "lucide-react";
+
+export type NavSection = "CLÍNICA" | "ADMINISTRAÇÃO" | "SISTEMA";
 
 export interface NavConfig {
     title: string;
     href: string;
     icon: LucideIcon;
     resource?: string;
-    section: "MAIN MENU" | "SISTEMA";
+    section: NavSection;
 }
 
 export const ADMIN_NAVIGATION: NavConfig[] = [
@@ -13,37 +15,47 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         title: "Dashboard",
         href: "/admin",
         icon: LayoutDashboard,
-        section: "MAIN MENU"
+        section: "CLÍNICA"
     },
+    {
+        title: "Agenda",
+        href: "/admin/agenda",
+        icon: CalendarDays,
+        resource: "agenda",
+        section: "CLÍNICA"
+    },
+    {
+        title: "Pacientes",
+        href: "/admin/pacientes",
+        icon: Users,
+        resource: "pacientes",
+        section: "CLÍNICA"
+    },
+
     {
         title: "Administradores",
         href: "/admin/usuarios",
         icon: ShieldCheck,
         resource: "usuarios",
-        section: "MAIN MENU"
+        section: "ADMINISTRAÇÃO"
     },
     {
         title: "Cargos e Permissões",
         href: "/admin/cargos",
         icon: Key,
         resource: "cargos",
-        section: "MAIN MENU"
+        section: "ADMINISTRAÇÃO"
     },
+
     {
         title: "Auditoria",
         href: "/admin/auditoria",
         icon: History,
         resource: "auditoria",
-        section: "MAIN MENU"
-    },
-    {
-        title: "Calendário",
-        href: "#",
-        icon: Calendar,
         section: "SISTEMA"
     },
     {
-        title: "Perfil",
+        title: "Meu Perfil",
         href: "#",
         icon: UserRound,
         section: "SISTEMA"
@@ -53,7 +65,7 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
 export const PERMISSION_RESOURCES = ADMIN_NAVIGATION
     .filter(nav => nav.resource)
     .map(nav => nav.resource as string);
-export const EXTRA_RESOURCES = ["configuracoes", "relatorios", "auditoria"];
+export const EXTRA_RESOURCES = ["configuracoes", "relatorios"];
 
 export const ALL_RESOURCES = [...new Set([...PERMISSION_RESOURCES, ...EXTRA_RESOURCES])];
 export const ALL_ACTIONS = ["visualizar", "criar", "editar", "deletar"];

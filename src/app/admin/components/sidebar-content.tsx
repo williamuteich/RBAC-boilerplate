@@ -13,7 +13,7 @@ export function SidebarContent({ onClose }: { onClose?: () => void }) {
 
     if (!session) return null;
 
-    const sections = ["MAIN MENU", "SISTEMA"] as const;
+    const sections = ["CLÍNICA", "ADMINISTRAÇÃO", "SISTEMA"] as const;
 
     return (
         <div className="flex flex-col h-full bg-white border-r border-slate-200 lg:border-none">
