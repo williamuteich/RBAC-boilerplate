@@ -1,4 +1,4 @@
-import { Stethoscope, Users, FileText, CalendarCheck } from "lucide-react";
+import { Users, FileText, CalendarCheck } from "lucide-react";
 
 export function SidebarLogin() {
     return (

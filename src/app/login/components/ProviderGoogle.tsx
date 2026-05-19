@@ -5,13 +5,11 @@ import { signIn } from "next-auth/react"
 export function ProviderGoogle() {
     return (
         <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50 relative overflow-hidden">
-            {/* Elegant decorative background blur circles */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-60 translate-x-20 -translate-y-20 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-50 rounded-full blur-3xl opacity-60 -translate-x-20 translate-y-20 pointer-events-none" />
 
             <div className="w-full max-w-md relative z-10">
                 <div className="text-center mb-8">
-                    {/* Centered logo above the form for mobile and branding */}
                     <div className="flex justify-center mb-6 lg:hidden">
                         <img
                             src="/logoHeader.png"
@@ -27,7 +25,6 @@ export function ProviderGoogle() {
                 </div>
 
                 <div className="bg-white p-8 rounded-2xl shadow-xl shadow-slate-100 border border-slate-100/80 backdrop-blur-sm">
-                    {/* Header card info */}
                     <div className="flex items-center gap-3 mb-6 p-3 bg-blue-50/50 rounded-xl border border-blue-100/50">
                         <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 font-semibold text-sm">
                             i
@@ -50,11 +47,6 @@ export function ProviderGoogle() {
                         </svg>
                         <span>Entrar com o Google</span>
                     </button>
-
-                    <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-center gap-1.5 text-xs text-slate-400">
-                        <span>Precisa de suporte?</span>
-                        <a href="mailto:suporte@uteich.com.br" className="text-blue-500 hover:underline font-medium">Contate a administração</a>
-                    </div>
                 </div>
             </div>
         </div>

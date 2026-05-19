@@ -1,5 +1,5 @@
 "use server";
-import { Admin, Role, AdminsResponse, AdminFilters } from "@/src/types/dashboard/admins";
+import { Role, AdminsResponse, AdminFilters } from "@/src/types/dashboard/admins";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
@@ -42,7 +42,7 @@ export async function createAdmin(data: { name: string; email: string; roleId: s
     if (res.status === 403) return { success: false, error: "Sem permissão" };
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao criar administrador" };
-    
+
     revalidatePath("/admin/usuarios");
     return { success: true };
 }
@@ -61,7 +61,7 @@ export async function updateAdmin(id: number, data: { name: string; email: strin
     if (res.status === 403) return { success: false, error: "Sem permissão" };
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao atualizar administrador" };
-    
+
     revalidatePath("/admin/usuarios");
     return { success: true };
 }
@@ -76,7 +76,7 @@ export async function deleteAdmin(id: number): Promise<{ success: boolean; error
     if (res.status === 403) return { success: false, error: "Sem permissão" };
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao excluir administrador" };
-    
+
     revalidatePath("/admin/usuarios");
     return { success: true };
 }
