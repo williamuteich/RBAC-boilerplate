@@ -1,4 +1,4 @@
-import { RoleManagement } from "../components/role-management";
+import { RoleManagement } from "./components/role-management";
 import { Key } from "lucide-react";
 import { getRoles } from "@/src/services/roles";
 import NotAuthorized from "@/src/app/components/notAuthorized";

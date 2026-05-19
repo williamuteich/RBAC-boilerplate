@@ -1,4 +1,4 @@
-import { AdminManagement } from "../components/admin-management";
+import { AdminManagement } from "./components/admin-management";
 import { ShieldCheck } from "lucide-react";
 import { getAdmins, getRoles } from "@/src/services/administrator";
 import NotAuthorized from "@/src/app/components/notAuthorized";

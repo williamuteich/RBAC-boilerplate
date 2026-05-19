@@ -1,6 +1,3 @@
-import { getServerSession } from "next-auth";
-import { auth } from "@/src/lib/auth-config";
-import { redirect } from "next/navigation";
 import { HeaderHome } from "./components/home/HeaderHome";
 import BannerHome from "./components/home/BannerHome";
 import { FooterHome } from "./components/home/FooterHome";
@@ -13,11 +10,6 @@ import { WhatsAppButton } from "./components/home/WhatsappButton";
 import { MobileContactBar } from "./components/home/MobileContactBar";
 
 export default async function LoginPage() {
-  const session = await getServerSession(auth);
-
-  if (session) {
-    redirect("/admin");
-  }
 
   return (
     <main className="flex min-h-screen w-full flex-col">

@@ -1,6 +1,6 @@
 import { requirePermission } from "@/src/lib/auth-helpers-server";
 import { getAuditLogs } from "@/src/services/audit";
-import { AuditManagement } from "../components/audit-management";
+import { AuditManagement } from "./components/audit-management";
 import { redirect } from "next/navigation";
 import { History } from "lucide-react";
 
