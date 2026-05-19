@@ -3,9 +3,44 @@ import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { pacienteSchema } from "@/src/schemas/paciente";
 import { withAudit } from "@/src/lib/audit";
+import { encrypt, decrypt, encryptDeterministic } from "@/src/lib/encrypted-fields";
 
 type Ctx = { params: Promise<{ id: string }> };
 const getId = async (ctx: Ctx) => (await ctx.params).id;
+
+const ENCRYPTED_FIELDS = [
+    { name: "cpf", action: encryptDeterministic, shouldProcess: (val: string) => !val.includes(":") },
+    { name: "phone", action: encrypt, shouldProcess: (val: string) => !val.includes(":") },
+    { name: "number", action: encrypt, shouldProcess: (val: string) => !val.includes(":") },
+    { name: "complement", action: encrypt, shouldProcess: (val: string) => !val.includes(":") },
+] as const;
+
+const DECRYPT_FIELDS = [
+    { name: "cpf", action: decrypt, shouldProcess: (val: string) => val.includes(":") },
+    { name: "phone", action: decrypt, shouldProcess: (val: string) => val.includes(":") },
+    { name: "number", action: decrypt, shouldProcess: (val: string) => val.includes(":") },
+    { name: "complement", action: decrypt, shouldProcess: (val: string) => val.includes(":") },
+] as const;
+
+async function processData(data: any, fields: typeof ENCRYPTED_FIELDS | typeof DECRYPT_FIELDS) {
+    if (!data) return data;
+    const res = { ...data };
+    for (const field of fields) {
+        const val = res[field.name];
+        if (typeof val === "string" && val.trim() !== "" && field.shouldProcess(val)) {
+            try {
+                res[field.name] = await field.action(val);
+            } catch (error) {
+                console.error("Erro ao criptografar campo", field.name, "valor", val, "erro", error);
+                throw error;
+            }
+        }
+    }
+    return res;
+}
+
+const encryptData = (data: any) => processData(data, ENCRYPTED_FIELDS);
+const decryptData = (data: any) => processData(data, DECRYPT_FIELDS);
 
 export async function GET(_req: Request, ctx: Ctx) {
     const session = await checkAdminApi();
@@ -20,7 +55,7 @@ export async function GET(_req: Request, ctx: Ctx) {
     });
 
     if (!paciente) return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });
-    return NextResponse.json(paciente);
+    return NextResponse.json(await decryptData(paciente));
 }
 
 async function _PUT(request: Request, ctx: Ctx) {
@@ -39,15 +74,22 @@ async function _PUT(request: Request, ctx: Ctx) {
         }
 
         const { birthDate, ...rest } = validated.data;
+
+        const encryptedBody = await encryptData(rest);
+
         const paciente = await prisma.paciente.update({
             where: { id },
-            data: { ...rest, birthDate: new Date(birthDate) },
+            data: {
+                ...encryptedBody,
+                birthDate: new Date(birthDate),
+            },
         });
 
-        return NextResponse.json(paciente);
+        return NextResponse.json(await decryptData(paciente));
     } catch (error: any) {
         if (error.code === "P2002") return NextResponse.json({ error: "CPF já cadastrado" }, { status: 400 });
         if (error.code === "P2025") return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });
+        console.error("Erro ao atualizar paciente:", error);
         return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
     }
 }
@@ -62,7 +104,7 @@ async function _DELETE(_req: Request, ctx: Ctx) {
     const id = await getId(ctx);
     try {
         const deletedPaciente = await prisma.paciente.delete({ where: { id } });
-        return NextResponse.json(deletedPaciente);
+        return NextResponse.json(await decryptData(deletedPaciente));
     } catch {
         return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });
     }

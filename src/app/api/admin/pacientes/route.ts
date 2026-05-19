@@ -3,6 +3,41 @@ import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { pacienteSchema, pacienteQuerySchema } from "@/src/schemas/paciente";
 import { withAudit } from "@/src/lib/audit";
+import { encrypt, decrypt, encryptDeterministic } from "@/src/lib/encrypted-fields";
+
+const ENCRYPTED_FIELDS = [
+    { name: "cpf", action: encryptDeterministic, shouldProcess: (val: string) => !val.includes(":") },
+    { name: "phone", action: encrypt, shouldProcess: (val: string) => !val.includes(":") },
+    { name: "number", action: encrypt, shouldProcess: (val: string) => !val.includes(":") },
+    { name: "complement", action: encrypt, shouldProcess: (val: string) => !val.includes(":") },
+] as const;
+
+const DECRYPT_FIELDS = [
+    { name: "cpf", action: decrypt, shouldProcess: (val: string) => val.includes(":") },
+    { name: "phone", action: decrypt, shouldProcess: (val: string) => val.includes(":") },
+    { name: "number", action: decrypt, shouldProcess: (val: string) => val.includes(":") },
+    { name: "complement", action: decrypt, shouldProcess: (val: string) => val.includes(":") },
+] as const;
+
+async function processData(data: any, fields: typeof ENCRYPTED_FIELDS | typeof DECRYPT_FIELDS) {
+    if (!data) return data;
+    const res = { ...data };
+    for (const field of fields) {
+        const val = res[field.name];
+        if (typeof val === "string" && val.trim() !== "" && field.shouldProcess(val)) {
+            try {
+                res[field.name] = await field.action(val);
+            } catch (error) {
+                console.error("Erro ao criptografar campo", field.name, "valor", val, "erro", error);
+                throw error;
+            }
+        }
+    }
+    return res;
+}
+
+const encryptData = (data: any) => processData(data, ENCRYPTED_FIELDS);
+const decryptData = (data: any) => processData(data, DECRYPT_FIELDS);
 
 export async function GET(request: Request) {
     const session = await checkAdminApi();
@@ -17,9 +52,11 @@ export async function GET(request: Request) {
 
     const { page, limit, name, cpf } = validated.data;
 
+    const searchCpf = cpf ? await encryptDeterministic(cpf) : undefined;
+
     const where = {
         ...(name && { name: { contains: name, mode: "insensitive" as const } }),
-        ...(cpf && { cpf: { contains: cpf } }),
+        ...(searchCpf && { cpf: searchCpf }),
     };
 
     const [pacientes, total] = await Promise.all([
@@ -28,28 +65,14 @@ export async function GET(request: Request) {
             orderBy: { name: "asc" },
             skip: (page - 1) * limit,
             take: limit,
-            select: {
-                id: true,
-                name: true,
-                cpf: true,
-                birthDate: true,
-                phone: true,
-                zipCode: true,
-                state: true,
-                city: true,
-                street: true,
-                number: true,
-                complement: true,
-                active: true,
-                createdAt: true,
-                updatedAt: true,
-            },
         }),
         prisma.paciente.count({ where }),
     ]);
 
+    const decryptedPacientes = await Promise.all(pacientes.map(p => decryptData(p)));
+
     return NextResponse.json({
-        pacientes,
+        pacientes: decryptedPacientes,
         total,
         page,
         totalPages: Math.ceil(total / limit),
@@ -72,11 +95,17 @@ async function _POST(request: Request) {
         }
 
         const { birthDate, ...rest } = validated.data;
+
+        const encryptedBody = await encryptData(rest);
+
         const paciente = await prisma.paciente.create({
-            data: { ...rest, birthDate: new Date(birthDate) },
+            data: {
+                ...encryptedBody,
+                birthDate: new Date(birthDate),
+            },
         });
 
-        return NextResponse.json(paciente, { status: 201 });
+        return NextResponse.json(await decryptData(paciente), { status: 201 });
     } catch (error: any) {
         if (error.code === "P2002") return NextResponse.json({ error: "CPF já cadastrado" }, { status: 400 });
         console.error("Erro ao criar paciente:", error);
