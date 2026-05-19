@@ -40,27 +40,24 @@ export function UserDropdown({ session }: { session: Session }) {
                         <span className="text-xs text-slate-500 truncate">{user.email}</span>
                     </div>
                 </div>
-                <DropdownMenuSeparator className="bg-slate-100" />
 
                 <div className="py-1">
-                    <DropdownMenuItem className="gap-3 py-2 cursor-pointer focus:bg-slate-50 focus:text-indigo-600 rounded-md">
-                        <User className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm font-medium">Ver perfil</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="gap-3 py-2 cursor-pointer focus:bg-slate-50 focus:text-indigo-600 rounded-md">
-                        <Settings className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm font-medium">Configurações da conta</span>
-                    </DropdownMenuItem>
-                </div>
-
-                <DropdownMenuSeparator className="bg-slate-100" />
-                <div className="py-1">
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                         onClick={() => signOut({ callbackUrl: "/" })}
-                        className="gap-3 py-2 cursor-pointer text-slate-600 focus:bg-red-50 focus:text-red-600 rounded-md"
+                        className="
+                            gap-3
+                            py-2
+                            px-3
+                            cursor-pointer
+                            rounded-md
+                            text-red-600
+                            focus:bg-red-500
+                            focus:text-white
+                            transition-all duration-200 ease-in-out
+                        "
                     >
                         <LogOut className="w-4 h-4" />
-                        <span className="text-sm font-medium">Sair do sistema</span>
+                        <span className="text-sm">Sair do sistema</span>
                     </DropdownMenuItem>
                 </div>
             </DropdownMenuContent>

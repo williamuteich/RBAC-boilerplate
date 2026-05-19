@@ -25,17 +25,17 @@ export function SidebarContent({
         <div className="flex h-full flex-col border-r border-slate-200/80 bg-white">
             <div className="flex h-20 items-center px-6 shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-600 to-violet-600 shadow-sm">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 shadow-sm">
                         <div className="h-3 w-3 rounded-full bg-white" />
                     </div>
 
                     <div className="flex flex-col leading-tight">
-                        <span className="text-[15px] font-semibold tracking-tight text-slate-800">
-                            NextAdmin
+                        <span className="text-[14px] font-bold tracking-tight text-slate-800 uppercase">
+                            Uteich Odontologia
                         </span>
 
-                        <span className="text-xs text-slate-400">
-                            Painel administrativo
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                            Painel Clínico
                         </span>
                     </div>
                 </div>

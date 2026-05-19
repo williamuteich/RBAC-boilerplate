@@ -54,12 +54,6 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         resource: "auditoria",
         section: "SISTEMA"
     },
-    {
-        title: "Meu Perfil",
-        href: "#",
-        icon: UserRound,
-        section: "SISTEMA"
-    }
 ];
 
 export const PERMISSION_RESOURCES = ADMIN_NAVIGATION
