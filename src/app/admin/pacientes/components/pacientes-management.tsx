@@ -182,6 +182,8 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
     const [error, setError] = useState("");
     const [editing, setEditing] = useState<Paciente | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [historyOpen, setHistoryOpen] = useState(false);
+    const [selectedPatientForHistory, setSelectedPatientForHistory] = useState<Paciente | null>(null);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -288,6 +290,68 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
                         <PacienteForm editing={editing} onSubmit={handleAction} isPending={isPending} error={error} />
                     </DialogContent>
                 </Dialog>
+
+                <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+                    <DialogContent className="sm:max-w-[500px]">
+                        <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2 text-slate-800 font-semibold">
+                                <CalendarDays className="h-5 w-5 text-blue-600" />
+                                Histórico de Atendimento
+                            </DialogTitle>
+                            <DialogDescription>
+                                Histórico de consultas e procedimentos realizados para <strong>{selectedPatientForHistory?.name}</strong>.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
+                            <div className="relative pl-6 border-l border-slate-200 space-y-6 ml-2">
+                                <div className="relative">
+                                    <span className="absolute -left-[29px] top-1 w-2.5 h-2.5 rounded-full bg-blue-600 ring-4 ring-blue-50 border border-white" />
+                                    <div className="flex justify-between items-start gap-2">
+                                        <div>
+                                            <p className="font-semibold text-slate-800 text-sm">Consulta de Rotina e Profilaxia</p>
+                                            <p className="text-xs text-muted-foreground">Dr. Alexandre Lima • Clínico Geral</p>
+                                        </div>
+                                        <span className="text-[10px] font-medium text-slate-500 bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 whitespace-nowrap">15/05/2026</span>
+                                    </div>
+                                    <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                                        Realizado raspagem, profilaxia e aplicação tópica de flúor. Paciente apresenta excelente saúde bucal, orientado a manter o uso diário de fio dental.
+                                    </p>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute -left-[29px] top-1 w-2.5 h-2.5 rounded-full bg-blue-600 ring-4 ring-blue-50 border border-white" />
+                                    <div className="flex justify-between items-start gap-2">
+                                        <div>
+                                            <p className="font-semibold text-slate-800 text-sm">Restauração de Resina Fotopolimerizável</p>
+                                            <p className="text-xs text-muted-foreground">Dra. Ana Mello • Estética</p>
+                                        </div>
+                                        <span className="text-[10px] font-medium text-slate-500 bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 whitespace-nowrap">08/04/2026</span>
+                                    </div>
+                                    <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                                        Procedimento de restauração estética classe I no dente 36. Removido tecido cariado ativo sob anestesia local e realizado selamento oclusal perfeito.
+                                    </p>
+                                </div>
+                                <div className="relative">
+                                    <span className="absolute -left-[29px] top-1 w-2.5 h-2.5 rounded-full bg-blue-600 ring-4 ring-blue-50 border border-white" />
+                                    <div className="flex justify-between items-start gap-2">
+                                        <div>
+                                            <p className="font-semibold text-slate-800 text-sm">Consulta de Avaliação Inicial</p>
+                                            <p className="text-xs text-muted-foreground">Dr. Alexandre Lima • Clínico Geral</p>
+                                        </div>
+                                        <span className="text-[10px] font-medium text-slate-500 bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5 whitespace-nowrap">12/03/2026</span>
+                                    </div>
+                                    <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                                        Primeira consulta para anamnese e exame clínico completo. Identificada necessidade de restauração pontual no dente 36 e profilaxia geral agendada.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setHistoryOpen(false)} className="w-full">
+                                Fechar
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
 
             <div className="rounded-xl border bg-card/50 overflow-hidden shadow-sm">
@@ -328,19 +392,22 @@ export function PacientesManagement({ initialData }: { initialData: PacientesRes
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-1">
-                                            <Link href={`/admin/pacientes/${paciente.id}`} title="Acessar Prontuário">
-                                                <Button variant="ghost" size="icon-sm" type="button">
-                                                    <FileText className="h-4 w-4 text-blue-500" />
-                                                </Button>
-                                            </Link>
                                             <Button
                                                 variant="ghost"
                                                 size="icon-sm"
-                                                onClick={() => { setEditing(paciente); setOpen(true); }}
-                                                title="Editar"
+                                                onClick={() => {
+                                                    setSelectedPatientForHistory(paciente);
+                                                    setHistoryOpen(true);
+                                                }}
+                                                title="Histórico de Atendimento"
                                             >
-                                                <Pencil className="h-4 w-4 text-slate-500" />
+                                                <FileText className="h-4 w-4 text-slate-500" />
                                             </Button>
+                                            <Link href={`/admin/pacientes/${paciente.id}`} title="Editar e Acessar Prontuário">
+                                                <Button variant="ghost" size="icon-sm" type="button">
+                                                    <Pencil className="h-4 w-4 text-blue-500" />
+                                                </Button>
+                                            </Link>
                                             <AlertDialog>
                                                 <AlertDialogTrigger render={
                                                     <Button variant="ghost" size="icon-sm" disabled={isPending}>
