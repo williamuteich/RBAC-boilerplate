@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
-import { roleSchema } from "@/src/schemas/admin";
+import { roleSchema } from "@/src/schemas/roles";
 import { withAudit } from "@/src/lib/audit";
 
 export async function GET() {

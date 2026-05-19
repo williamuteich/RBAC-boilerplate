@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
+import { auditQuerySchema } from "@/src/schemas/audit";
 
 export async function GET(request: Request) {
     const session = await checkAdminApi();
@@ -13,12 +14,14 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
-    const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit") ?? "20")));
-    const resource = searchParams.get("resource") || undefined;
-    const action = searchParams.get("action") || undefined;
-    const userName = searchParams.get("userName") || undefined;
-    const administratorId = searchParams.get("administratorId") || undefined;
+    const queryData = Object.fromEntries(searchParams.entries());
+    
+    const validated = auditQuerySchema.safeParse(queryData);
+    if (!validated.success) {
+        return NextResponse.json({ error: "Parâmetros inválidos" }, { status: 400 });
+    }
+
+    const { page, limit, resource, action, userName, administratorId } = validated.data;
 
     const where = {
         ...(resource && { resource }),
