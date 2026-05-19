@@ -13,7 +13,7 @@ export async function Sidebar() {
 export function SkeletonSidebar() {
     return (
         <div className="flex h-full flex-col border-r border-slate-200/80 bg-white">
-            <div className="flex h-20 items-center px-0 md:px-14 shrink-0">
+            <div className="flex h-20 items-center px-6 shrink-0">
                 <div className="flex items-center gap-3">
                     <div className="h-9 w-9 rounded-sm bg-slate-200 animate-pulse" />
 
