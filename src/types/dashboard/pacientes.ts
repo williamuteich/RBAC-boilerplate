@@ -43,6 +43,7 @@ export interface ToothInfo {
 export interface EvolucaoListProps {
   initialItems: HistoricoPatient[];
   patientId: string;
+  apiUrl: string;
 }
 
 export interface Appointment {

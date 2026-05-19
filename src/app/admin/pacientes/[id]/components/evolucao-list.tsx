@@ -8,6 +8,9 @@ import { CalendarDays, ClipboardList, Clock, Pencil, X, Activity, Plus, Trash2 }
 import { EvolucaoListProps, HistoricoPatient } from "@/src/types/dashboard/pacientes";
 import { createHistoricoPaciente, updateHistoricoPaciente, deleteHistoricoPaciente } from "@/src/services/pacientes";
 
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function EvolucaoList({ initialItems, patientId }: EvolucaoListProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -18,9 +21,20 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
         setItems(initialItems);
     }, [initialItems]);
 
-    const action = searchParams.get("action");
-    const editId = searchParams.get("editId");
+    const [action, setAction] = useState<"new" | "edit" | null>(null);
+    const [editId, setEditId] = useState<string | null>(null);
     const isModalOpen = action === "new" || action === "edit";
+
+    useEffect(() => {
+        const urlAction = searchParams.get("action") as "new" | "edit" | null;
+        const urlEditId = searchParams.get("editId");
+        if (urlAction) {
+            setAction(urlAction);
+            if (urlEditId) {
+                setEditId(urlEditId);
+            }
+        }
+    }, [searchParams]);
 
     const [description, setDescription] = useState("");
     const [isPending, setIsPending] = useState(false);
@@ -40,29 +54,39 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
     }, [action, editId, items]);
 
     const handleAddClick = () => {
-        const params = new URLSearchParams(searchParams.toString());
+        setAction("new");
+        setEditId(null);
+        const params = new URLSearchParams(window.location.search);
         params.set("action", "new");
         params.delete("editId");
-        router.push(`${pathname}?${params.toString()}`);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
     };
 
     const handleEditClick = (id: string) => {
-        const params = new URLSearchParams(searchParams.toString());
+        setAction("edit");
+        setEditId(id);
+        const params = new URLSearchParams(window.location.search);
         params.set("action", "edit");
         params.set("editId", id);
-        router.push(`${pathname}?${params.toString()}`);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
     };
 
     const handleCloseModal = () => {
-        const params = new URLSearchParams(searchParams.toString());
+        setAction(null);
+        setEditId(null);
+        const params = new URLSearchParams(window.location.search);
         params.delete("action");
         params.delete("editId");
-        router.push(`${pathname}?${params.toString()}`);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
     };
 
     const handleSave = async () => {
         if (description.trim().length < 3) {
             setError("A evolução clínica deve conter pelo menos 3 caracteres.");
+            toast.warning("A evolução clínica deve conter pelo menos 3 caracteres.");
             return;
         }
 
@@ -73,14 +97,18 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
             if (action === "new") {
                 const res = await createHistoricoPaciente(patientId, description);
                 if (res.success) {
+                    toast.success("Evolução clínica criada com sucesso!");
                     handleCloseModal();
                     router.refresh();
                 } else {
-                    setError(res.error || "Erro ao criar evolução.");
+                    const errMsg = res.error || "Erro ao criar evolução.";
+                    setError(errMsg);
+                    toast.error(errMsg);
                 }
             } else if (action === "edit" && editId) {
                 const res = await updateHistoricoPaciente(patientId, editId, description);
                 if (res.success) {
+                    toast.success("Evolução clínica atualizada com sucesso!");
                     setItems(prev =>
                         prev.map(item =>
                             item.id === editId ? { ...item, description } : item
@@ -89,12 +117,15 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
                     handleCloseModal();
                     router.refresh();
                 } else {
-                    setError(res.error || "Erro ao salvar alterações.");
+                    const errMsg = res.error || "Erro ao salvar alterações.";
+                    setError(errMsg);
+                    toast.error(errMsg);
                 }
             }
         } catch (err) {
             console.error("Erro ao salvar evolução clínica:", err);
             setError("Erro interno do servidor.");
+            toast.error("Erro interno do servidor ao salvar.");
         } finally {
             setIsPending(false);
         }
@@ -109,15 +140,19 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
         try {
             const res = await deleteHistoricoPaciente(patientId, deleteId);
             if (res.success) {
+                toast.success("Registro clínico excluído com sucesso!");
                 setItems(prev => prev.filter(item => item.id !== deleteId));
                 setDeleteId(null);
                 router.refresh();
             } else {
-                setError(res.error || "Erro ao excluir registro.");
+                const errMsg = res.error || "Erro ao excluir registro.";
+                setError(errMsg);
+                toast.error(errMsg);
             }
         } catch (err) {
             console.error("Erro ao excluir histórico clínico:", err);
             setError("Erro interno ao processar a exclusão.");
+            toast.error("Erro interno ao processar a exclusão.");
         } finally {
             setIsPending(false);
         }
@@ -125,6 +160,8 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
 
     return (
         <div className="space-y-6 w-full animate-in fade-in duration-500">
+            <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+
             <div className="flex flex-row items-center justify-between border-b pb-4 gap-4">
                 <div>
                     <h3 className="text-base sm:text-lg font-semibold text-slate-900 flex items-center gap-2">
@@ -159,7 +196,6 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
                                 <div className="absolute -left-[32px] top-1.5 w-4 h-4 rounded-full bg-blue-50 border-2 border-blue-600 shadow-sm flex items-center justify-center ring-4 ring-white">
                                     <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
                                 </div>
-
                                 <div className="bg-slate-50/40 hover:bg-white border hover:border-slate-200 rounded-lg p-3 transition-all duration-300 shadow-sm hover:shadow-slate-100/50 flex gap-4 items-start justify-between group">
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-3 text-[11px] font-bold text-slate-500">
@@ -193,7 +229,7 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
                                                 setError("");
                                                 setDeleteId(evolucao.id);
                                             }}
-                                            className="p-1.5 text-slate-400 hover:text-rose-650 hover:bg-rose-50 rounded-md transition-colors"
+                                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                             title="Excluir relato clínico"
                                         >
                                             <Trash2 className="h-3.5 w-3.5" />
@@ -205,7 +241,6 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
                     </div>
                 )}
             </div>
-
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-350">
                     <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
@@ -265,22 +300,22 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
             {deleteId && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-350">
                     <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-5 border-b flex justify-between items-center bg-rose-50/30">
+                        <div className="p-5 border-b flex justify-between items-center bg-red-50/30">
                             <h3 className="font-semibold text-slate-900 flex items-center gap-2 text-sm sm:text-base">
-                                <Trash2 className="h-4.5 w-4.5 text-rose-600" />
+                                <Trash2 className="h-4.5 w-4.5 text-red-650" />
                                 Confirmar Exclusão
                             </h3>
                             <button
                                 type="button"
                                 onClick={() => setDeleteId(null)}
-                                className="text-slate-400 hover:text-slate-650 rounded-md p-1 hover:bg-slate-100 transition-colors"
+                                className="text-slate-400 hover:text-red-650 rounded-md p-1 hover:bg-slate-100 transition-colors"
                             >
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
 
                         <div className="p-5 space-y-2">
-                            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-semibold">
+                            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-semibold">
                                 Tem certeza absoluta que deseja remover este registro clínico?
                             </p>
                             <p className="text-xs text-slate-400 leading-normal">
@@ -303,7 +338,7 @@ export default function EvolucaoList({ initialItems, patientId }: EvolucaoListPr
                                 type="button"
                                 onClick={handleDeleteConfirm}
                                 disabled={isPending}
-                                className="bg-rose-600 hover:bg-rose-700 h-9 text-xs text-white"
+                                className="bg-red-600 hover:bg-red-700 h-9 text-xs text-white"
                             >
                                 {isPending ? "Excluindo..." : "Sim, Excluir Registro"}
                             </Button>
