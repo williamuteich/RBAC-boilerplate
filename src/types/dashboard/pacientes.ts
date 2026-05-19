@@ -74,7 +74,7 @@ export interface OdontogramaTabProps {
 }
 
 export interface EvolucaoTabProps {
-  evolution: EvolutionItem[];
+  evolution: HistoricoPatient[];
   newEvolutionText: string;
   onTextChange: (val: string) => void;
   onSubmit: (e: FormEvent) => void;
@@ -98,7 +98,7 @@ export interface CadastroTabProps {
 
 export interface HistoricoPatient {
   id: string;
-  patient: Paciente;
+  patient?: Paciente;
   patientId: string;
   description: string;
   createdAt: string;
