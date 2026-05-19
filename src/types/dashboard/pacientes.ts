@@ -116,8 +116,9 @@ export interface CreatePacienteDialogProps {
 }
 
 export interface PacienteHistoricoDialogProps {
-  paciente: Paciente;
-  history: HistoricoPatient[];
+  paciente: Paciente | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export interface DeleteDialogGenericProps {
