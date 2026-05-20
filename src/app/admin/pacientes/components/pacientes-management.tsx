@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-    Loader2, Pencil, Search, ChevronLeft, ChevronRight,
-    User, Phone, FileText, CalendarDays
+    Loader2, Pencil, Search, ChevronLeft, ChevronRight, FileText
 } from "lucide-react";
 import { Paciente, PacientesResponse, PacienteFilters } from "@/src/types/dashboard/pacientes";
 import { getPacientes } from "@/src/services/pacientes";
