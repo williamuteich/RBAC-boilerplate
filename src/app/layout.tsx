@@ -48,8 +48,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { Providers } from "./components/providers";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -89,9 +87,7 @@ export default function RootLayout({
         />
         {/* End Google Tag Manager */}
 
-        <Providers>
-          <main className="flex-1">{children}</main>
-        </Providers>
+        <main className="flex-1">{children}</main>
       </body>
     </html>
   );
