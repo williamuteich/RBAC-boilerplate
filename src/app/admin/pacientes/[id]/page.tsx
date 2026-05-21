@@ -7,14 +7,13 @@ import ProntuarioContainer from "./nav-links/prontuario-container";
 import { Suspense } from "react";
 import { ProntuarioSkeleton } from "./components/prontuario-skeleton";
 
-export default async function ProntuarioPage({
+async function ProntuarioContent({
     params,
     searchParams
 }: {
     params: Promise<{ id: string }>;
     searchParams: Promise<{ tab?: string }>;
 }) {
-
     await requirePermission("pacientes", "visualizar");
 
     const { id } = await params;
@@ -46,14 +45,26 @@ export default async function ProntuarioPage({
     }
 
     return (
+        <ProntuarioContainer
+            paciente={paciente}
+            patientId={id}
+            activeTab={activeTab}
+            initialHistory={activeTab === "evolucao" ? historicoPaciente || [] : undefined}
+            initialAnamnese={activeTab === "anamnese" ? anamnese : undefined}
+        />
+    );
+}
+
+export default async function ProntuarioPage({
+    params,
+    searchParams
+}: {
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ tab?: string }>;
+}) {
+    return (
         <Suspense fallback={<ProntuarioSkeleton />}>
-            <ProntuarioContainer
-                paciente={paciente}
-                patientId={id}
-                activeTab={activeTab}
-                initialHistory={activeTab === "evolucao" ? historicoPaciente || [] : undefined}
-                initialAnamnese={activeTab === "anamnese" ? anamnese : undefined}
-            />
+            <ProntuarioContent params={params} searchParams={searchParams} />
         </Suspense>
     );
 }

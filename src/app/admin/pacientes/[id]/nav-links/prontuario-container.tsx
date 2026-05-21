@@ -9,6 +9,7 @@ import EvolucaoList from "./evolucao/evolucao-list";
 import AgendamentosTab from "./agendamentos/agendamentos-tab";
 import CadastroTab from "./cadastro/cadastro-tab";
 import AnamneseTab from "./anamnese/anamnese-tab";
+import { Suspense } from "react";
 
 export default function ProntuarioContainer({
     paciente,
@@ -174,7 +175,11 @@ export default function ProntuarioContainer({
                 )}
                 {activeTab === "anamnese" && <AnamneseTab patientId={patientId} initialAnamnese={initialAnamnese} />}
                 {activeTab === "agendamentos" && <AgendamentosTab />}
-                {activeTab === "cadastro" && <CadastroTab paciente={paciente} />}
+                {activeTab === "cadastro" && (
+                    <Suspense fallback={"carregando..."}>
+                        <CadastroTab paciente={paciente} />
+                    </Suspense>
+                )}
             </div>
         </div>
     );
