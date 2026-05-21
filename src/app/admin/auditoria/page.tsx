@@ -3,8 +3,10 @@ import { getAuditLogs } from "@/src/services/audit";
 import { AuditManagement } from "./components/audit-management";
 import { redirect } from "next/navigation";
 import { History } from "lucide-react";
+import { Suspense } from "react";
+import { TableSkeleton } from "../components/table-skeleton";
 
-export default async function AuditoriaPage() {
+async function AuditoriaContent() {
     await requirePermission("auditoria", "visualizar");
 
     const auditData = await getAuditLogs({ page: 1, limit: 20 });
@@ -13,6 +15,10 @@ export default async function AuditoriaPage() {
         redirect("/admin/unauthorized");
     }
 
+    return <AuditManagement initialData={auditData} />;
+}
+
+export default async function AuditoriaPage() {
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
@@ -25,8 +31,9 @@ export default async function AuditoriaPage() {
                 </p>
             </div>
 
-            <AuditManagement initialData={auditData} />
+            <Suspense fallback={<TableSkeleton colsCount={5} hasHeaderButton={false} />}>
+                <AuditoriaContent />
+            </Suspense>
         </div>
     );
 }
-

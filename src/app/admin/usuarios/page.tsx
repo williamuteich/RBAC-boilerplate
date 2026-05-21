@@ -2,12 +2,21 @@ import { AdminManagement } from "./components/admin-management";
 import { ShieldCheck } from "lucide-react";
 import { getUsuariosInit } from "@/src/services/administrator";
 import { requirePermission } from "@/src/lib/auth-helpers-server";
+import { Suspense } from "react";
+import { TableSkeleton } from "../components/table-skeleton";
+
+async function UsuariosContent() {
+    await requirePermission("administradores", "visualizar");
+    const data = await getUsuariosInit();
+    return (
+        <AdminManagement
+            initialData={data?.admins ?? { admins: [], total: 0, page: 1, limit: 20, totalPages: 0 }}
+            initialRoles={data?.roles ?? []}
+        />
+    );
+}
 
 export default async function UsuariosAdminPage() {
-    await requirePermission("administradores", "visualizar");
-
-    const data = await getUsuariosInit();
-
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
@@ -20,10 +29,9 @@ export default async function UsuariosAdminPage() {
                 </p>
             </div>
 
-            <AdminManagement
-                initialData={data?.admins ?? { admins: [], total: 0, page: 1, limit: 20, totalPages: 0 }}
-                initialRoles={data?.roles ?? []}
-            />
+            <Suspense fallback={<TableSkeleton colsCount={4} buttonWidthClass="w-48" />}>
+                <UsuariosContent />
+            </Suspense>
         </div>
     );
 }

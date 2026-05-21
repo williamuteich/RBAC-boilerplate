@@ -2,12 +2,16 @@ import { RoleManagement } from "./components/role-management";
 import { Key } from "lucide-react";
 import { getRoles } from "@/src/services/roles";
 import { requirePermission } from "@/src/lib/auth-helpers-server";
+import { Suspense } from "react";
+import { TableSkeleton } from "../components/table-skeleton";
+
+async function CargosContent() {
+    await requirePermission("cargos", "visualizar");
+    const initialRoles = await getRoles();
+    return <RoleManagement initialRoles={initialRoles ?? []} />;
+}
 
 export default async function AdminCargosPage() {
-    await requirePermission("cargos", "visualizar");
-
-    const initialRoles = await getRoles();
-
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
@@ -20,7 +24,9 @@ export default async function AdminCargosPage() {
                 </p>
             </div>
 
-            <RoleManagement initialRoles={initialRoles ?? []} />
+            <Suspense fallback={<TableSkeleton colsCount={3} buttonWidthClass="w-36" />}>
+                <CargosContent />
+            </Suspense>
         </div>
     );
 }
