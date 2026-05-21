@@ -4,6 +4,7 @@ import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { pacienteSchema, pacienteQuerySchema } from "@/src/schemas/paciente";
 import { withAudit } from "@/src/lib/audit";
 import { encrypt, decrypt, encryptDeterministic } from "@/src/lib/encrypted-fields";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 
 const ENCRYPTED_FIELDS = [
     { name: "cpf", action: encryptDeterministic, shouldProcess: (val: string) => !val.includes(":") },
@@ -40,6 +41,10 @@ const encryptData = (data: any) => processData(data, ENCRYPTED_FIELDS);
 const decryptData = (data: any) => processData(data, DECRYPT_FIELDS);
 
 export async function GET(request: Request) {
+    "use cache";
+    cacheLife("hours");
+    cacheTag("pacientes-list", "max");
+
     const session = await checkAdminApi();
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     if (!hasPermission(session, "pacientes", "visualizar")) {
@@ -81,6 +86,8 @@ export async function GET(request: Request) {
 }
 
 async function _POST(request: Request) {
+    "use cache"
+
     const session = await checkAdminApi();
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     if (!hasPermission(session, "pacientes", "criar")) {
@@ -104,6 +111,8 @@ async function _POST(request: Request) {
                 birthDate: new Date(birthDate),
             },
         });
+
+        revalidateTag("pacientes-list", "max");
 
         return NextResponse.json(await decryptData(paciente), { status: 201 });
     } catch (error: any) {

@@ -2,6 +2,8 @@ import { PacientesManagement } from "./components/pacientes-management";
 import { Users } from "lucide-react";
 import { getPacientes } from "@/src/services/pacientes";
 import { requirePermission } from "@/src/lib/auth-helpers-server";
+import { Suspense } from "react";
+import { PacientesSkeleton } from "./components/pacientes-skeleton";
 
 export const metadata = {
     title: "Pacientes | Uteich Odontologia",
@@ -25,7 +27,9 @@ export default async function PacientesAdminPage() {
                 </p>
             </div>
 
-            <PacientesManagement initialData={initialData ?? { pacientes: [], total: 0, page: 1, limit: 20, totalPages: 0 }} />
+            <Suspense fallback={<PacientesSkeleton />}>
+                <PacientesManagement initialData={initialData ?? { pacientes: [], total: 0, page: 1, limit: 20, totalPages: 0 }} />
+            </Suspense>
         </div>
     );
 }
