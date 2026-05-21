@@ -90,8 +90,9 @@ model Patient {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  history   PatientHistory[]
-  anamneses Anamnese[]
+  history    PatientHistory[]
+  anamneses  Anamnese[]
+  odontogram Odontogram?
 }
 
 model PatientHistory {
@@ -160,4 +161,45 @@ model ContinuousMedication {
   frequency String?
 
   medicalFollowUp String?
+}
+
+model Odontogram {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  patientId String   @unique @db.ObjectId
+  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teeth     Tooth[]
+}
+
+model Tooth {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  
+  odontogramId String      @db.ObjectId
+  odontogram   Odontogram  @relation(fields: [odontogramId], references: [id], onDelete: Cascade)
+  
+  toothKey     String      
+  isCustom     Boolean     @default(false)
+  customName   String?     
+  status       ToothStatus
+  notes        String?     
+  
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@unique([odontogramId, toothKey])
+}
+
+enum ToothStatus {
+  SAUDAVEL
+  CARIE
+  ENDODONTIA
+  PROTESE
+  IMPLANTE
+  EXTRAIDO
+  RETIDO
+  OUTRO
 }
