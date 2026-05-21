@@ -11,9 +11,9 @@ export function TableSkeleton({
     hasHeaderButton = true,
     buttonWidthClass = "w-36"
 }: TableSkeletonProps) {
+
     return (
         <div className="w-full flex flex-col gap-6 animate-pulse">
-            {/* Controles de busca e ação */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="h-10 w-full sm:w-72 rounded-xl bg-slate-200" />
                 {hasHeaderButton && (
@@ -21,12 +21,10 @@ export function TableSkeleton({
                 )}
             </div>
 
-            {/* Container da Tabela */}
             <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm overflow-hidden">
                 <div className="space-y-4">
-                    {/* Cabeçalho da Tabela */}
-                    <div 
-                        className="grid border-b border-slate-100 pb-4" 
+                    <div
+                        className="grid border-b border-slate-100 pb-4"
                         style={{ gridTemplateColumns: `repeat(${colsCount}, minmax(0, 1fr))` }}
                     >
                         {Array.from({ length: colsCount }).map((_, i) => (
@@ -37,7 +35,6 @@ export function TableSkeleton({
                         ))}
                     </div>
 
-                    {/* Linhas da Tabela */}
                     {Array.from({ length: rowsCount }).map((_, rowIndex) => (
                         <div
                             key={rowIndex}
@@ -45,7 +42,6 @@ export function TableSkeleton({
                             style={{ gridTemplateColumns: `repeat(${colsCount}, minmax(0, 1fr))` }}
                         >
                             {Array.from({ length: colsCount }).map((_, colIndex) => {
-                                // A última coluna representa as ações (botões) à direita
                                 if (colIndex === colsCount - 1) {
                                     return (
                                         <div key={colIndex} className="flex justify-end gap-2">
@@ -54,7 +50,6 @@ export function TableSkeleton({
                                         </div>
                                     );
                                 }
-                                // A primeira coluna representa a informação principal (nome, título, ação etc.)
                                 if (colIndex === 0) {
                                     return (
                                         <div key={colIndex} className="flex items-center gap-3">
@@ -62,7 +57,6 @@ export function TableSkeleton({
                                         </div>
                                     );
                                 }
-                                // Colunas intermediárias (valores secundários, status, etc.)
                                 return (
                                     <div key={colIndex} className="h-5 w-24 rounded bg-slate-100" />
                                 );
