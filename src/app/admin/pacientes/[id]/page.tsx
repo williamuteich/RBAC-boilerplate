@@ -17,10 +17,14 @@ export default async function ProntuarioPage({
 
     const { id } = await params;
     const { tab = "odontograma" } = await searchParams;
+    const activeTab = ["odontograma", "evolucao", "anamnese", "agendamentos", "cadastro"].includes(tab)
+        ? tab
+        : "odontograma";
+
     const [paciente, historicoPaciente, anamnese] = await Promise.all([
         getPaciente(id),
-        getHistoricoPaciente(id),
-        getAnamnesePaciente(id)
+        activeTab === "evolucao" ? getHistoricoPaciente(id) : Promise.resolve(null),
+        activeTab === "anamnese" ? getAnamnesePaciente(id) : Promise.resolve(null)
     ]);
 
     if (!paciente) {
@@ -42,10 +46,10 @@ export default async function ProntuarioPage({
     return (
         <ProntuarioContainer
             paciente={paciente}
-            initialHistory={historicoPaciente || []}
             patientId={id}
-            initialTab={tab}
-            initialAnamnese={anamnese}
+            activeTab={activeTab}
+            initialHistory={activeTab === "evolucao" ? historicoPaciente || [] : undefined}
+            initialAnamnese={activeTab === "anamnese" ? anamnese : undefined}
         />
     );
 }

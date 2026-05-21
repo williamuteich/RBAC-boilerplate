@@ -22,7 +22,7 @@ export interface IPatient {
 
 export interface AnamneseTabProps {
     patientId: string;
-    initialAnamnese: IAnamnese | null;
+    initialAnamnese?: IAnamnese | null;
 }
 
 export interface IPatientHistory {

@@ -44,12 +44,10 @@ export interface ToothInfo {
 export interface EvolucaoListProps {
   initialItems: HistoricoPatient[];
   patientId: string;
-  apiUrl: string;
 }
 
 export interface EvolucaoItemProps {
   evolucao: HistoricoPatient;
-  apiUrl: string;
   onUpdate: (id: string, description: string) => void;
   onDelete: (id: string) => void;
 }
@@ -75,10 +73,10 @@ export interface Budget {
 
 export interface ProntuarioContainerProps {
   paciente: Paciente;
-  initialHistory: HistoricoPatient[];
   patientId: string;
-  initialTab: string;
-  initialAnamnese: IAnamnese | null;
+  activeTab: string;
+  initialHistory?: HistoricoPatient[];
+  initialAnamnese?: IAnamnese | null;
 }
 
 export interface OdontogramaTabProps {

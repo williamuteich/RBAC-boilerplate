@@ -3,11 +3,15 @@ import { HistoricoPatient, Paciente, PacienteFilters, PacientesResponse } from "
 import { IAnamnese } from "@/src/types/dashboard/anamnese";
 import { IOdontogram } from "@/src/types/dashboard/odontograma";
 import { headers } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { cacheLife, cacheTag, revalidatePath, revalidateTag } from "next/cache";
 
 const API_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 export async function getPacientes(filters: PacienteFilters = { page: 1, limit: 20 }): Promise<PacientesResponse | null> {
+    "use cache";
+    cacheLife("hours");
+    cacheTag("pacientes-list");
+    
     const cookie = (await headers()).get("cookie") || "";
     const params = new URLSearchParams();
     if (filters.page) params.set("page", String(filters.page));
@@ -27,6 +31,9 @@ export async function getPacientes(filters: PacienteFilters = { page: 1, limit: 
 }
 
 export async function getPaciente(id: string): Promise<Paciente | null> {
+    "use cache";
+    cacheLife("hours");
+    cacheTag(`paciente-${id}`);
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/pacientes/${id}`, {
         headers: { Cookie: cookie },
@@ -44,6 +51,7 @@ export async function createPaciente(data: Omit<Paciente, "id" | "createdAt" | "
     });
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao criar paciente" };
+    revalidateTag("pacientes-list", "max");
     revalidatePath("/admin/pacientes");
     return { success: true };
 }
@@ -57,6 +65,7 @@ export async function updatePaciente(id: string, data: Partial<Paciente>): Promi
     });
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao atualizar paciente" };
+    revalidateTag("pacientes-list", "max");
     revalidatePath("/admin/pacientes");
     return { success: true };
 }
@@ -69,6 +78,7 @@ export async function deletePaciente(id: string): Promise<{ success: boolean; er
     });
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao excluir paciente" };
+    revalidateTag("pacientes-list", "max");
     revalidatePath("/admin/pacientes");
     return { success: true };
 }

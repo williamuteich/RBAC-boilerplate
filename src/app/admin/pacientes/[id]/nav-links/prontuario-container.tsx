@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { User, Calendar, Stethoscope, Activity, HeartPulse, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -17,11 +14,9 @@ export default function ProntuarioContainer({
     paciente,
     initialHistory,
     patientId,
-    initialTab,
+    activeTab,
     initialAnamnese
 }: ProntuarioContainerProps) {
-    const [activeTab, setActiveTab] = useState(initialTab);
-
     const calcIdade = (birthDate: string) => {
         if (!birthDate) return 0;
         const hoje = new Date();
@@ -32,11 +27,7 @@ export default function ProntuarioContainer({
         return idade;
     };
 
-    const handleTabChange = (newTab: string) => {
-        setActiveTab(newTab);
-        const newUrl = `${window.location.pathname}?tab=${newTab}`;
-        window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, "", newUrl);
-    };
+    const tabHref = (tab: string) => `/admin/pacientes/${patientId}?tab=${tab}`;
 
     return (
         <div className="flex flex-col gap-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -107,8 +98,8 @@ export default function ProntuarioContainer({
             </div>
 
             <div className="flex flex-wrap gap-1 border-b pb-px w-full mt-2">
-                <button
-                    onClick={() => handleTabChange("odontograma")}
+                <Link
+                    href={tabHref("odontograma")}
                     className={cn(
                         "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative cursor-pointer",
                         activeTab === "odontograma"
@@ -118,10 +109,10 @@ export default function ProntuarioContainer({
                 >
                     <Stethoscope className="h-4 w-4" />
                     Odontograma Interativo 3D
-                </button>
+                </Link>
 
-                <button
-                    onClick={() => handleTabChange("evolucao")}
+                <Link
+                    href={tabHref("evolucao")}
                     className={cn(
                         "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative cursor-pointer",
                         activeTab === "evolucao"
@@ -131,10 +122,10 @@ export default function ProntuarioContainer({
                 >
                     <Activity className="h-4 w-4" />
                     Evolução & Procedimentos
-                </button>
+                </Link>
 
-                <button
-                    onClick={() => handleTabChange("anamnese")}
+                <Link
+                    href={tabHref("anamnese")}
                     className={cn(
                         "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative cursor-pointer",
                         activeTab === "anamnese"
@@ -144,10 +135,10 @@ export default function ProntuarioContainer({
                 >
                     <HeartPulse className="h-4 w-4" />
                     Anamnese & Saúde
-                </button>
+                </Link>
 
-                <button
-                    onClick={() => handleTabChange("agendamentos")}
+                <Link
+                    href={tabHref("agendamentos")}
                     className={cn(
                         "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative cursor-pointer",
                         activeTab === "agendamentos"
@@ -157,10 +148,10 @@ export default function ProntuarioContainer({
                 >
                     <Calendar className="h-4 w-4" />
                     Agendamentos
-                </button>
+                </Link>
 
-                <button
-                    onClick={() => handleTabChange("cadastro")}
+                <Link
+                    href={tabHref("cadastro")}
                     className={cn(
                         "px-3.5 py-2 rounded-t-md text-xs sm:text-sm font-medium transition-all duration-200 flex items-center gap-1.5 relative cursor-pointer",
                         activeTab === "cadastro"
@@ -170,16 +161,15 @@ export default function ProntuarioContainer({
                 >
                     <User className="h-4 w-4" />
                     Ficha Cadastral
-                </button>
+                </Link>
             </div>
 
             <div className="w-full bg-white rounded-md border p-4 sm:p-6 shadow-sm">
                 {activeTab === "odontograma" && <OdontogramaTab />}
                 {activeTab === "evolucao" && (
                     <EvolucaoList
-                        initialItems={initialHistory}
+                        initialItems={initialHistory ?? []}
                         patientId={patientId}
-                        apiUrl={`/api/admin/pacientes/${patientId}/historico`}
                     />
                 )}
                 {activeTab === "anamnese" && <AnamneseTab patientId={patientId} initialAnamnese={initialAnamnese} />}
