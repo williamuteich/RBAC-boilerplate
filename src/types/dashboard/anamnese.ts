@@ -20,6 +20,11 @@ export interface IPatient {
     anamneses?: IAnamnese[];
 }
 
+export interface AnamneseTabProps {
+    patientId: string;
+    initialAnamnese: IAnamnese | null;
+}
+
 export interface IPatientHistory {
     id: string;
     patientId: string;

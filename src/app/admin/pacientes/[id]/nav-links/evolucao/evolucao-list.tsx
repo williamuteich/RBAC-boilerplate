@@ -5,27 +5,20 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { CalendarDays, ClipboardList, Clock, Pencil, Activity, Plus, Trash2 } from "lucide-react";
-import { EvolucaoListProps, HistoricoPatient } from "@/src/types/dashboard/pacientes";
+import { EvolucaoItemProps, EvolucaoListProps, HistoricoPatient } from "@/src/types/dashboard/pacientes";
 import { DeleteDialogGeneric } from "@/src/app/components/delete-dialog-generic";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-interface EvolucaoItemProps {
-    evolucao: HistoricoPatient;
-    apiUrl: string;
-    onUpdate: (id: string, description: string) => void;
-    onDelete: (id: string) => void;
-}
 
 function EvolucaoItem({ evolucao, apiUrl, onUpdate, onDelete }: EvolucaoItemProps) {
     const [editOpen, setEditOpen] = useState(false);
@@ -78,7 +71,7 @@ function EvolucaoItem({ evolucao, apiUrl, onUpdate, onDelete }: EvolucaoItemProp
             <div className="absolute -left-[32px] top-1.5 w-4 h-4 rounded-full bg-blue-50 border-2 border-blue-600 shadow-sm flex items-center justify-center ring-4 ring-white">
                 <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
             </div>
-            
+
             <div className="bg-slate-50/40 hover:bg-white border hover:border-slate-200 rounded-lg p-3 transition-all duration-300 shadow-sm hover:shadow-slate-100/50 flex gap-4 items-start justify-between group">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3 text-[11px] font-bold text-slate-500">
@@ -98,7 +91,7 @@ function EvolucaoItem({ evolucao, apiUrl, onUpdate, onDelete }: EvolucaoItemProp
                 </div>
 
                 <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-all duration-300 shrink-0">
-                    
+
                     <Dialog open={editOpen} onOpenChange={setEditOpen}>
                         <DialogTrigger render={
                             <button

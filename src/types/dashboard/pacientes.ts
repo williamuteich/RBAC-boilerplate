@@ -47,6 +47,13 @@ export interface EvolucaoListProps {
   apiUrl: string;
 }
 
+export interface EvolucaoItemProps {
+  evolucao: HistoricoPatient;
+  apiUrl: string;
+  onUpdate: (id: string, description: string) => void;
+  onDelete: (id: string) => void;
+}
+
 export interface Appointment {
   id: number;
   date: string;

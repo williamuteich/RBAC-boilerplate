@@ -3,7 +3,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { requirePermission } from "@/src/lib/auth-helpers-server";
-import ProntuarioContainer from "./components/prontuario-container";
+import ProntuarioContainer from "./nav-links/prontuario-container";
 
 export default async function ProntuarioPage({
     params,

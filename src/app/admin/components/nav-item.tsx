@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { NavItemProps } from "@/src/types/dashboard/components";

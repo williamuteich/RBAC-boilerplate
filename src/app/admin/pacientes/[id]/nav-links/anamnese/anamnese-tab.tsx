@@ -7,33 +7,28 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { 
-    HeartPulse, 
-    AlertTriangle, 
-    Pill, 
-    ShieldCheck, 
+import {
+    HeartPulse,
+    AlertTriangle,
+    Pill,
+    ShieldCheck,
     Plus,
     Trash2,
     Save,
     Loader2
 } from "lucide-react";
 import { saveAnamnesePaciente } from "@/src/services/pacientes";
-import { IAnamnese, IAnamneseDisease, IAnamneseAllergy, IContinuousMedication } from "@/src/types/dashboard/anamnese";
-
-interface AnamneseTabProps {
-    patientId: string;
-    initialAnamnese: IAnamnese | null;
-}
+import { IAnamneseDisease, IAnamneseAllergy, IContinuousMedication, AnamneseTabProps } from "@/src/types/dashboard/anamnese";
 
 export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
-    
+
     const [requiresMedicalClearance, setRequiresMedicalClearance] = useState(initialAnamnese?.requiresMedicalClearance ?? false);
     const [doctorRecommendations, setDoctorRecommendations] = useState(initialAnamnese?.doctorRecommendations ?? "");
     const [panicOrBehaviorNotes, setPanicOrBehaviorNotes] = useState(initialAnamnese?.panicOrBehaviorNotes ?? "");
     const [observations, setObservations] = useState(initialAnamnese?.observations ?? "");
-    
+
     const [diseases, setDiseases] = useState<Omit<IAnamneseDisease, "id" | "anamneseId">[]>(initialAnamnese?.diseases ?? []);
     const [allergies, setAllergies] = useState<Omit<IAnamneseAllergy, "id" | "anamneseId">[]>(initialAnamnese?.allergies ?? []);
     const [medications, setMedications] = useState<Omit<IContinuousMedication, "id" | "anamneseId">[]>(initialAnamnese?.medications ?? []);
@@ -88,7 +83,7 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
 
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         const hasEmptyDiseaseName = diseases.some(d => !d.name.trim());
         const hasEmptyAllergySubstance = allergies.some(a => !a.substance.trim());
         const hasEmptyMedicationName = medications.some(m => !m.medication.trim());
@@ -107,11 +102,11 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
                     observations: observations.trim() || undefined,
                     diseases: diseases.map(d => ({ name: d.name.trim(), observations: d.observations?.trim() || undefined })),
                     allergies: allergies.map(a => ({ substance: a.substance.trim(), reaction: a.reaction?.trim() || undefined })),
-                    medications: medications.map(m => ({ 
-                        medication: m.medication.trim(), 
-                        dosage: m.dosage?.trim() || undefined, 
-                        frequency: m.frequency?.trim() || undefined, 
-                        medicalFollowUp: m.medicalFollowUp?.trim() || undefined 
+                    medications: medications.map(m => ({
+                        medication: m.medication.trim(),
+                        dosage: m.dosage?.trim() || undefined,
+                        frequency: m.frequency?.trim() || undefined,
+                        medicalFollowUp: m.medicalFollowUp?.trim() || undefined
                     })),
                 };
 
@@ -153,17 +148,17 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                
+
                 <div className="bg-slate-50/40 border border-slate-100 rounded-xl p-4 flex flex-col min-h-[220px]">
                     <div className="flex items-center justify-between border-b pb-2 mb-3">
                         <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                             <HeartPulse className="h-4 w-4 text-rose-500" />
                             Condições Clínicas
                         </span>
-                        <Button 
-                            type="button" 
-                            size="icon-xs" 
-                            variant="ghost" 
+                        <Button
+                            type="button"
+                            size="icon-xs"
+                            variant="ghost"
                             onClick={addDisease}
                             className="h-7 w-7 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-full"
                         >
@@ -174,9 +169,9 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
                     {diseases.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-200 rounded-lg bg-white/50">
                             <p className="text-[10px] font-medium text-slate-400">Nenhuma doença registrada.</p>
-                            <Button 
-                                type="button" 
-                                variant="link" 
+                            <Button
+                                type="button"
+                                variant="link"
                                 onClick={addDisease}
                                 className="text-[10px] text-rose-600 font-bold h-auto p-0 mt-1"
                             >
@@ -225,10 +220,10 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
                             <AlertTriangle className="h-4 w-4 text-amber-500" />
                             Alergias & Reações
                         </span>
-                        <Button 
-                            type="button" 
-                            size="icon-xs" 
-                            variant="ghost" 
+                        <Button
+                            type="button"
+                            size="icon-xs"
+                            variant="ghost"
                             onClick={addAllergy}
                             className="h-7 w-7 text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-full"
                         >
@@ -239,9 +234,9 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
                     {allergies.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-200 rounded-lg bg-white/50">
                             <p className="text-[10px] font-medium text-slate-400">Sem alergias catalogadas.</p>
-                            <Button 
-                                type="button" 
-                                variant="link" 
+                            <Button
+                                type="button"
+                                variant="link"
                                 onClick={addAllergy}
                                 className="text-[10px] text-amber-600 font-bold h-auto p-0 mt-1"
                             >
@@ -290,10 +285,10 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
                             <Pill className="h-4 w-4 text-blue-500" />
                             Uso Contínuo (Fármacos)
                         </span>
-                        <Button 
-                            type="button" 
-                            size="icon-xs" 
-                            variant="ghost" 
+                        <Button
+                            type="button"
+                            size="icon-xs"
+                            variant="ghost"
                             onClick={addMedication}
                             className="h-7 w-7 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full"
                         >
@@ -304,9 +299,9 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
                     {medications.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-200 rounded-lg bg-white/50">
                             <p className="text-[10px] font-medium text-slate-400">Sem uso de medicação contínua.</p>
-                            <Button 
-                                type="button" 
-                                variant="link" 
+                            <Button
+                                type="button"
+                                variant="link"
                                 onClick={addMedication}
                                 className="text-[10px] text-blue-600 font-bold h-auto p-0 mt-1"
                             >
@@ -371,7 +366,7 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-                
+
                 <div className="space-y-3 bg-slate-50/20 border rounded-xl p-4 shadow-xs">
                     <Label htmlFor="observations" className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
                         Observações e Anotações Gerais do Prontuário
@@ -387,7 +382,7 @@ export default function AnamneseTab({ patientId, initialAnamnese }: AnamneseTabP
                 </div>
 
                 <div className="bg-white border rounded-xl p-4 flex flex-col justify-between gap-4">
-                    
+
                     <div className="flex items-start justify-between bg-slate-50/50 hover:bg-slate-50 border border-slate-100 rounded-xl p-3.5 transition-all select-none">
                         <div className="space-y-1">
                             <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
