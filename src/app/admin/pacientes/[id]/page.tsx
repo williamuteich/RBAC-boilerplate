@@ -1,4 +1,4 @@
-import { getPaciente, getHistoricoPaciente, getAnamnesePaciente } from "@/src/services/pacientes";
+import { getPaciente, getHistoricoPaciente, getAnamnesePaciente, getOdontogramaPaciente } from "@/src/services/pacientes";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -22,10 +22,11 @@ async function ProntuarioContent({
         ? tab
         : "odontograma";
 
-    const [paciente, historicoPaciente, anamnese] = await Promise.all([
+    const [paciente, historicoPaciente, anamnese, odontogram] = await Promise.all([
         getPaciente(id),
         activeTab === "evolucao" ? getHistoricoPaciente(id) : Promise.resolve(null),
-        activeTab === "anamnese" ? getAnamnesePaciente(id) : Promise.resolve(null)
+        activeTab === "anamnese" ? getAnamnesePaciente(id) : Promise.resolve(null),
+        activeTab === "odontograma" ? getOdontogramaPaciente(id) : Promise.resolve(null),
     ]);
 
     if (!paciente) {
@@ -51,6 +52,7 @@ async function ProntuarioContent({
             activeTab={activeTab}
             initialHistory={activeTab === "evolucao" ? historicoPaciente || [] : undefined}
             initialAnamnese={activeTab === "anamnese" ? anamnese : undefined}
+            initialOdontogram={activeTab === "odontograma" ? odontogram : undefined}
         />
     );
 }

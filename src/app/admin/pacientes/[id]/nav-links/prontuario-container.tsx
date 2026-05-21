@@ -16,7 +16,8 @@ export default function ProntuarioContainer({
     initialHistory,
     patientId,
     activeTab,
-    initialAnamnese
+    initialAnamnese,
+    initialOdontogram,
 }: ProntuarioContainerProps) {
     const calcIdade = (birthDate: string) => {
         if (!birthDate) return 0;
@@ -166,7 +167,7 @@ export default function ProntuarioContainer({
             </div>
 
             <div className="w-full bg-white rounded-md border p-4 sm:p-6 shadow-sm">
-                {activeTab === "odontograma" && <OdontogramaTab />}
+                {activeTab === "odontograma" && <OdontogramaTab patientId={patientId} initialOdontogram={initialOdontogram ?? null} />}
                 {activeTab === "evolucao" && (
                     <EvolucaoList
                         initialItems={initialHistory ?? []}

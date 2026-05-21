@@ -1,5 +1,6 @@
 import { FormEvent } from "react";
 import { IAnamnese } from "./anamnese";
+import { IOdontogram } from "@/src/schemas/odontograma";
 
 export interface Paciente {
   id: string;
@@ -33,7 +34,7 @@ export interface PacienteFilters {
   cpf?: string;
 }
 
-export type ToothStatus = "healthy" | "cavity" | "restored" | "extracted" | "missing";
+export type ToothStatus = "SAUDAVEL" | "CARIE" | "ENDODONTIA" | "PROTESE" | "IMPLANTE" | "EXTRAIDO" | "RETIDO" | "OUTRO";
 
 export interface ToothInfo {
   id: number;
@@ -77,6 +78,7 @@ export interface ProntuarioContainerProps {
   activeTab: string;
   initialHistory?: HistoricoPatient[];
   initialAnamnese?: IAnamnese | null;
+  initialOdontogram?: IOdontogram | null;
 }
 
 export interface OdontogramaTabProps {

@@ -3,7 +3,7 @@ import { HistoricoPatient, Paciente, PacienteFilters, PacientesResponse } from "
 import { IAnamnese } from "@/src/types/dashboard/anamnese";
 import { IOdontogram } from "@/src/types/dashboard/odontograma";
 import { headers } from "next/headers";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 const API_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
@@ -156,8 +156,9 @@ export async function getOdontogramaPaciente(patientId: string): Promise<IOdonto
 
 export async function saveOdontogramaPaciente(patientId: string, data: any): Promise<{ success: boolean; data?: IOdontogram; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const isUpdate = !!data.id;
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/odontograma`, {
-        method: "POST",
+        method: isUpdate ? "PUT" : "POST",
         headers: { Cookie: cookie, "Content-Type": "application/json" },
         body: JSON.stringify(data),
     });
