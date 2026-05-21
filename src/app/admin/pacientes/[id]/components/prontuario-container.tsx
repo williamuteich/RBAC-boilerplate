@@ -90,7 +90,7 @@ export default function ProntuarioContainer({
                     <div className="min-w-0">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status do Paciente</p>
                         <p className="text-sm font-bold text-slate-800 mt-0.5">{paciente.active ? "Cadastro Ativo" : "Inativo"}</p>
-                        <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">Último Acesso: Hoje</p>
+                        <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">Última alteração no cadastro: {new Date(paciente.updatedAt).toLocaleDateString()}</p>
                     </div>
                 </div>
 

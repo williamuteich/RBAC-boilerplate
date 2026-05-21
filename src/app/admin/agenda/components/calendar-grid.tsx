@@ -93,7 +93,7 @@ export default function CalendarGrid({ appointments, view, onStatusChange }: Cal
         <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 w-full">
             <div className="lg:col-span-2 bg-white border rounded-xl p-4 flex flex-col gap-4 shadow-sm h-fit">
                 <div className="flex items-center justify-between border-b pb-2">
-                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider capitalize">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                         {currentMonthName}
                     </span>
                     <div className="flex gap-1">
