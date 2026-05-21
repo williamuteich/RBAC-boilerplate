@@ -4,6 +4,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { requirePermission } from "@/src/lib/auth-helpers-server";
 import ProntuarioContainer from "./nav-links/prontuario-container";
+import { Suspense } from "react";
+import { ProntuarioSkeleton } from "./components/prontuario-skeleton";
 
 export default async function ProntuarioPage({
     params,
@@ -44,12 +46,14 @@ export default async function ProntuarioPage({
     }
 
     return (
-        <ProntuarioContainer
-            paciente={paciente}
-            patientId={id}
-            activeTab={activeTab}
-            initialHistory={activeTab === "evolucao" ? historicoPaciente || [] : undefined}
-            initialAnamnese={activeTab === "anamnese" ? anamnese : undefined}
-        />
+        <Suspense fallback={<ProntuarioSkeleton />}>
+            <ProntuarioContainer
+                paciente={paciente}
+                patientId={id}
+                activeTab={activeTab}
+                initialHistory={activeTab === "evolucao" ? historicoPaciente || [] : undefined}
+                initialAnamnese={activeTab === "anamnese" ? anamnese : undefined}
+            />
+        </Suspense>
     );
 }

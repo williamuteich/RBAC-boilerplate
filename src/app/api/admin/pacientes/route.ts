@@ -40,11 +40,27 @@ async function processData(data: any, fields: typeof ENCRYPTED_FIELDS | typeof D
 const encryptData = (data: any) => processData(data, ENCRYPTED_FIELDS);
 const decryptData = (data: any) => processData(data, DECRYPT_FIELDS);
 
-export async function GET(request: Request) {
+async function getPacientesFromDb(where: any, page: number, limit: number) {
     "use cache";
     cacheLife("hours");
-    cacheTag("pacientes-list", "max");
+    cacheTag("pacientes-list");
 
+    const dataRequisicao = new Date().toISOString();
+
+    const [pacientes, total] = await Promise.all([
+        prisma.patient.findMany({
+            where,
+            orderBy: { name: "asc" },
+            skip: (page - 1) * limit,
+            take: limit,
+        }),
+        prisma.patient.count({ where }),
+    ]);
+
+    return { pacientes, total, dataRequisicao };
+}
+
+export async function GET(request: Request) {
     const session = await checkAdminApi();
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     if (!hasPermission(session, "pacientes", "visualizar")) {
@@ -64,15 +80,7 @@ export async function GET(request: Request) {
         ...(searchCpf && { cpf: searchCpf }),
     };
 
-    const [pacientes, total] = await Promise.all([
-        prisma.patient.findMany({
-            where,
-            orderBy: { name: "asc" },
-            skip: (page - 1) * limit,
-            take: limit,
-        }),
-        prisma.patient.count({ where }),
-    ]);
+    const { pacientes, total, dataRequisicao } = await getPacientesFromDb(where, page, limit);
 
     const decryptedPacientes = await Promise.all(pacientes.map(p => decryptData(p)));
 
@@ -82,12 +90,11 @@ export async function GET(request: Request) {
         page,
         totalPages: Math.ceil(total / limit),
         limit,
+        dataRequisicao,
     });
 }
 
 async function _POST(request: Request) {
-    "use cache"
-
     const session = await checkAdminApi();
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     if (!hasPermission(session, "pacientes", "criar")) {

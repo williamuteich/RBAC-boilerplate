@@ -4,6 +4,7 @@ import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { pacienteSchema } from "@/src/schemas/paciente";
 import { withAudit } from "@/src/lib/audit";
 import { encrypt, decrypt, encryptDeterministic } from "@/src/lib/encrypted-fields";
+import { revalidateTag } from "next/cache";
 
 type Ctx = { params: Promise<{ id: string }> };
 const getId = async (ctx: Ctx) => (await ctx.params).id;
@@ -85,6 +86,8 @@ async function _PUT(request: Request, ctx: Ctx) {
             },
         });
 
+        revalidateTag("pacientes-list", "max");
+
         return NextResponse.json(await decryptData(paciente));
     } catch (error: any) {
         if (error.code === "P2002") return NextResponse.json({ error: "CPF já cadastrado" }, { status: 400 });
@@ -104,6 +107,7 @@ async function _DELETE(_req: Request, ctx: Ctx) {
     const id = await getId(ctx);
     try {
         const deletedPaciente = await prisma.patient.delete({ where: { id } });
+        revalidateTag("pacientes-list", "max");
         return NextResponse.json(await decryptData(deletedPaciente));
     } catch {
         return NextResponse.json({ error: "Paciente não encontrado" }, { status: 404 });

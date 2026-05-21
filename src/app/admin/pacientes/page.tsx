@@ -10,11 +10,16 @@ export const metadata = {
     description: "Gerencie os pacientes da clínica.",
 };
 
-export default async function PacientesAdminPage() {
+async function PacientesContent() {
     await requirePermission("pacientes", "visualizar");
-
     const initialData = await getPacientes();
 
+    return (
+        <PacientesManagement initialData={initialData ?? { pacientes: [], total: 0, page: 1, limit: 20, totalPages: 0 }} />
+    );
+}
+
+export default async function PacientesAdminPage() {
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
@@ -28,8 +33,9 @@ export default async function PacientesAdminPage() {
             </div>
 
             <Suspense fallback={<PacientesSkeleton />}>
-                <PacientesManagement initialData={initialData ?? { pacientes: [], total: 0, page: 1, limit: 20, totalPages: 0 }} />
+                <PacientesContent />
             </Suspense>
         </div>
     );
 }
+
