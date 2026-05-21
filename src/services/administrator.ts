@@ -72,7 +72,7 @@ export async function createAdmin(data: { name: string; email: string; roleId: s
     return { success: true };
 }
 
-export async function updateAdmin(id: number, data: { name: string; email: string; roleId: string; active: boolean }): Promise<{ success: boolean; error?: string }> {
+export async function updateAdmin(id: string, data: { name: string; email: string; roleId: string; active: boolean }): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/usuarios/${id}`, {
         method: "PUT",
@@ -91,7 +91,7 @@ export async function updateAdmin(id: number, data: { name: string; email: strin
     return { success: true };
 }
 
-export async function deleteAdmin(id: number): Promise<{ success: boolean; error?: string }> {
+export async function deleteAdmin(id: string): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/usuarios/${id}`, {
         method: "DELETE",

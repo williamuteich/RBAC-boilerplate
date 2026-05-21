@@ -37,7 +37,7 @@ interface CustomTooth {
     notes: string;
 }
 
-export default function OdontogramaTab() {
+export default function OdontogramaTab({ patientId, initialOdontogram }: { patientId?: string, initialOdontogram?: any }) {
     const [dentitionType, setDentitionType] = useState<"adult" | "child">("adult");
 
     const [teeth, setTeeth] = useState<Record<number, ToothInfo>>(() => {

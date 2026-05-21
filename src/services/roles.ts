@@ -35,7 +35,7 @@ export async function createRole(data: { name: string; description: string; perm
     return { success: true };
 }
 
-export async function updateRole(id: number, data: { name: string; description: string; permissions: { resource: string; action: string }[] }): Promise<{ success: boolean; error?: string }> {
+export async function updateRole(id: string, data: { name: string; description: string; permissions: { resource: string; action: string }[] }): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/roles/${id}`, {
         method: "PUT",
@@ -54,7 +54,7 @@ export async function updateRole(id: number, data: { name: string; description: 
     return { success: true };
 }
 
-export async function deleteRole(id: number): Promise<{ success: boolean; error?: string }> {
+export async function deleteRole(id: string): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/roles/${id}`, {
         method: "DELETE",

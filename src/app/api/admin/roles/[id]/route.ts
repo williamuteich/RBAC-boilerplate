@@ -20,11 +20,16 @@ async function _DELETE(
 
     try {
         const roleToDelete = await prisma.adminRole.findUnique({
-            where: { id }
+            where: { id },
+            include: { _count: { select: { administrators: true } } }
         });
 
         if (roleToDelete?.name === "Admin") {
             return NextResponse.json({ error: "O cargo de Admin não pode ser removido." }, { status: 403 });
+        }
+
+        if (roleToDelete?._count?.administrators && roleToDelete._count.administrators > 0) {
+            return NextResponse.json({ error: "Existem administradores vinculados a este cargo. Não é possível excluir." }, { status: 400 });
         }
 
         await prisma.adminRole.delete({

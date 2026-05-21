@@ -1,12 +1,12 @@
 export interface Admin {
-    id: number;
+    id: string;
     email: string;
     name: string | null;
     active: boolean;
     createdAt: string;
     image: string | null;
     role: {
-        id: number;
+        id: string;
         name: string;
     } | null;
     lastLogin: string | null;
@@ -20,7 +20,7 @@ export interface PermissionToRole {
 }
 
 export interface Role {
-    id: number;
+    id: string;
     name: string;
     description: string | null;
     permissions: PermissionToRole[];

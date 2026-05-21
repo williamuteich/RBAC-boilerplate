@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
     Table,
     TableBody,
@@ -46,6 +47,7 @@ export function AdminManagement({
     initialData: AdminsResponse,
     initialRoles: Role[]
 }) {
+    const router = useRouter();
     const [data, setData] = useState<AdminsResponse>(initialData);
     const [filters, setFilters] = useState<AdminFilters>({
         page: 1,
@@ -94,6 +96,7 @@ export function AdminManagement({
             if (res.success) {
                 setOpen(false);
                 fetchAdmins(filters);
+                router.refresh();
             } else {
                 setError(res.error || "Erro ao salvar");
             }
@@ -204,8 +207,11 @@ export function AdminManagement({
                                                     <Button variant="ghost" size="icon-sm" onClick={() => { setEditingAdmin(admin); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
                                                     <DeleteDialogGeneric
                                                         id={String(admin.id)}
-                                                        onDelete={async (idStr) => deleteAdmin(Number(idStr))}
-                                                        onSuccess={() => fetchAdmins(filters)}
+                                                        onDelete={async (idStr) => deleteAdmin(idStr)}
+                                                        onSuccess={() => {
+                                                            fetchAdmins(filters);
+                                                            router.refresh();
+                                                        }}
                                                         title="Remover Administrador"
                                                         description={`Remover ${admin.name || admin.email}?`}
                                                         successMessage="Administrador removido com sucesso!"

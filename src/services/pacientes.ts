@@ -58,6 +58,7 @@ export async function updatePaciente(id: string, data: Partial<Paciente>): Promi
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao atualizar paciente" };
     revalidatePath("/admin/pacientes");
+    revalidatePath(`/admin/pacientes/${id}`);
     return { success: true };
 }
 

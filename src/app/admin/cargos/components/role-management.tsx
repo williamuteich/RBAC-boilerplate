@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
     Table,
     TableBody,
@@ -25,11 +26,19 @@ import { Plus, Loader2, ShieldAlert, Key, CheckCircle2, Pencil, Trash2 } from "l
 import { Role, PermissionToRole } from "@/src/types/dashboard/admins";
 import { ALL_RESOURCES, ALL_ACTIONS } from "@/src/lib/navigation";
 import { ViewPermissions } from "./view-permissions";
-import { createRole, updateRole, deleteRole } from "@/src/services/roles";
+import { createRole, updateRole, deleteRole, getRoles } from "@/src/services/roles";
 import { DeleteDialogGeneric } from "@/src/app/components/delete-dialog-generic";
 
 export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
+    const router = useRouter();
+    const [roles, setRoles] = useState<Role[]>(initialRoles);
     const [isPending, startTransition] = useTransition();
+
+    const fetchRolesLocally = async () => {
+        const newRoles = await getRoles();
+        if (newRoles) setRoles(newRoles);
+    };
+
     const [open, setOpen] = useState(false);
     const [error, setError] = useState("");
 
@@ -58,6 +67,8 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
             const res = editingRole ? await updateRole(editingRole.id, data) : await createRole(data);
             if (res.success) {
                 setOpen(false);
+                fetchRolesLocally();
+                router.refresh();
             } else {
                 setError(res.error || "Erro ao salvar");
             }
@@ -138,7 +149,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {initialRoles.map((role) => (
+                        {roles.map((role) => (
                             <TableRow key={role.id} className={`hover:bg-muted/30 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
                                 <TableCell className="font-bold text-slate-800">{role.name}</TableCell>
                                 <TableCell className="text-sm text-slate-500">{role.description || "-"}</TableCell>
@@ -150,8 +161,11 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                                 <Button variant="ghost" size="icon-sm" onClick={() => { setEditingRole(role); setSelectedPermissions(role.permissions.map((p: PermissionToRole) => ({ resource: p.permission.resource, action: p.permission.action }))); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
                                                 <DeleteDialogGeneric
                                                     id={String(role.id)}
-                                                    onDelete={async (idStr) => deleteRole(Number(idStr))}
-                                                    onSuccess={() => { }}
+                                                    onDelete={async (idStr) => deleteRole(idStr)}
+                                                    onSuccess={() => {
+                                                        fetchRolesLocally();
+                                                        router.refresh();
+                                                    }}
                                                     title="Remover Cargo"
                                                     description={`Remover ${role.name}?`}
                                                     successMessage="Cargo removido com sucesso!"
