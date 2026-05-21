@@ -19,7 +19,7 @@ model Administrator {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  roleId    String?   @db.ObjectId
+  roleId    String?    @db.ObjectId
   role      AdminRole? @relation(fields: [roleId], references: [id])
   logAdmins LogAdmin[]
 }
@@ -75,22 +75,23 @@ model LogAdmin {
 }
 
 model Patient {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  cpf            String   @unique
-  birthDate      DateTime
-  phone          String
-  zipCode        String
-  state          String
-  city           String
-  street         String
-  number         String
-  complement     String?
-  active         Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  cpf        String   @unique
+  birthDate  DateTime
+  phone      String
+  zipCode    String
+  state      String
+  city       String
+  street     String
+  number     String
+  complement String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  history        PatientHistory[]
+  history   PatientHistory[]
+  anamneses Anamnese[]
 }
 
 model PatientHistory {
@@ -100,4 +101,63 @@ model PatientHistory {
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Anamnese {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  patientId String  @db.ObjectId
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  observations String?
+
+  doctorRecommendations String?
+
+  panicOrBehaviorNotes String?
+
+  requiresMedicalClearance Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  diseases    AnamneseDisease[]
+  allergies   AnamneseAllergy[]
+  medications ContinuousMedication[]
+}
+
+model AnamneseDisease {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  anamneseId String   @db.ObjectId
+  anamnese   Anamnese @relation(fields: [anamneseId], references: [id], onDelete: Cascade)
+
+  name String
+
+  observations String?
+}
+
+model AnamneseAllergy {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  anamneseId String   @db.ObjectId
+  anamnese   Anamnese @relation(fields: [anamneseId], references: [id], onDelete: Cascade)
+
+  substance String
+
+  reaction String?
+}
+
+model ContinuousMedication {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  anamneseId String   @db.ObjectId
+  anamnese   Anamnese @relation(fields: [anamneseId], references: [id], onDelete: Cascade)
+
+  medication String
+
+  dosage String?
+
+  frequency String?
+
+  medicalFollowUp String?
 }
