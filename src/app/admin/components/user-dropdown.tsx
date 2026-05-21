@@ -8,7 +8,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Settings, LogOut, ChevronDown } from "lucide-react";
+import { LogOut, ChevronDown } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
 
@@ -43,7 +43,7 @@ export function UserDropdown({ session }: { session: Session }) {
 
                 <div className="py-1">
                     <DropdownMenuItem
-                        onClick={() => signOut({ callbackUrl: "/" })}
+                        onClick={() => signOut({ callbackUrl: "/login" })}
                         className="
                             gap-3
                             py-2
