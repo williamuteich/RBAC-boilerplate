@@ -20,12 +20,15 @@ const lowerTeethLeftChild = [75, 74, 73, 72, 71];
 const lowerTeethRightChild = [81, 82, 83, 84, 85];
 
 export const statusConfig = {
-    healthy: { label: "Saudável", color: "bg-emerald-500", border: "border-emerald-500", text: "text-emerald-700", bgLight: "bg-emerald-50/60" },
-    cavity: { label: "Cárie / Canal", color: "bg-rose-500", border: "border-rose-500", text: "text-rose-700", bgLight: "bg-rose-50/60" },
-    restored: { label: "Restaurado", color: "bg-blue-500", border: "border-blue-500", text: "text-blue-700", bgLight: "bg-blue-50/60" },
-    extracted: { label: "Implante", color: "bg-amber-500", border: "border-amber-500", text: "text-amber-700", bgLight: "bg-amber-50/60" },
-    missing: { label: "Ausente", color: "bg-slate-400", border: "border-slate-400", text: "text-slate-700", bgLight: "bg-slate-50" },
-};
+    SAUDAVEL: { label: "Saudável", color: "bg-emerald-500", border: "border-emerald-500", text: "text-emerald-700", bgLight: "bg-emerald-50/60" },
+    CARIE: { label: "Cárie", color: "bg-rose-500", border: "border-rose-500", text: "text-rose-700", bgLight: "bg-rose-50/60" },
+    ENDODONTIA: { label: "Endodontia", color: "bg-blue-500", border: "border-blue-500", text: "text-blue-700", bgLight: "bg-blue-50/60" },
+    PROTESE: { label: "Prótese", color: "bg-violet-500", border: "border-violet-500", text: "text-violet-700", bgLight: "bg-violet-50/60" },
+    IMPLANTE: { label: "Implante", color: "bg-amber-500", border: "border-amber-500", text: "text-amber-700", bgLight: "bg-amber-50/60" },
+    EXTRAIDO: { label: "Extraído", color: "bg-slate-400", border: "border-slate-400", text: "text-slate-700", bgLight: "bg-slate-50" },
+    RETIDO: { label: "Retido", color: "bg-orange-500", border: "border-orange-500", text: "text-orange-700", bgLight: "bg-orange-50/60" },
+    OUTRO: { label: "Outro", color: "bg-indigo-500", border: "border-indigo-500", text: "text-indigo-700", bgLight: "bg-indigo-50/60" },
+} satisfies Record<ToothStatus, { label: string; color: string; border: string; text: string; bgLight: string }>;
 
 interface CustomTooth {
     id: string;
@@ -44,19 +47,19 @@ export default function OdontogramaTab() {
             ...upperTeethRightChild, ...upperTeethLeftChild, ...lowerTeethLeftChild, ...lowerTeethRightChild
         ];
         allTeeth.forEach(t => {
-            let status: ToothStatus = "healthy";
+            let status: ToothStatus = "SAUDAVEL";
             let notes = "";
-            if (t === 16) { status = "cavity"; notes = "Cárie oclusal detectada"; }
-            else if (t === 14) { status = "restored"; notes = "Restauração de resina oclusal realizada"; }
-            else if (t === 36) { status = "extracted"; notes = "Implante osseointegrado instalado em 2024"; }
-            else if (t === 38 || t === 48) { status = "missing"; notes = "Dente do siso não erupcionado / ausente"; }
+            if (t === 16) { status = "CARIE"; notes = "Cárie oclusal detectada"; }
+            else if (t === 14) { status = "ENDODONTIA"; notes = "Restauração de resina oclusal realizada"; }
+            else if (t === 36) { status = "IMPLANTE"; notes = "Implante osseointegrado instalado em 2024"; }
+            else if (t === 38 || t === 48) { status = "RETIDO"; notes = "Dente do siso não erupcionado / ausente"; }
             initial[t] = { id: t, status, notes };
         });
         return initial;
     });
 
     const [customTeeth, setCustomTeeth] = useState<CustomTooth[]>([
-        { id: "Supranumerário #1", description: "Dente extra entre 11 e 21 (Mesiodens)", status: "healthy", notes: "Acompanhar erupção ou possível extração futura" }
+        { id: "Supranumerário #1", description: "Dente extra entre 11 e 21 (Mesiodens)", status: "OUTRO", notes: "Acompanhar erupção ou possível extração futura" }
     ]);
 
     const [selectedTooth, setSelectedTooth] = useState<number | null>(16);
@@ -101,7 +104,7 @@ export default function OdontogramaTab() {
         const newTooth: CustomTooth = {
             id: newId,
             description: "Dente extra detectado",
-            status: "healthy",
+            status: "SAUDAVEL",
             notes: ""
         };
         setCustomTeeth(prev => [...prev, newTooth]);
@@ -122,10 +125,10 @@ export default function OdontogramaTab() {
     const activeLowerRight = dentitionType === "adult" ? lowerTeethRight : lowerTeethRightChild;
 
     const currentSelectedStatus = selectedTooth !== null
-        ? teeth[selectedTooth]?.status || "healthy"
+        ? teeth[selectedTooth]?.status || "SAUDAVEL"
         : selectedCustomToothId !== null
-            ? customTeeth.find(ct => ct.id === selectedCustomToothId)?.status || "healthy"
-            : "healthy";
+            ? customTeeth.find(ct => ct.id === selectedCustomToothId)?.status || "SAUDAVEL"
+            : "SAUDAVEL";
 
     const currentSelectedNotes = selectedTooth !== null
         ? teeth[selectedTooth]?.notes || ""
@@ -136,14 +139,20 @@ export default function OdontogramaTab() {
     const ToothSvg = ({ toothId, active }: { toothId: number; active: boolean }) => {
         const info = teeth[toothId];
         let fillClass = "fill-emerald-500 hover:fill-emerald-600";
-        if (info?.status === "cavity") {
+        if (info?.status === "CARIE") {
             fillClass = "fill-rose-500 hover:fill-rose-600";
-        } else if (info?.status === "restored") {
+        } else if (info?.status === "ENDODONTIA") {
             fillClass = "fill-blue-500 hover:fill-blue-600";
-        } else if (info?.status === "extracted") {
+        } else if (info?.status === "PROTESE") {
+            fillClass = "fill-violet-500 hover:fill-violet-600";
+        } else if (info?.status === "IMPLANTE") {
             fillClass = "fill-amber-500 hover:fill-amber-600";
-        } else if (info?.status === "missing") {
+        } else if (info?.status === "EXTRAIDO") {
             fillClass = "fill-slate-400 hover:fill-slate-500";
+        } else if (info?.status === "RETIDO") {
+            fillClass = "fill-orange-500 hover:fill-orange-600";
+        } else if (info?.status === "OUTRO") {
+            fillClass = "fill-indigo-500 hover:fill-indigo-600";
         }
 
         return (
@@ -167,7 +176,7 @@ export default function OdontogramaTab() {
                         className={cn("transition-all duration-300", fillClass)}
                     />
                 </svg>
-                <span className={cn("w-2.5 h-2.5 rounded-full mt-2", statusConfig[info?.status || "healthy"].color)}></span>
+                <span className={cn("w-2.5 h-2.5 rounded-full mt-2", statusConfig[info?.status || "SAUDAVEL"].color)}></span>
             </button>
         );
     };
@@ -282,7 +291,7 @@ export default function OdontogramaTab() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                             {customTeeth.map((ct) => {
-                                const conf = statusConfig[ct.status || "healthy"];
+                                const conf = statusConfig[ct.status || "SAUDAVEL"];
                                 const isSelected = selectedCustomToothId === ct.id;
                                 return (
                                     <div

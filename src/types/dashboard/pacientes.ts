@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import { IAnamnese } from "./anamnese";
 import { IOdontogram } from "@/src/schemas/odontograma";
+import type { ToothStatus as OdontogramToothStatus } from "./odontograma";
 
 export interface Paciente {
   id: string;
@@ -34,7 +35,7 @@ export interface PacienteFilters {
   cpf?: string;
 }
 
-export type ToothStatus = "SAUDAVEL" | "CARIE" | "ENDODONTIA" | "PROTESE" | "IMPLANTE" | "EXTRAIDO" | "RETIDO" | "OUTRO";
+export type ToothStatus = OdontogramToothStatus;
 
 export interface ToothInfo {
   id: number;
