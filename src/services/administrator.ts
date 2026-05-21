@@ -5,6 +5,31 @@ import { revalidatePath } from "next/cache";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
+export async function getUsuariosInit(filters: AdminFilters = { page: 1, limit: 20 }): Promise<{ admins: AdminsResponse; roles: Role[] } | null> {
+    const cookie = (await headers()).get("cookie") || "";
+    const params = new URLSearchParams();
+    if (filters.page) params.set("page", String(filters.page));
+    if (filters.limit) params.set("limit", String(filters.limit));
+    if (filters.name) params.set("name", filters.name);
+
+    const res = await fetch(`${API_URL}/api/admin/usuarios/init?${params.toString()}`, {
+        headers: { Cookie: cookie }
+    });
+    if (res.status === 403 || res.status === 401) return null;
+    if (!res.ok) return null;
+    const data = await res.json();
+    return {
+        admins: {
+            admins: data.admins ?? [],
+            total: data.total ?? 0,
+            page: data.page ?? 1,
+            limit: data.limit ?? 20,
+            totalPages: data.totalPages ?? 0,
+        },
+        roles: data.roles ?? [],
+    };
+}
+
 export async function getAdmins(filters: AdminFilters = { page: 1, limit: 20 }): Promise<AdminsResponse | null> {
     const cookie = (await headers()).get("cookie") || "";
     const params = new URLSearchParams();

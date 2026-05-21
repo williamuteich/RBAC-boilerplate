@@ -1,14 +1,12 @@
 import { RoleManagement } from "./components/role-management";
 import { Key } from "lucide-react";
 import { getRoles } from "@/src/services/roles";
-import NotAuthorized from "@/src/app/components/notAuthorized";
+import { requirePermission } from "@/src/lib/auth-helpers-server";
 
 export default async function AdminCargosPage() {
-    const initialRoles = await getRoles();
+    await requirePermission("cargos", "visualizar");
 
-    if (initialRoles === null) {
-        return <NotAuthorized />;
-    }
+    const initialRoles = await getRoles();
 
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -22,7 +20,7 @@ export default async function AdminCargosPage() {
                 </p>
             </div>
 
-            <RoleManagement initialRoles={initialRoles} />
+            <RoleManagement initialRoles={initialRoles ?? []} />
         </div>
     );
 }

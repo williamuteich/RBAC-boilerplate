@@ -1,15 +1,12 @@
 import { AdminManagement } from "./components/admin-management";
 import { ShieldCheck } from "lucide-react";
-import { getAdmins, getRoles } from "@/src/services/administrator";
-import NotAuthorized from "@/src/app/components/notAuthorized";
+import { getUsuariosInit } from "@/src/services/administrator";
+import { requirePermission } from "@/src/lib/auth-helpers-server";
 
 export default async function UsuariosAdminPage() {
-    const initialAdmins = await getAdmins();
-    const initialRoles = await getRoles();
+    await requirePermission("administradores", "visualizar");
 
-    if (initialAdmins === null || initialRoles === null) {
-        return <NotAuthorized />;
-    }
+    const data = await getUsuariosInit();
 
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -24,8 +21,8 @@ export default async function UsuariosAdminPage() {
             </div>
 
             <AdminManagement
-                initialData={initialAdmins}
-                initialRoles={initialRoles}
+                initialData={data?.admins ?? { admins: [], total: 0, page: 1, limit: 20, totalPages: 0 }}
+                initialRoles={data?.roles ?? []}
             />
         </div>
     );

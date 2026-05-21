@@ -2,6 +2,7 @@ import { getPaciente, getHistoricoPaciente, getAnamnesePaciente } from "@/src/se
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { requirePermission } from "@/src/lib/auth-helpers-server";
 import ProntuarioContainer from "./components/prontuario-container";
 
 export default async function ProntuarioPage({
@@ -11,6 +12,9 @@ export default async function ProntuarioPage({
     params: Promise<{ id: string }>;
     searchParams: Promise<{ tab?: string }>;
 }) {
+
+    await requirePermission("pacientes", "visualizar");
+
     const { id } = await params;
     const { tab = "odontograma" } = await searchParams;
     const [paciente, historicoPaciente, anamnese] = await Promise.all([
