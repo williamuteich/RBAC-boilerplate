@@ -17,7 +17,8 @@ export default function ProntuarioContainer({
     paciente,
     initialHistory,
     patientId,
-    initialTab
+    initialTab,
+    initialAnamnese
 }: ProntuarioContainerProps) {
     const [activeTab, setActiveTab] = useState(initialTab);
 
@@ -181,7 +182,7 @@ export default function ProntuarioContainer({
                         apiUrl={`/api/admin/pacientes/${patientId}/historico`}
                     />
                 )}
-                {activeTab === "anamnese" && <AnamneseTab patientId={patientId} />}
+                {activeTab === "anamnese" && <AnamneseTab patientId={patientId} initialAnamnese={initialAnamnese} />}
                 {activeTab === "agendamentos" && <AgendamentosTab />}
                 {activeTab === "cadastro" && <CadastroTab paciente={paciente} />}
             </div>

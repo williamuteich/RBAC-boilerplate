@@ -1,4 +1,5 @@
 import { FormEvent } from "react";
+import { IAnamnese } from "./anamnese";
 
 export interface Paciente {
   id: string;
@@ -70,6 +71,7 @@ export interface ProntuarioContainerProps {
   initialHistory: HistoricoPatient[];
   patientId: string;
   initialTab: string;
+  initialAnamnese: IAnamnese | null;
 }
 
 export interface OdontogramaTabProps {
