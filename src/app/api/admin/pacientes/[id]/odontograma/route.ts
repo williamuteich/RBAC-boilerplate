@@ -32,11 +32,16 @@ async function processData(data: any, fields: typeof ENCRYPTED_FIELDS | typeof D
             try {
                 res[field.name] = await field.action(val);
             } catch (error) {
-                console.error("Erro ao criptografar/descriptografar campo", field.name, "valor", val, "erro", error);
+                console.error("Erro ao processar campo", field.name, error);
                 throw error;
             }
         }
     }
+
+    if (res.teeth && Array.isArray(res.teeth)) {
+        res.teeth = await Promise.all(res.teeth.map((t: any) => processData(t, fields)));
+    }
+
     return res;
 }
 
@@ -52,7 +57,8 @@ export async function GET(_req: Request, ctx: Ctx) {
 
     const id = await getId(ctx);
     const odontogram = await prisma.odontogram.findUnique({
-        where: { patientId: id }
+        where: { patientId: id },
+        include: { teeth: true }
     });
 
     if (!odontogram) {
@@ -78,12 +84,26 @@ async function _POST(request: Request, ctx: Ctx) {
         }
 
         const encryptedBody = await encryptData(validated.data);
+        const { teeth, ...odontogramRest } = encryptedBody;
 
-        const odontogram = await prisma.odontogram.create({
-            data: {
-                patientId: id,
-                ...encryptedBody
-            },
+        const odontogram = await prisma.$transaction(async (tx) => {
+            const created = await tx.odontogram.create({
+                data: {
+                    patientId: id,
+                    ...odontogramRest,
+                    teeth: {
+                        create: teeth.map((t: any) => ({
+                            toothKey: t.toothKey,
+                            isCustom: t.isCustom,
+                            customName: t.customName,
+                            status: t.status,
+                            notes: t.notes
+                        }))
+                    }
+                },
+                include: { teeth: true }
+            });
+            return created;
         });
 
         return NextResponse.json(await decryptData(odontogram), { status: 201 });
@@ -114,18 +134,43 @@ async function _PUT(request: Request, ctx: Ctx) {
     }
 
     try {
+        const id = await getId(ctx);
         const body = await request.json();
-        const { odontogramId, ...rest } = body;
+        const { id: odontogramId, teeth, ...rest } = body;
 
-        if (!odontogramId || !rest) {
+        if (!odontogramId) {
             return NextResponse.json({ error: "Parâmetros inválidos" }, { status: 400 });
         }
 
-        const encryptedBody = await encryptData(rest);
+        const validated = odontogramSchema.safeParse({ id: odontogramId, teeth, ...rest, patientId: id });
+        if (!validated.success) {
+            return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
+        }
 
-        const updatedOdontogram = await prisma.odontogram.update({
-            where: { id: odontogramId },
-            data: encryptedBody,
+        const encryptedBody = await encryptData(validated.data);
+        const { teeth: teethList, ...odontogramRest } = encryptedBody;
+
+        const updatedOdontogram = await prisma.$transaction(async (tx) => {
+            await tx.tooth.deleteMany({
+                where: { odontogramId }
+            });
+
+            return await tx.odontogram.update({
+                where: { id: odontogramId },
+                data: {
+                    ...odontogramRest,
+                    teeth: {
+                        create: (teethList || []).map((t: any) => ({
+                            toothKey: t.toothKey,
+                            isCustom: t.isCustom,
+                            customName: t.customName,
+                            status: t.status,
+                            notes: t.notes
+                        }))
+                    }
+                },
+                include: { teeth: true }
+            });
         });
 
         return NextResponse.json(await decryptData(updatedOdontogram));
@@ -147,4 +192,3 @@ export const PUT = withAudit(_PUT, {
         return `/admin/pacientes/${params.id}?tab=odontograma`;
     }
 });
-
