@@ -2,6 +2,44 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { auditQuerySchema } from "@/src/schemas/audit";
+import { cacheLife, cacheTag } from "next/cache";
+
+async function getAuditoriaFromDb(where: any, page: number, limit: number) {
+    "use cache";
+    cacheLife("hours");
+    cacheTag("auditoria-list");
+
+    const [logs, total] = await Promise.all([
+        prisma.logAdmin.findMany({
+            where,
+            orderBy: { createdAt: "desc" },
+            skip: (page - 1) * limit,
+            take: limit,
+            select: {
+                id: true,
+                action: true,
+                resource: true,
+                resourceId: true,
+                resourceName: true,
+                url: true,
+                createdAt: true,
+                administrator: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        role: {
+                            select: { name: true },
+                        },
+                    },
+                },
+            },
+        }),
+        prisma.logAdmin.count({ where }),
+    ]);
+
+    return { logs, total };
+}
 
 export async function GET(request: Request) {
     const session = await checkAdminApi();
@@ -38,34 +76,7 @@ export async function GET(request: Request) {
     };
 
     try {
-        const [logs, total] = await Promise.all([
-            prisma.logAdmin.findMany({
-                where,
-                orderBy: { createdAt: "desc" },
-                skip: (page - 1) * limit,
-                take: limit,
-                select: {
-                    id: true,
-                    action: true,
-                    resource: true,
-                    resourceId: true,
-                    resourceName: true,
-                    url: true,
-                    createdAt: true,
-                    administrator: {
-                        select: {
-                            id: true,
-                            name: true,
-                            email: true,
-                            role: {
-                                select: { name: true },
-                            },
-                        },
-                    },
-                },
-            }),
-            prisma.logAdmin.count({ where }),
-        ]);
+        const { logs, total } = await getAuditoriaFromDb(where, page, limit);
 
         return NextResponse.json({
             logs,

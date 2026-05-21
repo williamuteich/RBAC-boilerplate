@@ -4,6 +4,7 @@ import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { evolutionSchema } from "@/src/schemas/paciente";
 import { withAudit } from "@/src/lib/audit";
 import { encrypt, decrypt } from "@/src/lib/encrypted-fields";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 
 type Ctx = { params: Promise<{ id: string }> };
 const getId = async (ctx: Ctx) => (await ctx.params).id;
@@ -41,6 +42,17 @@ async function processData(data: any, fields: typeof ENCRYPTED_FIELDS | typeof D
 const encryptData = (data: any) => processData(data, ENCRYPTED_FIELDS);
 const decryptData = (data: any) => processData(data, DECRYPT_FIELDS);
 
+async function getHistoricoFromDb(patientId: string) {
+    "use cache";
+    cacheLife("hours");
+    cacheTag("historico-list");
+
+    return prisma.patientHistory.findMany({
+        where: { patientId },
+        orderBy: { createdAt: "desc" }
+    });
+}
+
 export async function GET(_req: Request, ctx: Ctx) {
     const session = await checkAdminApi();
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
@@ -49,10 +61,7 @@ export async function GET(_req: Request, ctx: Ctx) {
     }
 
     const id = await getId(ctx);
-    const patientHistories = await prisma.patientHistory.findMany({
-        where: { patientId: id },
-        orderBy: { createdAt: "desc" }
-    });
+    const patientHistories = await getHistoricoFromDb(id);
 
     return NextResponse.json(await decryptData(patientHistories));
 }
@@ -81,6 +90,7 @@ async function _POST(request: Request, ctx: Ctx) {
             },
         });
 
+        revalidateTag("historico-list", "max");
         return NextResponse.json(await decryptData(history), { status: 201 });
     } catch (error: any) {
         console.error("Erro ao criar historico:", error);
@@ -125,6 +135,7 @@ async function _PUT(request: Request, ctx: Ctx) {
             },
         });
 
+        revalidateTag("historico-list", "max");
         return NextResponse.json(await decryptData(updatedHistory));
     } catch (error: any) {
         console.error("Erro ao atualizar historico:", error);
@@ -164,6 +175,7 @@ async function _DELETE(request: Request, ctx: Ctx) {
             where: { id: historyId },
         });
 
+        revalidateTag("historico-list", "max");
         return NextResponse.json(await decryptData(deletedHistory));
     } catch (error: any) {
         console.error("Erro ao deletar historico:", error);

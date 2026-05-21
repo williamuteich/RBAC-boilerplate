@@ -3,6 +3,7 @@ import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { adminSchema } from "@/src/schemas/admin";
 import { withAudit } from "@/src/lib/audit";
+import { revalidateTag } from "next/cache";
 
 async function _DELETE(
     request: Request,
@@ -30,6 +31,7 @@ async function _DELETE(
         await prisma.administrator.delete({
             where: { id },
         });
+        revalidateTag("usuarios-list", "max");
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Erro ao deletar administrador:", error);
@@ -84,6 +86,7 @@ async function _PUT(
             },
         });
 
+        revalidateTag("usuarios-list", "max");
         return NextResponse.json(admin);
     } catch (error) {
         console.error("Erro ao atualizar administrador:", error);

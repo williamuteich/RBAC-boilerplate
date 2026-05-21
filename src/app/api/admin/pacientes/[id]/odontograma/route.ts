@@ -4,6 +4,7 @@ import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { withAudit } from "@/src/lib/audit";
 import { encrypt, decrypt } from "@/src/lib/encrypted-fields";
 import { odontogramSchema } from "@/src/schemas/odontograma";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 
 type Ctx = { params: Promise<{ id: string }> };
 const getId = async (ctx: Ctx) => (await ctx.params).id;
@@ -48,6 +49,17 @@ async function processData(data: any, fields: typeof ENCRYPTED_FIELDS | typeof D
 const encryptData = (data: any) => processData(data, ENCRYPTED_FIELDS);
 const decryptData = (data: any) => processData(data, DECRYPT_FIELDS);
 
+async function getOdontogramaFromDb(patientId: string) {
+    "use cache";
+    cacheLife("hours");
+    cacheTag("odontograma-list");
+
+    return prisma.odontogram.findUnique({
+        where: { patientId },
+        include: { teeth: true }
+    });
+}
+
 export async function GET(_req: Request, ctx: Ctx) {
     const session = await checkAdminApi();
     if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
@@ -56,10 +68,7 @@ export async function GET(_req: Request, ctx: Ctx) {
     }
 
     const id = await getId(ctx);
-    const odontogram = await prisma.odontogram.findUnique({
-        where: { patientId: id },
-        include: { teeth: true }
-    });
+    const odontogram = await getOdontogramaFromDb(id);
 
     if (!odontogram) {
         return NextResponse.json({ message: "Odontograma não encontrado" }, { status: 404 });
@@ -106,6 +115,7 @@ async function _POST(request: Request, ctx: Ctx) {
             return created;
         });
 
+        revalidateTag("odontograma-list", "max");
         return NextResponse.json(await decryptData(odontogram), { status: 201 });
     } catch (error: any) {
         console.error("Erro ao criar odontograma:", error);
@@ -173,6 +183,7 @@ async function _PUT(request: Request, ctx: Ctx) {
             });
         });
 
+        revalidateTag("odontograma-list", "max");
         return NextResponse.json(await decryptData(updatedOdontogram));
     } catch (error: any) {
         console.error("Erro ao atualizar odontograma:", error);

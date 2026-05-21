@@ -3,6 +3,7 @@ import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { roleSchema } from "@/src/schemas/roles";
 import { withAudit } from "@/src/lib/audit";
+import { revalidateTag } from "next/cache";
 
 async function _DELETE(
     request: Request,
@@ -29,6 +30,7 @@ async function _DELETE(
         await prisma.adminRole.delete({
             where: { id },
         });
+        revalidateTag("roles-list", "max");
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Erro ao deletar cargo:", error);
@@ -111,6 +113,7 @@ async function _PUT(
             return updatedRole;
         });
 
+        revalidateTag("roles-list", "max");
         return NextResponse.json(role);
     } catch (error) {
         console.error("Erro ao atualizar cargo:", error);

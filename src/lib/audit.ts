@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi } from "@/src/lib/auth-helpers-server";
+import { revalidateTag } from "next/cache";
 
 type AnyContext = { params?: Promise<Record<string, string>> };
 type RouteHandler<Ctx extends AnyContext = AnyContext> = (
@@ -66,6 +67,7 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                             url: resolvedUrl ?? `/${options.resource}`,
                         },
                     })
+                    .then(() => revalidateTag("auditoria-list", "max"))
                     .catch((err) =>
                         console.error("[Audit] Erro ao salvar log de auditoria:", err)
                     );

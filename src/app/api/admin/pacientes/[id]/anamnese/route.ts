@@ -4,6 +4,7 @@ import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { anamneseSchema } from "@/src/schemas/anamnese";
 import { withAudit } from "@/src/lib/audit";
 import { encrypt, decrypt } from "@/src/lib/encrypted-fields";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 
 type Ctx = { params: Promise<{ id: string }> };
 const getId = async (ctx: Ctx) => (await ctx.params).id;
@@ -110,15 +111,12 @@ async function decryptAnamnese(data: any): Promise<any> {
     return base;
 }
 
-export async function GET(_req: Request, ctx: Ctx) {
-    const session = await checkAdminApi();
-    if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
-    if (!hasPermission(session, "pacientes", "visualizar")) {
-        return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
-    }
+async function getAnamneseFromDb(patientId: string) {
+    "use cache";
+    cacheLife("hours");
+    cacheTag("anamnese-list");
 
-    const patientId = await getId(ctx);
-    const anamnese = await prisma.anamnese.findFirst({
+    return prisma.anamnese.findFirst({
         where: { patientId },
         include: {
             diseases: true,
@@ -127,6 +125,17 @@ export async function GET(_req: Request, ctx: Ctx) {
         },
         orderBy: { createdAt: "desc" },
     });
+}
+
+export async function GET(_req: Request, ctx: Ctx) {
+    const session = await checkAdminApi();
+    if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (!hasPermission(session, "pacientes", "visualizar")) {
+        return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
+
+    const patientId = await getId(ctx);
+    const anamnese = await getAnamneseFromDb(patientId);
 
     if (!anamnese) return NextResponse.json(null);
     return NextResponse.json(await decryptAnamnese(anamnese));
@@ -232,6 +241,7 @@ async function _POST(request: Request, ctx: Ctx) {
             });
         }
 
+        revalidateTag("anamnese-list", "max");
         return NextResponse.json(await decryptAnamnese(resultAnamnese), { status: 200 });
     } catch (error: any) {
         console.error(error);

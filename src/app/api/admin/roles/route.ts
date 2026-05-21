@@ -3,6 +3,32 @@ import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { roleSchema } from "@/src/schemas/roles";
 import { withAudit } from "@/src/lib/audit";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
+
+async function getRolesFromDb() {
+    "use cache";
+    cacheLife("hours");
+    cacheTag("roles-list");
+
+    return prisma.adminRole.findMany({
+        orderBy: { name: "asc" },
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            permissions: {
+                select: {
+                    permission: {
+                        select: {
+                            resource: true,
+                            action: true,
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
 export async function GET() {
     const session = await checkAdminApi();
@@ -11,25 +37,7 @@ export async function GET() {
     }
 
     try {
-        const roles = await prisma.adminRole.findMany({
-            orderBy: { name: "asc" },
-            select: {
-                id: true,
-                name: true,
-                description: true,
-                permissions: {
-                    select: {
-                        permission: {
-                            select: {
-                                resource: true,
-                                action: true,
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
+        const roles = await getRolesFromDb();
         return NextResponse.json(roles);
     } catch (error) {
         console.error("Erro ao buscar cargos:", error);
@@ -103,6 +111,7 @@ async function _POST(request: Request) {
             });
         });
 
+        revalidateTag("roles-list", "max");
         return NextResponse.json(role, { status: 201 });
     } catch (error: any) {
         if (error.code === 'P2002') {

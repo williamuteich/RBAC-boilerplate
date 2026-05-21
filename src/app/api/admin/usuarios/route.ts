@@ -3,6 +3,39 @@ import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { adminSchema } from "@/src/schemas/admin";
 import { withAudit } from "@/src/lib/audit";
+import { cacheLife, cacheTag, revalidateTag } from "next/cache";
+
+async function getUsuariosFromDb(where: any, page: number, limit: number) {
+    "use cache";
+    cacheLife("hours");
+    cacheTag("usuarios-list");
+
+    const [admins, total] = await Promise.all([
+        prisma.administrator.findMany({
+            where,
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: { createdAt: "desc" },
+            select: {
+                id: true,
+                email: true,
+                name: true,
+                active: true,
+                lastLogin: true,
+                createdAt: true,
+                role: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+            },
+        }),
+        prisma.administrator.count({ where }),
+    ]);
+
+    return { admins, total };
+}
 
 export async function GET(request: Request) {
     const session = await checkAdminApi();
@@ -29,29 +62,7 @@ export async function GET(request: Request) {
             }),
         };
 
-        const [admins, total] = await Promise.all([
-            prisma.administrator.findMany({
-                where,
-                skip: (page - 1) * limit,
-                take: limit,
-                orderBy: { createdAt: "desc" },
-                select: {
-                    id: true,
-                    email: true,
-                    name: true,
-                    active: true,
-                    lastLogin: true,
-                    createdAt: true,
-                    role: {
-                        select: {
-                            id: true,
-                            name: true,
-                        },
-                    },
-                },
-            }),
-            prisma.administrator.count({ where }),
-        ]);
+        const { admins, total } = await getUsuariosFromDb(where, page, limit);
 
         return NextResponse.json({
             admins,
@@ -110,6 +121,7 @@ async function _POST(request: Request) {
             },
         });
 
+        revalidateTag("usuarios-list", "max");
         return NextResponse.json(admin, { status: 201 });
     } catch (error) {
         console.error("Erro ao criar administrador:", error);

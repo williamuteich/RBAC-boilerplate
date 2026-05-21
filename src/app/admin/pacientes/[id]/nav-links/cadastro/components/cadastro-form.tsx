@@ -70,7 +70,7 @@ export default function CadastroForm({ paciente }: { paciente: Paciente }) {
                 city: fields.city,
                 street: fields.street,
                 number: fields.number,
-                complement: fields.complement || null,
+                complement: fields.complement || undefined,
                 active: fields.active,
             };
 
