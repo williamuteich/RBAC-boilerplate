@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
     Table,
@@ -28,6 +28,7 @@ import { ALL_RESOURCES, ALL_ACTIONS } from "@/src/lib/navigation";
 import { ViewPermissions } from "./view-permissions";
 import { createRole, updateRole, deleteRole, getRoles } from "@/src/services/roles";
 import { DeleteDialogGeneric } from "@/src/app/components/delete-dialog-generic";
+import { toast, ToastContainer } from "react-toastify";
 
 export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
     const router = useRouter();
@@ -44,6 +45,10 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
 
     const [editingRole, setEditingRole] = useState<Role | null>(null);
     const [selectedPermissions, setSelectedPermissions] = useState<{ resource: string, action: string }[]>([]);
+
+    useEffect(() => {
+        setRoles(initialRoles);
+    }, [initialRoles]);
 
     const togglePermission = (resource: string, action: string) => {
         setSelectedPermissions(prev => {
@@ -67,9 +72,11 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
             const res = editingRole ? await updateRole(editingRole.id, data) : await createRole(data);
             if (res.success) {
                 setOpen(false);
+                toast.success(editingRole ? "Cargo atualizado com sucesso!" : "Cargo criado com sucesso!");
                 fetchRolesLocally();
                 router.refresh();
             } else {
+                toast.error(res.error || "Erro ao salvar cargo");
                 setError(res.error || "Erro ao salvar");
             }
         });
@@ -77,6 +84,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
 
     return (
         <div className="space-y-4">
+            <ToastContainer position="top-right" autoClose={3000} theme="colored" />
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-xl font-semibold flex items-center gap-2"><Key className="h-5 w-5 text-indigo-500" /> Gestão de Cargos</h2>

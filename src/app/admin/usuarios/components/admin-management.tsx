@@ -39,6 +39,7 @@ import {
 import { Admin, Role, AdminsResponse, AdminFilters } from "@/src/types/dashboard/admins";
 import { createAdmin, updateAdmin, deleteAdmin, getAdmins } from "@/src/services/administrator";
 import { DeleteDialogGeneric } from "@/src/app/components/delete-dialog-generic";
+import { toast, ToastContainer } from "react-toastify";
 
 export function AdminManagement({
     initialData,
@@ -58,6 +59,10 @@ export function AdminManagement({
     const [error, setError] = useState("");
     const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+
+    useEffect(() => {
+        setData(initialData);
+    }, [initialData]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -95,9 +100,11 @@ export function AdminManagement({
 
             if (res.success) {
                 setOpen(false);
+                toast.success(editingAdmin ? "Administrador atualizado com sucesso!" : "Administrador criado com sucesso!");
                 fetchAdmins(filters);
                 router.refresh();
             } else {
+                toast.error(res.error || "Erro ao salvar administrador");
                 setError(res.error || "Erro ao salvar");
             }
         });
@@ -105,6 +112,7 @@ export function AdminManagement({
 
     return (
         <div className="space-y-4">
+            <ToastContainer position="top-right" autoClose={3000} theme="colored" />
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-2">
                     <div className="relative">
