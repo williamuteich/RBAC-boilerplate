@@ -25,14 +25,6 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         section: "CLÍNICA"
     },
     {
-        title: "Emergência",
-        href: "/admin/emergencia",
-        icon: Siren,
-        resource: "emergencia",
-        section: "CLÍNICA"
-    },
-
-    {
         title: "Administradores",
         href: "/admin/usuarios",
         icon: ShieldCheck,
