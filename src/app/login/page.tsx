@@ -4,14 +4,7 @@ import { getServerSession } from "next-auth";
 import { auth } from "@/src/lib/auth-config";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-
-function LoginLoading() {
-    return (
-        <div className="flex min-h-screen w-full items-center justify-center bg-slate-950 text-white">
-            Carregando...
-        </div>
-    );
-}
+import { LoginSkeleton } from "./components/skeleton";
 
 async function LoginContent() {
     const session = await getServerSession(auth);
@@ -29,7 +22,7 @@ async function LoginContent() {
 
 export default function LoginPage() {
     return (
-        <Suspense fallback={<LoginLoading />}>
+        <Suspense fallback={<LoginSkeleton />}>
             <LoginContent />
         </Suspense>
     );
