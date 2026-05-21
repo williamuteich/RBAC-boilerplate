@@ -1,11 +1,11 @@
-export type ToothStatus = 
-    | "SAUDAVEL" 
-    | "CARIE" 
-    | "ENDODONTIA" 
-    | "PROTESE" 
-    | "IMPLANTE" 
-    | "EXTRAIDO" 
-    | "RETIDO" 
+export type ToothStatus =
+    | "SAUDAVEL"
+    | "CARIE"
+    | "ENDODONTIA"
+    | "PROTESE"
+    | "IMPLANTE"
+    | "EXTRAIDO"
+    | "RETIDO"
     | "OUTRO";
 
 export interface ITooth {
