@@ -8,9 +8,9 @@ import { cacheLife, cacheTag, revalidatePath, revalidateTag } from "next/cache";
 const API_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 export async function getPacientes(filters: PacienteFilters = { page: 1, limit: 20 }): Promise<PacientesResponse | null> {
-    "use cache";
-    cacheLife("hours");
-    cacheTag("pacientes-list");
+    //"use cache";
+    //cacheLife("hours");
+    //cacheTag("pacientes-list");
     
     const cookie = (await headers()).get("cookie") || "";
     const params = new URLSearchParams();
@@ -31,9 +31,9 @@ export async function getPacientes(filters: PacienteFilters = { page: 1, limit: 
 }
 
 export async function getPaciente(id: string): Promise<Paciente | null> {
-    "use cache";
-    cacheLife("hours");
-    cacheTag(`paciente-${id}`);
+    //"use cache";
+    //cacheLife("hours");
+    //cacheTag(`paciente-${id}`);
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/pacientes/${id}`, {
         headers: { Cookie: cookie },
@@ -51,7 +51,7 @@ export async function createPaciente(data: Omit<Paciente, "id" | "createdAt" | "
     });
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao criar paciente" };
-    revalidateTag("pacientes-list", "max");
+    //revalidateTag("pacientes-list", "max");
     revalidatePath("/admin/pacientes");
     return { success: true };
 }

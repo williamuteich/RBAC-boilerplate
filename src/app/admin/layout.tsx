@@ -1,14 +1,11 @@
 import { ReactNode, Suspense } from "react";
 import { Header, SkeletonHeader } from "./header";
 import { Sidebar, SkeletonSidebar } from "./sidebar";
-import { requireAdminContext } from "@/src/lib/auth-helpers-server";
 import { Providers } from "../components/providers";
 
 export default async function PrivateLayout({ children }: { children: ReactNode }) {
-    const session = await requireAdminContext();
-
     return (
-        <Providers session={session}>
+        <Providers>
             <div className="flex h-screen bg-slate-50 overflow-hidden text-slate-900 font-sans">
                 <Suspense fallback={
                     <aside className="w-64 bg-white hidden lg:flex flex-col h-full shrink-0 relative transition-transform border-r border-slate-200/80">
