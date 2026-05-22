@@ -162,6 +162,7 @@ export function CreatePacienteDialog({ onCreateSuccess }: CreatePacienteDialogPr
                                 placeholder="000.000.000-00" 
                                 required 
                                 className="h-10 bg-white"
+                                maxLength={14}
                             />
                         </div>
                         
@@ -183,6 +184,7 @@ export function CreatePacienteDialog({ onCreateSuccess }: CreatePacienteDialogPr
                                 placeholder="(51) 99999-9999" 
                                 required 
                                 className="h-10 bg-white"
+                                maxLength={15}
                             />
                         </div>
                     </div>

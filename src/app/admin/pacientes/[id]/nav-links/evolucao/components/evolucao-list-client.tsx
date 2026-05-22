@@ -17,6 +17,7 @@ import {
 import { CalendarDays, ClipboardList, Clock, Pencil, Activity, Plus, Trash2 } from "lucide-react";
 import { EvolucaoItemProps, HistoricoPatient } from "@/src/types/dashboard/pacientes";
 import { DeleteDialogGeneric } from "@/src/app/components/delete-dialog-generic";
+import { createHistoricoPaciente, updateHistoricoPaciente, deleteHistoricoPaciente } from "@/src/services/pacientes";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -35,18 +36,13 @@ function EvolucaoItem({ evolucao, onUpdate, onDelete }: EvolucaoItemProps) {
 
         setIsPending(true);
         try {
-            const res = await fetch(apiUrl, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ historyId: evolucao.id, description })
-            });
-            const result = await res.json();
-            if (res.ok) {
+            const res = await updateHistoricoPaciente(evolucao.patientId, evolucao.id, description);
+            if (res.success) {
                 toast.success("Evolução clínica atualizada com sucesso!");
                 setEditOpen(false);
                 onUpdate(evolucao.id, description);
             } else {
-                toast.error(result.error || "Erro ao salvar alterações.");
+                toast.error(res.error || "Erro ao salvar alterações.");
             }
         } catch (err) {
             toast.error("Erro interno do servidor ao salvar.");
@@ -57,11 +53,8 @@ function EvolucaoItem({ evolucao, onUpdate, onDelete }: EvolucaoItemProps) {
 
     const handleDelete = async (id: string) => {
         try {
-            const res = await fetch(`${apiUrl}?historyId=${id}`, {
-                method: "DELETE"
-            });
-            const result = await res.json();
-            return { success: res.ok, error: result.error };
+            const res = await deleteHistoricoPaciente(evolucao.patientId, id);
+            return { success: res.success, error: res.error };
         } catch (err) {
             return { success: false, error: "Erro interno ao processar a exclusão." };
         }
@@ -206,20 +199,15 @@ export default function EvolucaoListClient({ initialItems, patientId }: Evolucao
 
         setIsPending(true);
         try {
-            const res = await fetch(apiUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ description })
-            });
-            const result = await res.json();
-            if (res.ok) {
+            const res = await createHistoricoPaciente(patientId, description);
+            if (res.success && res.data) {
                 toast.success("Evolução clínica criada com sucesso!");
                 setCreateOpen(false);
-                setItems(prev => [result, ...prev]);
+                setItems(prev => [res.data, ...prev]);
                 form.reset();
                 router.refresh();
             } else {
-                toast.error(result.error || "Erro ao criar evolução.");
+                toast.error(res.error || "Erro ao criar evolução.");
             }
         } catch (err) {
             console.error("Erro ao criar evolução:", err);

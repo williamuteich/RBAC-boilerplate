@@ -84,7 +84,7 @@ export async function getHistoricoPaciente(id: string): Promise<HistoricoPatient
     return res.json();
 }
 
-export async function createHistoricoPaciente(patientId: string, description: string): Promise<{ success: boolean; error?: string }> {
+export async function createHistoricoPaciente(patientId: string, description: string): Promise<{ success: boolean; data?: any; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/historico`, {
         method: "POST",
@@ -94,7 +94,7 @@ export async function createHistoricoPaciente(patientId: string, description: st
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao criar histórico" };
     revalidatePath(`/admin/pacientes/${patientId}`);
-    return { success: true };
+    return { success: true, data: result };
 }
 
 export async function updateHistoricoPaciente(patientId: string, historyId: string, description: string): Promise<{ success: boolean; error?: string }> {
