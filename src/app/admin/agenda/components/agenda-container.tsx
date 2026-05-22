@@ -1,52 +1,147 @@
 "use client";
 
-import { useState } from "react";
-import CalendarGrid from "./calendar-grid";
-import { CalendarDays } from "lucide-react";
-
-export interface Appointment {
-    id: number;
-    patientName: string;
-    date: string;
-    time: string;
-    procedure: string;
-    status: "Confirmado" | "Pendente" | "Cancelado";
-    isNew?: boolean;
-    isGuest?: boolean;
-}
-
-function mkDate(offsetDays: number) {
-    const d = new Date();
-    d.setDate(d.getDate() + offsetDays);
-    return d.toISOString().split("T")[0];
-}
-
-const INITIAL_APPOINTMENTS: Appointment[] = [
-    { id: 1, patientName: "Matheus Uteich", date: mkDate(0), time: "09:00", procedure: "Implante Dentário", status: "Confirmado" },
-    { id: 2, patientName: "Ana Clara Silva", date: mkDate(0), time: "10:30", procedure: "Profilaxia e Limpeza", status: "Pendente" },
-    { id: 3, patientName: "Carlos Eduardo Souza", date: mkDate(0), time: "14:00", procedure: "Tratamento de Canal", status: "Confirmado" },
-    { id: 4, patientName: "Fernanda Lima", date: mkDate(-2), time: "08:00", procedure: "Clareamento Dental", status: "Confirmado" },
-    { id: 5, patientName: "Roberto Santos", date: mkDate(-2), time: "11:00", procedure: "Extração Simples", status: "Cancelado" },
-    { id: 6, patientName: "Juliana Pereira", date: mkDate(1), time: "09:30", procedure: "Ortodontia", status: "Pendente" },
-    { id: 7, patientName: "Bruno Costa", date: mkDate(1), time: "15:00", procedure: "Restauração", status: "Pendente" },
-    { id: 8, patientName: "Mariana Alves", date: mkDate(3), time: "10:00", procedure: "Consulta de Avaliação", status: "Confirmado" },
-    { id: 9, patientName: "Pedro Oliveira", date: mkDate(5), time: "08:30", procedure: "Periodontia", status: "Pendente" },
-    { id: 10, patientName: "Sofia Mendes", date: mkDate(5), time: "13:00", procedure: "Prótese Dentária", status: "Confirmado" },
-    { id: 11, patientName: "Lucas Ferreira", date: mkDate(7), time: "16:00", procedure: "Implante Dentário", status: "Pendente" },
-    { id: 12, patientName: "Camila Ramos", date: mkDate(-5), time: "09:00", procedure: "Clareamento Dental", status: "Confirmado" },
-];
+import { useState, useEffect, useCallback } from "react";
+import CalendarGrid, { Appointment } from "./calendar-grid";
+import { CalendarDays, Loader2 } from "lucide-react";
 
 export default function AgendaContainer() {
-    const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_APPOINTMENTS);
+    const [viewDate, setViewDate] = useState(new Date());
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const handleStatusChange = (id: number, newStatus: "Confirmado" | "Cancelado") => {
-        setAppointments((prev) =>
-            prev.map((a) => (a.id === id ? { ...a, status: newStatus, isNew: false } : a))
-        );
+    // Safe timezone-accurate local date conversion helpers
+    const getLocalDateString = useCallback((dateInput: string | Date) => {
+        const d = new Date(dateInput);
+        if (isNaN(d.getTime())) return "";
+        const yearStr = d.getFullYear();
+        const monthStr = String(d.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(d.getDate()).padStart(2, '0');
+        return `${yearStr}-${monthStr}-${dayStr}`;
+    }, []);
+
+    const getLocalTimeString = useCallback((dateInput: string | Date) => {
+        const d = new Date(dateInput);
+        if (isNaN(d.getTime())) return "09:00";
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }, []);
+
+    const fetchAppointments = useCallback(async () => {
+        setLoading(true);
+        try {
+            const year = viewDate.getFullYear();
+            const month = viewDate.getMonth();
+
+            // Calculate start and end dates for the 42 cells rendered in grid to be precise
+            const firstDayOfMonth = new Date(year, month, 1);
+            const startDayOfWeek = firstDayOfMonth.getDay();
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+            // First cell's date
+            const startCellDate = new Date(year, month - 1, prevMonthLastDay - startDayOfWeek + 1);
+            startCellDate.setHours(0, 0, 0, 0);
+
+            // Last cell's date (42 cells total)
+            const totalCells = 42;
+            const endCellDate = new Date(startCellDate);
+            endCellDate.setDate(startCellDate.getDate() + totalCells);
+            endCellDate.setHours(23, 59, 59, 999);
+
+            const startIso = startCellDate.toISOString();
+            const endIso = endCellDate.toISOString();
+
+            const res = await fetch(`/api/admin/agenda?startDate=${encodeURIComponent(startIso)}&endDate=${encodeURIComponent(endIso)}&limit=1000`);
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+
+            if (data.agendamentos) {
+                const mapped: Appointment[] = data.agendamentos.map((apt: any) => {
+                    // Backend status: "CONFIRMADO", "PENDENTE", "CANCELADO", "REALIZADO"
+                    let mappedStatus: "Confirmado" | "Pendente" | "Cancelado" = "Pendente";
+                    if (apt.status === "CONFIRMADO" || apt.status === "REALIZADO") {
+                        mappedStatus = "Confirmado";
+                    } else if (apt.status === "CANCELADO") {
+                        mappedStatus = "Cancelado";
+                    }
+
+                    return {
+                        id: apt.id,
+                        patientName: apt.patientName || apt.guestName || "Paciente",
+                        date: getLocalDateString(apt.scheduledAt),
+                        time: getLocalTimeString(apt.scheduledAt),
+                        procedure: apt.serviceType || "Consulta",
+                        description: apt.description || "",
+                        status: mappedStatus,
+                        isGuest: !apt.patientId || apt.patientId === "",
+                    };
+                });
+                setAppointments(mapped);
+            }
+        } catch (error) {
+            console.error("Erro ao carregar agendamentos reais:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [viewDate, getLocalDateString, getLocalTimeString]);
+
+    useEffect(() => {
+        fetchAppointments();
+    }, [fetchAppointments]);
+
+    const handleStatusChange = async (id: string | number, newStatus: "Confirmado" | "Cancelado") => {
+        try {
+            // Optimistic UI update
+            setAppointments((prev) =>
+                prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a))
+            );
+
+            const backendStatus = newStatus === "Confirmado" ? "CONFIRMADO" : "CANCELADO";
+            const res = await fetch(`/api/admin/agenda/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: backendStatus }),
+            });
+
+            if (!res.ok) throw new Error();
+            fetchAppointments(); // Refresh to ensure sync
+        } catch (error) {
+            console.error("Erro ao atualizar status:", error);
+            fetchAppointments(); // Rollback on error
+        }
     };
 
-    const handleAdd = (apt: Omit<Appointment, "id">) => {
-        setAppointments((prev) => [...prev, { ...apt, id: Date.now(), isNew: true }]);
+    const handleAdd = async (apt: Omit<Appointment, "id">) => {
+        try {
+            const scheduledAt = new Date(`${apt.date}T${apt.time}:00`);
+            const isGuest = apt.isGuest;
+
+            // Use the structured create input Zod schema parameters
+            const body = {
+                ...(isGuest ? { guestName: apt.patientName } : { patientId: (apt as any).patientId }),
+                scheduledAt: scheduledAt.toISOString(),
+                serviceType: apt.procedure,
+                description: apt.description || null,
+                estimatedValue: 0,
+                status: "PENDENTE",
+            };
+
+            const res = await fetch("/api/admin/agenda", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || "Erro ao salvar");
+            }
+
+            fetchAppointments();
+        } catch (error: any) {
+            console.error("Erro ao adicionar agendamento real:", error);
+            alert(error.message || "Erro ao salvar o agendamento no banco de dados.");
+        }
     };
 
     const hoje = new Date();
@@ -64,9 +159,18 @@ export default function AgendaContainer() {
                     </h2>
                     <p className="text-xs text-slate-500 mt-1 capitalize">{dataFormatada}</p>
                 </div>
+                {loading && (
+                    <div className="flex items-center gap-2 text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100 animate-pulse">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Atualizando dados...
+                    </div>
+                )}
             </div>
+
             <CalendarGrid
                 appointments={appointments}
+                viewDate={viewDate}
+                setViewDate={setViewDate}
                 onStatusChange={handleStatusChange}
                 onAdd={handleAdd}
             />

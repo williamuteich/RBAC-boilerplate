@@ -1,26 +1,27 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { 
-    Stethoscope, 
-    ChevronLeft, 
-    ChevronRight, 
-    Plus, 
-    Search, 
-    X, 
-    UserCheck, 
-    UserX, 
-    Loader2, 
-    ChevronDown, 
-    Pencil, 
-    Check, 
-    AlertCircle, 
-    Sparkles, 
+import {
+    Stethoscope,
+    ChevronLeft,
+    ChevronRight,
+    Plus,
+    Search,
+    X,
+    UserCheck,
+    UserX,
+    Loader2,
+    ChevronDown,
+    Pencil,
+    Check,
+    AlertCircle,
+    Sparkles,
     Calendar,
     CheckCircle2,
     Clock,
     XCircle,
-    Info
+    Info,
+    AlignLeft
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -32,19 +33,23 @@ import {
 } from "@/components/ui/dialog";
 
 export interface Appointment {
-    id: number;
+    id: string | number;
     patientName: string;
     date: string;
     time: string;
     procedure: string;
+    description?: string;
     status: "Confirmado" | "Pendente" | "Cancelado";
     isNew?: boolean;
     isGuest?: boolean;
+    patientId?: string;
 }
 
 interface CalendarGridProps {
     appointments: Appointment[];
-    onStatusChange: (id: number, status: "Confirmado" | "Cancelado") => void;
+    viewDate: Date;
+    setViewDate: (date: Date) => void;
+    onStatusChange: (id: string | number, status: "Confirmado" | "Cancelado") => void;
     onAdd: (apt: Omit<Appointment, "id">) => void;
 }
 
@@ -73,19 +78,19 @@ const PROCEDURES = [
 
 const STATUS_THEMES = {
     Confirmado: {
-        bg: "bg-emerald-50 hover:bg-emerald-100/80 border-emerald-200 text-emerald-800",
+        bg: "bg-emerald-50 hover:bg-emerald-100/80 border-emerald-250 text-emerald-800",
         badge: "bg-emerald-500 text-white",
         dot: "bg-emerald-500",
         pill: "bg-emerald-100 text-emerald-800 border-emerald-200",
     },
     Pendente: {
-        bg: "bg-amber-50 hover:bg-amber-100/80 border-amber-200 text-amber-900",
+        bg: "bg-amber-50 hover:bg-amber-100/80 border-amber-250 text-amber-900",
         badge: "bg-amber-500 text-white",
         dot: "bg-amber-500",
-        pill: "bg-amber-100 text-amber-800 border-amber-200",
+        pill: "bg-amber-100 text-amber-800 border-amber-250",
     },
     Cancelado: {
-        bg: "bg-rose-50 hover:bg-rose-100/80 border-rose-200 text-rose-800 opacity-60",
+        bg: "bg-rose-50 hover:bg-rose-100/80 border-rose-250 text-rose-800 opacity-60",
         badge: "bg-rose-500 text-white",
         dot: "bg-rose-500",
         pill: "bg-rose-100 text-rose-800 border-rose-200",
@@ -100,8 +105,7 @@ function formatCPF(value: string) {
         .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
 
-export default function CalendarGrid({ appointments, onStatusChange, onAdd }: CalendarGridProps) {
-    const [viewDate, setViewDate] = useState(new Date());
+export default function CalendarGrid({ appointments, viewDate, setViewDate, onStatusChange, onAdd }: CalendarGridProps) {
     const [selectedDateStr, setSelectedDateStr] = useState<string | null>(null);
     const [selectedApt, setSelectedApt] = useState<Appointment | null>(null);
     const [isAddOpen, setIsAddOpen] = useState(false);
@@ -116,6 +120,7 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
     const [guestName, setGuestName] = useState("");
     const [procedure, setProcedure] = useState("");
     const [customProcedure, setCustomProcedure] = useState("");
+    const [description, setDescription] = useState("");
     const [time, setTime] = useState("09:00");
     const [submitting, setSubmitting] = useState(false);
     const [procedureOpen, setProcedureOpen] = useState(false);
@@ -138,22 +143,30 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
 
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
-    
+
     const startDayOfWeek = firstDayOfMonth.getDay(); // 0: Sun, 6: Sat
     const totalDaysInMonth = lastDayOfMonth.getDate();
-    
+
     const prevMonthLastDay = new Date(year, month, 0).getDate();
 
     // Create 42 grid cells (6 rows x 7 columns)
     const cells: { dateStr: string; dayNum: number; isCurrentMonth: boolean; isToday: boolean }[] = [];
+
+    // Exact timezone-safe today local date definition to resolve highlight bug!
     const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
+    const todayYear = today.getFullYear();
+    const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+    const todayDay = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${todayYear}-${todayMonth}-${todayDay}`;
 
     // Padding from previous month
     for (let i = startDayOfWeek - 1; i >= 0; i--) {
         const d = prevMonthLastDay - i;
         const prevMonthDate = new Date(year, month - 1, d);
-        const dateStr = prevMonthDate.toISOString().split("T")[0];
+        const y = prevMonthDate.getFullYear();
+        const m = String(prevMonthDate.getMonth() + 1).padStart(2, '0');
+        const day = String(prevMonthDate.getDate()).padStart(2, '0');
+        const dateStr = `${y}-${m}-${day}`;
         cells.push({
             dateStr,
             dayNum: d,
@@ -165,11 +178,10 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
     // Days in current month
     for (let d = 1; d <= totalDaysInMonth; d++) {
         const currentMonthDate = new Date(year, month, d);
-        // Ensure timezone-safe date string
-        const yearStr = currentMonthDate.getFullYear();
-        const monthStr = String(currentMonthDate.getMonth() + 1).padStart(2, '0');
-        const dayStr = String(currentMonthDate.getDate()).padStart(2, '0');
-        const dateStr = `${yearStr}-${monthStr}-${dayStr}`;
+        const y = currentMonthDate.getFullYear();
+        const m = String(currentMonthDate.getMonth() + 1).padStart(2, '0');
+        const day = String(currentMonthDate.getDate()).padStart(2, '0');
+        const dateStr = `${y}-${m}-${day}`;
         cells.push({
             dateStr,
             dayNum: d,
@@ -182,7 +194,10 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
     const remainingCells = 42 - cells.length;
     for (let d = 1; d <= remainingCells; d++) {
         const nextMonthDate = new Date(year, month + 1, d);
-        const dateStr = nextMonthDate.toISOString().split("T")[0];
+        const y = nextMonthDate.getFullYear();
+        const m = String(nextMonthDate.getMonth() + 1).padStart(2, '0');
+        const day = String(nextMonthDate.getDate()).padStart(2, '0');
+        const dateStr = `${y}-${m}-${day}`;
         cells.push({
             dateStr,
             dayNum: d,
@@ -209,12 +224,10 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
         setCpfError("");
         setPatientFound(null);
         try {
-            // We search with and without formatting to make it bulletproof
             let res = await fetch(`/api/admin/pacientes?cpf=${raw}&limit=1`);
             let data = await res.json();
-            
+
             if (!data.pacientes || data.pacientes.length === 0) {
-                // Try with dots/dash format
                 const formatted = formatCPF(raw);
                 res = await fetch(`/api/admin/pacientes?cpf=${encodeURIComponent(formatted)}&limit=1`);
                 data = await res.json();
@@ -243,6 +256,7 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
         setGuestName("");
         setProcedure("");
         setCustomProcedure("");
+        setDescription("");
         setTime("09:00");
         setIsAddOpen(true);
     };
@@ -258,24 +272,24 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
         if (!name) return;
 
         setSubmitting(true);
-        setTimeout(() => {
-            onAdd({
-                patientName: name,
-                date: selectedDateStr,
-                time,
-                procedure: finalProcedure,
-                status: "Pendente",
-                isNew: true,
-                isGuest,
-            });
-            setSubmitting(false);
-            setIsAddOpen(false);
-        }, 500);
+        onAdd({
+            patientName: name,
+            date: selectedDateStr,
+            time,
+            procedure: finalProcedure,
+            description: description.trim() || undefined,
+            status: "Pendente",
+            isNew: true,
+            isGuest,
+            ...(mode === "registered" && patientFound ? { patientId: patientFound.id } : {}),
+        } as any);
+        setSubmitting(false);
+        setIsAddOpen(false);
     };
 
     // Calculate dynamic stats for currently viewed month
     const currentMonthAppointments = appointments.filter(apt => {
-        const aptDate = new Date(apt.date);
+        const aptDate = new Date(apt.date + "T00:00:00");
         return aptDate.getFullYear() === year && aptDate.getMonth() === month;
     });
 
@@ -287,10 +301,10 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
     };
 
     return (
-        <div className="space-y-6 w-full">
+        <div className="space-y-6 w-full animate-in fade-in duration-500">
             {/* Top Metrics Cards (Beautifully Color-Coded) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-                <div className="bg-gradient-to-br from-white to-blue-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="bg-linear-to-br from-white to-blue-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 shadow-inner">
                         <Calendar className="h-5 w-5" />
                     </div>
@@ -300,7 +314,7 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-white to-emerald-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="bg-linear-to-br from-white to-emerald-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
                         <CheckCircle2 className="h-5 w-5" />
                     </div>
@@ -310,7 +324,7 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-white to-amber-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="bg-linear-to-brrom-white to-amber-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shrink-0 shadow-inner">
                         <Clock className="h-5 w-5" />
                     </div>
@@ -320,7 +334,7 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-white to-rose-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="bg-linear-to-br from-white to-rose-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 shrink-0 shadow-inner">
                         <XCircle className="h-5 w-5" />
                     </div>
@@ -360,7 +374,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                 </div>
 
                 <div className="flex items-center gap-3">
-                    {/* General "Novo Agendamento" Button */}
                     <button
                         onClick={() => openAddModal(new Date().toISOString().split("T")[0])}
                         className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold rounded-xl shadow-sm shadow-blue-200 transition-all cursor-pointer uppercase tracking-wider"
@@ -376,8 +389,8 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                 {/* Weekday Labels */}
                 <div className="grid grid-cols-7 border-b bg-slate-50/80">
                     {["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map((day, idx) => (
-                        <div 
-                            key={day} 
+                        <div
+                            key={day}
                             className={cn(
                                 "py-3 text-center text-[10px] font-black uppercase tracking-wider border-r border-slate-200/80 last:border-r-0",
                                 (idx === 0 || idx === 6) ? "text-slate-400" : "text-slate-500"
@@ -391,7 +404,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                 {/* Day Cells */}
                 <div className="grid grid-cols-7 grid-rows-6 divide-x divide-y divide-slate-150">
                     {cells.map((cell, idx) => {
-                        // Filter appointments scheduled for this cell's date
                         const cellApts = appointments.filter(apt => apt.date === cell.dateStr);
 
                         return (
@@ -400,25 +412,30 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                                 className={cn(
                                     "min-h-[110px] p-2 flex flex-col justify-between group transition-all duration-200 relative",
                                     cell.isCurrentMonth ? "bg-white" : "bg-slate-50/40 text-slate-400",
-                                    cell.isToday && "bg-blue-50/20 ring-1 ring-blue-400/30 ring-inset"
+                                    cell.isToday && "bg-blue-50/60 border-2 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.18)] z-10"
                                 )}
                             >
-                                {/* Cell Top Bar */}
                                 <div className="flex items-center justify-between">
-                                    <span 
-                                        className={cn(
-                                            "text-xs font-black w-6 h-6 flex items-center justify-center rounded-full transition-all",
-                                            cell.isToday 
-                                                ? "bg-blue-600 text-white shadow-sm font-black" 
-                                                : cell.isCurrentMonth 
-                                                    ? "text-slate-700 group-hover:text-blue-600" 
-                                                    : "text-slate-300"
+                                    <div className="flex items-center gap-1.5">
+                                        <span
+                                            className={cn(
+                                                "text-xs font-black w-6 h-6 flex items-center justify-center rounded-full transition-all",
+                                                cell.isToday
+                                                    ? "bg-blue-600 text-white shadow-md font-black ring-2 ring-blue-150"
+                                                    : cell.isCurrentMonth
+                                                        ? "text-slate-700 group-hover:text-blue-600"
+                                                        : "text-slate-350"
+                                            )}
+                                        >
+                                            {cell.dayNum}
+                                        </span>
+                                        {cell.isToday && (
+                                            <span className="px-1.5 py-0.5 rounded-md bg-blue-600 text-white text-[8px] font-black tracking-wider uppercase shadow-xs animate-pulse">
+                                                Hoje
+                                            </span>
                                         )}
-                                    >
-                                        {cell.dayNum}
-                                    </span>
+                                    </div>
 
-                                    {/* Inline Hover "+" Add Button */}
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -431,10 +448,9 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                                     </button>
                                 </div>
 
-                                {/* Appointment List inside the day card */}
                                 <div className="flex-1 mt-2 space-y-1 overflow-y-auto max-h-[85px] custom-scrollbar pr-0.5">
                                     {cellApts.map(apt => {
-                                        const theme = STATUS_THEMES[apt.status];
+                                        const theme = STATUS_THEMES[apt.status] || STATUS_THEMES.Pendente;
                                         return (
                                             <button
                                                 key={apt.id}
@@ -456,7 +472,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                                     })}
                                 </div>
 
-                                {/* Bottom bar indicators */}
                                 {cellApts.length > 0 && (
                                     <div className="mt-1 flex items-center justify-between text-[8px] font-black uppercase tracking-wider text-slate-400">
                                         <span>{cellApts.length} {cellApts.length === 1 ? 'Consulta' : 'Consultas'}</span>
@@ -468,14 +483,13 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                 </div>
             </div>
 
-            {/* Modal: Appointment Action Details (With Blue Edit Button) */}
+            {/* Modal: Appointment Action Details */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                 <DialogContent className="sm:max-w-md border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
                     {selectedApt && (
                         <div className="bg-white">
-                            {/* Colorful dialog top header by status */}
                             <div className={cn(
-                                "px-6 py-6 text-white bg-gradient-to-r",
+                                "px-6 py-6 text-white bg-linear-to-r",
                                 selectedApt.status === "Confirmado" && "from-emerald-600 to-emerald-700",
                                 selectedApt.status === "Pendente" && "from-amber-500 to-orange-600",
                                 selectedApt.status === "Cancelado" && "from-rose-500 to-rose-600"
@@ -493,7 +507,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                                 </div>
                             </div>
 
-                            {/* Body details */}
                             <div className="p-6 space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
@@ -513,7 +526,7 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                                         <div className="mt-1">
                                             <span className={cn(
                                                 "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider inline-block",
-                                                STATUS_THEMES[selectedApt.status].pill
+                                                (STATUS_THEMES[selectedApt.status] || STATUS_THEMES.Pendente).pill
                                             )}>
                                                 {selectedApt.status}
                                             </span>
@@ -531,9 +544,19 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                                             {selectedApt.date.split("-").reverse().join("/")} às <span className="text-blue-600 font-black">{selectedApt.time}</span>
                                         </p>
                                     </div>
+
+                                    {/* Description inside details */}
+                                    {selectedApt.description && (
+                                        <div className="col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-100 mt-2">
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                                <AlignLeft className="h-3 w-3 text-slate-400" />
+                                                Descrição / Observações
+                                            </span>
+                                            <p className="text-xs text-slate-700 mt-1.5 whitespace-pre-wrap font-medium leading-relaxed">{selectedApt.description}</p>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* Status actions */}
                                 {selectedApt.status === "Pendente" && (
                                     <div className="pt-2 flex gap-2">
                                         <button
@@ -559,7 +582,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                                     </div>
                                 )}
 
-                                {/* Bottom footer inside panel */}
                                 <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
                                     <button
                                         onClick={() => setIsDetailsOpen(false)}
@@ -568,11 +590,9 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                                         Fechar
                                     </button>
 
-                                    {/* Standard Blue Edit Button (Botao azul padrao) */}
                                     <button
                                         className="inline-flex items-center gap-2 h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer uppercase tracking-wider shadow-sm"
                                         onClick={() => {
-                                            // Trigger editing dialog
                                             setIsDetailsOpen(false);
                                         }}
                                     >
@@ -586,10 +606,10 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                 </DialogContent>
             </Dialog>
 
-            {/* Modal: Add Appointment (Gorgeous Shadcn Dialog) */}
+            {/* Modal: Add Appointment */}
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                 <DialogContent className="sm:max-w-lg border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
-                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-6 text-white">
+                    <div className="bg-linear-to-r from-blue-600 to-blue-700 px-6 py-6 text-white">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                                 <Plus className="h-5 w-5 text-white" />
@@ -604,7 +624,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                     </div>
 
                     <form onSubmit={handleAddSubmit} className="p-6 space-y-5">
-                        {/* Paciente Type Toggle */}
                         <div>
                             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
                                 Identificação do Paciente
@@ -639,7 +658,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                             </div>
                         </div>
 
-                        {/* Search Patient by CPF */}
                         {mode === "registered" && (
                             <div>
                                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
@@ -696,7 +714,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                             </div>
                         )}
 
-                        {/* Guest Patient Name */}
                         {mode === "guest" && (
                             <div>
                                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
@@ -717,7 +734,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                             </div>
                         )}
 
-                        {/* Select Procedure */}
                         <div ref={procedureRef}>
                             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
                                 Procedimento Clínico <span className="text-rose-500">*</span>
@@ -764,7 +780,20 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                             )}
                         </div>
 
-                        {/* Timing details */}
+                        {/* Optional Description / Comments input */}
+                        <div>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                Descrição / Observações <span className="text-slate-300">(Opcional)</span>
+                            </label>
+                            <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Adicione observações, queixas, sintomas ou detalhes específicos sobre o procedimento..."
+                                rows={3}
+                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium resize-none"
+                            />
+                        </div>
+
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">Data</label>
@@ -788,7 +817,6 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                             </div>
                         </div>
 
-                        {/* Actions */}
                         <div className="pt-4 border-t border-slate-100 flex gap-3">
                             <button
                                 type="button"
@@ -800,9 +828,9 @@ export default function CalendarGrid({ appointments, onStatusChange, onAdd }: Ca
                             <button
                                 type="submit"
                                 disabled={
-                                    submitting || 
-                                    !procedure || 
-                                    (mode === "registered" && !patientFound) || 
+                                    submitting ||
+                                    !procedure ||
+                                    (mode === "registered" && !patientFound) ||
                                     (mode === "guest" && !guestName.trim())
                                 }
                                 className="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 uppercase tracking-wider"
