@@ -117,10 +117,10 @@ export default function CadastroForm({ paciente }: { paciente: Paciente }) {
                             <Label htmlFor="phone" className="text-sm font-medium flex items-center gap-1.5">
                                 <Phone className="h-4 w-4 text-slate-500" /> Telefone / WhatsApp
                             </Label>
-                            <Input id="phone" name="phone" value={fields.phone} onChange={(e) => setFields(prev => ({ ...prev, phone: maskPhone(e.target.value) }))} placeholder="(51) 99999-9999" required className="h-10 bg-white rounded-md" />
+                            <Input id="phone" maxLength={15} name="phone" value={fields.phone} onChange={(e) => setFields(prev => ({ ...prev, phone: maskPhone(e.target.value) }))} placeholder="(51) 99999-9999" required className="h-10 bg-white rounded-md" />
                         </div>
                         <div className="flex items-center gap-2 pt-4">
-                            <input type="checkbox" name="active" id="active" checked={fields.active} onChange={handleChange} className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
+                            <input type="checkbox" name="active" id="active" checked={fields.active} onChange={handleChange} className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer" maxLength={15}/>
                             <Label htmlFor="active" className="text-sm font-medium text-slate-700 cursor-pointer select-none">Paciente com cadastro ativo</Label>
                         </div>
                     </div>
