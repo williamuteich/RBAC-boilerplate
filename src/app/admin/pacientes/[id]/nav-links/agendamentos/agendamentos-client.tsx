@@ -27,13 +27,13 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
     const [scheduledAt, setScheduledAt] = useState("");
     const [serviceType, setServiceType] = useState("");
     const [estimatedValue, setEstimatedValue] = useState("");
-    const [description, setDescription] = useState("");
+    
     const [status, setStatus] = useState<Appointment["status"]>("PENDENTE");
 
     const [editScheduledAt, setEditScheduledAt] = useState("");
     const [editServiceType, setEditServiceType] = useState("");
     const [editEstimatedValue, setEditEstimatedValue] = useState("");
-    const [editDescription, setEditDescription] = useState("");
+    
     const [editStatus, setEditStatus] = useState<Appointment["status"]>("PENDENTE");
 
     const sortedAppointments = useMemo(
@@ -58,7 +58,6 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
             scheduledAt,
             serviceType,
             estimatedValue: Number(estimatedValue),
-            description: description.trim() || undefined,
             status,
         };
 
@@ -75,7 +74,7 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
             setScheduledAt("");
             setServiceType("");
             setEstimatedValue("");
-            setDescription("");
+        
             setStatus("PENDENTE");
             toast.success("Agendamento criado com sucesso!");
         });
@@ -86,7 +85,7 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
         setEditScheduledAt(toDateTimeLocalValue(appointment.scheduledAt));
         setEditServiceType(appointment.serviceType);
         setEditEstimatedValue(String(appointment.estimatedValue));
-        setEditDescription(appointment.description || "");
+        
         setEditStatus(appointment.status);
     };
 
@@ -100,7 +99,6 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
             scheduledAt: editScheduledAt,
             serviceType: editServiceType,
             estimatedValue: Number(editEstimatedValue),
-            description: editDescription.trim() || undefined,
             status: editStatus,
         };
 
@@ -183,15 +181,7 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
                             <option value="REALIZADO">Realizado</option>
                         </select>
                     </div>
-                    <div className="space-y-1 md:col-span-2">
-                        <label className="text-xs font-semibold text-slate-600">Descrição (opcional)</label>
-                        <textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Observações do agendamento"
-                            className="w-full h-20 rounded-md border bg-white p-3 text-sm resize-none"
-                        />
-                    </div>
+                    
                     <div className="md:col-span-2 flex justify-end">
                         <Button onClick={handleCreate} disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white">
                             {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar Agendamento"}
@@ -251,9 +241,8 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
 
                             <div className="border-t pt-3 flex justify-between items-end text-xs gap-3">
                                 <div className="min-w-0">
-                                    <span className="text-slate-400">Descrição:</span>
-                                    <p className="font-semibold text-slate-700 truncate">{appt.description || "Sem observações"}</p>
-                                </div>
+                                    
+                                    </div>
                                 <div className="text-right shrink-0">
                                     <span className="text-slate-400">Valor Estimado:</span>
                                     <p className="font-semibold text-slate-800">
@@ -294,11 +283,7 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
                                         <option value="CANCELADO">Cancelado</option>
                                         <option value="REALIZADO">Realizado</option>
                                     </select>
-                                    <textarea
-                                        value={editDescription}
-                                        onChange={(e) => setEditDescription(e.target.value)}
-                                        className="md:col-span-2 w-full h-20 rounded-md border bg-white p-3 text-sm resize-none"
-                                    />
+                                    
                                     <div className="md:col-span-2 flex justify-end gap-2">
                                         <Button variant="outline" onClick={() => setEditingId(null)} disabled={isPending}>Cancelar</Button>
                                         <Button onClick={() => handleSaveEdit(appt.id)} disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white">

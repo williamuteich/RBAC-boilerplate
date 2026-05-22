@@ -16,12 +16,6 @@ export const createAppointmentSchema = z
     estimatedValue: z.coerce
       .number({ message: "Valor estimado inválido" })
       .min(0, "Valor estimado não pode ser negativo"),
-    description: z
-      .string()
-      .trim()
-      .max(1000, "Descrição deve ter no máximo 1000 caracteres")
-      .optional()
-      .or(z.literal("")),
     status: appointmentStatusSchema.default("PENDENTE").optional(),
   })
   .refine(
@@ -40,12 +34,6 @@ export const updateAppointmentSchema = z.object({
     .number({ message: "Valor estimado inválido" })
     .min(0, "Valor estimado não pode ser negativo")
     .optional(),
-  description: z
-    .string()
-    .trim()
-    .max(1000)
-    .optional()
-    .or(z.literal("")),
   status: appointmentStatusSchema.optional(),
 });
 

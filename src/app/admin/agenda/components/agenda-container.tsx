@@ -9,7 +9,6 @@ export default function AgendaContainer() {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Safe timezone-accurate local date conversion helpers
     const getLocalDateString = useCallback((dateInput: string | Date) => {
         const d = new Date(dateInput);
         if (isNaN(d.getTime())) return "";
@@ -33,16 +32,13 @@ export default function AgendaContainer() {
             const year = viewDate.getFullYear();
             const month = viewDate.getMonth();
 
-            // Calculate start and end dates for the 42 cells rendered in grid to be precise
             const firstDayOfMonth = new Date(year, month, 1);
             const startDayOfWeek = firstDayOfMonth.getDay();
             const prevMonthLastDay = new Date(year, month, 0).getDate();
 
-            // First cell's date
             const startCellDate = new Date(year, month - 1, prevMonthLastDay - startDayOfWeek + 1);
             startCellDate.setHours(0, 0, 0, 0);
 
-            // Last cell's date (42 cells total)
             const totalCells = 42;
             const endCellDate = new Date(startCellDate);
             endCellDate.setDate(startCellDate.getDate() + totalCells);
@@ -57,7 +53,6 @@ export default function AgendaContainer() {
 
             if (data.agendamentos) {
                 const mapped: Appointment[] = data.agendamentos.map((apt: any) => {
-                    // Backend status: "CONFIRMADO", "PENDENTE", "CANCELADO", "REALIZADO"
                     let mappedStatus: "Confirmado" | "Pendente" | "Cancelado" = "Pendente";
                     if (apt.status === "CONFIRMADO" || apt.status === "REALIZADO") {
                         mappedStatus = "Confirmado";
@@ -71,7 +66,6 @@ export default function AgendaContainer() {
                         date: getLocalDateString(apt.scheduledAt),
                         time: getLocalTimeString(apt.scheduledAt),
                         procedure: apt.serviceType || "Consulta",
-                        description: apt.description || "",
                         status: mappedStatus,
                         isGuest: !apt.patientId || apt.patientId === "",
                     };
@@ -91,7 +85,6 @@ export default function AgendaContainer() {
 
     const handleStatusChange = async (id: string | number, newStatus: "Confirmado" | "Cancelado") => {
         try {
-            // Optimistic UI update
             setAppointments((prev) =>
                 prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a))
             );
@@ -120,7 +113,7 @@ export default function AgendaContainer() {
             const body = {
                 ...(scheduledAt ? { scheduledAt } : {}),
                 ...(updatedFields.procedure ? { serviceType: updatedFields.procedure } : {}),
-                ...(updatedFields.description !== undefined ? { description: updatedFields.description } : {}),
+                
                 ...(updatedFields.status ? { 
                     status: updatedFields.status === "Confirmado" ? "CONFIRMADO" : 
                             updatedFields.status === "Cancelado" ? "CANCELADO" : "PENDENTE" 
@@ -146,12 +139,11 @@ export default function AgendaContainer() {
             const scheduledAt = new Date(`${apt.date}T${apt.time}:00`);
             const isGuest = apt.isGuest;
 
-            // Use the structured create input Zod schema parameters
             const body = {
                 ...(isGuest ? { guestName: apt.patientName } : { patientId: (apt as any).patientId }),
                 scheduledAt: scheduledAt.toISOString(),
                 serviceType: apt.procedure,
-                description: apt.description || null,
+                
                 estimatedValue: 0,
                 status: "PENDENTE",
             };

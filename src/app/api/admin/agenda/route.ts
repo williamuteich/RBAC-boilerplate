@@ -12,12 +12,10 @@ import { decrypt, encrypt } from "@/src/lib/encrypted-fields";
 
 const ENCRYPTED_FIELDS = [
   { name: "serviceType", action: encrypt, shouldProcess: (val: string) => !val.includes(":") && val.trim() !== "" },
-  { name: "description", action: encrypt, shouldProcess: (val: string) => !val.includes(":") && val.trim() !== "" },
 ] as const;
 
 const DECRYPT_FIELDS = [
   { name: "serviceType", action: decrypt, shouldProcess: (val: string) => val.includes(":") && val.trim() !== "" },
-  { name: "description", action: decrypt, shouldProcess: (val: string) => val.includes(":") && val.trim() !== "" },
 ] as const;
 
 async function processData(data: any, fields: typeof ENCRYPTED_FIELDS | typeof DECRYPT_FIELDS): Promise<any> {
@@ -77,7 +75,6 @@ function mapAppointment(appointment: any): Appointment {
     scheduledAt: appointment.scheduledAt?.toISOString?.() || String(appointment.scheduledAt),
     serviceType: appointment.serviceType,
     estimatedValue: appointment.estimatedValue,
-    description: appointment.description,
     status: appointment.status,
     createdAt: appointment.createdAt?.toISOString?.() || String(appointment.createdAt),
     updatedAt: appointment.updatedAt?.toISOString?.() || String(appointment.updatedAt),
@@ -165,10 +162,6 @@ async function _POST(request: Request) {
         scheduledAt: encryptedBody.scheduledAt,
         serviceType: encryptedBody.serviceType,
         estimatedValue: encryptedBody.estimatedValue,
-        description:
-          encryptedBody.description && encryptedBody.description.trim() !== ""
-            ? encryptedBody.description
-            : null,
         status: encryptedBody.status || "PENDENTE",
       },
       include: {

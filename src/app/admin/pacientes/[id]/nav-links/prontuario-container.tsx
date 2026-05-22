@@ -11,7 +11,9 @@ import CadastroTab from "./cadastro/cadastro-tab";
 import AnamneseTab from "./anamnese/anamnese-tab";
 import { Suspense } from "react";
 
-export default function ProntuarioContainer({
+import { getAgendamentos } from "@/src/services/pacientes";
+
+export default async function ProntuarioContainer({
     paciente,
     initialHistory,
     patientId,
@@ -19,6 +21,19 @@ export default function ProntuarioContainer({
     initialAnamnese,
     initialOdontogram,
 }: ProntuarioContainerProps) {
+    // Fetch recent appointments for this patient to show last scheduled
+    let lastAppointment: any = null;
+    try {
+        const resp = await getAgendamentos({ patientId, page: 1, limit: 100 });
+        if (resp && resp.agendamentos && resp.agendamentos.length > 0) {
+            lastAppointment = resp.agendamentos.reduce((best: any, cur: any) => {
+                if (!best) return cur;
+                return new Date(cur.scheduledAt) > new Date(best.scheduledAt) ? cur : best;
+            }, resp.agendamentos[0]);
+        }
+    } catch (err) {
+        lastAppointment = null;
+    }
     const calcIdade = (birthDate: string) => {
         if (!birthDate) return 0;
         const hoje = new Date();
@@ -93,8 +108,17 @@ export default function ProntuarioContainer({
                     </div>
                     <div className="min-w-0">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Próxima Consulta</p>
-                        <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">28 Mai 2026 • 14:00</p>
-                        <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">Limpeza & Profilaxia</p>
+                        {lastAppointment ? (
+                            <>
+                                <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">{new Date(lastAppointment.scheduledAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })} • {new Date(lastAppointment.scheduledAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</p>
+                                <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">{lastAppointment.serviceType || "Sem informação"}</p>
+                            </>
+                        ) : (
+                            <>
+                                <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">Sem informação</p>
+                                <p className="text-[11px] font-semibold text-slate-500 mt-px truncate">&nbsp;</p>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

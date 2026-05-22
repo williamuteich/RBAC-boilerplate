@@ -2,12 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import {
-    Stethoscope,
     ChevronLeft,
     ChevronRight,
     Plus,
     Search,
-    X,
     UserCheck,
     UserX,
     Loader2,
@@ -15,20 +13,18 @@ import {
     Pencil,
     Check,
     AlertCircle,
-    Sparkles,
     Calendar,
     CheckCircle2,
     Clock,
     XCircle,
     Info,
-    AlignLeft
+    
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
 
@@ -38,7 +34,6 @@ export interface Appointment {
     date: string;
     time: string;
     procedure: string;
-    description?: string;
     status: "Confirmado" | "Pendente" | "Cancelado";
     isNew?: boolean;
     isGuest?: boolean;
@@ -113,7 +108,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
 
-    // Modal state for adding a new appointment
     const [mode, setMode] = useState<"registered" | "guest">("registered");
     const [cpfInput, setCpfInput] = useState("");
     const [cpfSearching, setCpfSearching] = useState(false);
@@ -122,23 +116,19 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
     const [guestName, setGuestName] = useState("");
     const [procedure, setProcedure] = useState("");
     const [customProcedure, setCustomProcedure] = useState("");
-    const [description, setDescription] = useState("");
     const [time, setTime] = useState("09:00");
     const [submitting, setSubmitting] = useState(false);
     const [procedureOpen, setProcedureOpen] = useState(false);
     const procedureRef = useRef<HTMLDivElement>(null);
 
-    // Modal state for editing an appointment
     const [editProcedure, setEditProcedure] = useState("");
     const [editCustomProcedure, setEditCustomProcedure] = useState("");
-    const [editDescription, setEditDescription] = useState("");
     const [editDate, setEditDate] = useState("");
     const [editTime, setEditTime] = useState("");
     const [editStatus, setEditStatus] = useState<"Confirmado" | "Pendente" | "Cancelado">("Pendente");
     const [editProcedureOpen, setEditProcedureOpen] = useState(false);
     const editProcedureRef = useRef<HTMLDivElement>(null);
 
-    // Click outside handler for custom procedure select
     useEffect(() => {
         function handleClick(e: MouseEvent) {
             if (procedureRef.current && !procedureRef.current.contains(e.target as Node)) {
@@ -152,7 +142,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         return () => document.removeEventListener("mousedown", handleClick);
     }, []);
 
-    // Calendar logic
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth();
 
@@ -164,17 +153,14 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
 
     const prevMonthLastDay = new Date(year, month, 0).getDate();
 
-    // Create 42 grid cells (6 rows x 7 columns)
     const cells: { dateStr: string; dayNum: number; isCurrentMonth: boolean; isToday: boolean }[] = [];
 
-    // Exact timezone-safe today local date definition to resolve highlight bug!
     const today = new Date();
     const todayYear = today.getFullYear();
     const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
     const todayDay = String(today.getDate()).padStart(2, '0');
     const todayStr = `${todayYear}-${todayMonth}-${todayDay}`;
 
-    // Padding from previous month
     for (let i = startDayOfWeek - 1; i >= 0; i--) {
         const d = prevMonthLastDay - i;
         const prevMonthDate = new Date(year, month - 1, d);
@@ -190,7 +176,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         });
     }
 
-    // Days in current month
     for (let d = 1; d <= totalDaysInMonth; d++) {
         const currentMonthDate = new Date(year, month, d);
         const y = currentMonthDate.getFullYear();
@@ -205,7 +190,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         });
     }
 
-    // Padding for next month to complete 42 cells
     const remainingCells = 42 - cells.length;
     for (let d = 1; d <= remainingCells; d++) {
         const nextMonthDate = new Date(year, month + 1, d);
@@ -221,14 +205,12 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         });
     }
 
-    // Navigation handlers
     const prevMonth = () => setViewDate(new Date(year, month - 1, 1));
     const nextMonth = () => setViewDate(new Date(year, month + 1, 1));
     const goToToday = () => setViewDate(new Date());
 
     const monthName = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" }).format(viewDate);
 
-    // Search patient by CPF
     const handleCPFSearch = async () => {
         const raw = cpfInput.replace(/\D/g, "");
         if (raw.length !== 11) {
@@ -261,7 +243,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         }
     };
 
-    // Open Add Appointment Modal for a specific date
     const openAddModal = (dateStr: string) => {
         setSelectedDateStr(dateStr);
         setMode("registered");
@@ -271,12 +252,10 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         setGuestName("");
         setProcedure("");
         setCustomProcedure("");
-        setDescription("");
         setTime("09:00");
         setIsAddOpen(true);
     };
 
-    // Form submission for adding
     const handleAddSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const finalProcedure = procedure === "Outro" ? customProcedure : procedure;
@@ -287,12 +266,11 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         if (!name) return;
 
         setSubmitting(true);
-        onAdd({
+            onAdd({
             patientName: name,
             date: selectedDateStr,
             time,
             procedure: finalProcedure,
-            description: description.trim() || undefined,
             status: "Pendente",
             isNew: true,
             isGuest,
@@ -302,7 +280,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         setIsAddOpen(false);
     };
 
-    // Form submission for updating
     const handleEditSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedApt) return;
@@ -311,7 +288,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
 
         onUpdate(selectedApt.id, {
             procedure: finalProcedure,
-            description: editDescription.trim() || undefined,
             date: editDate,
             time: editTime,
             status: editStatus,
@@ -320,7 +296,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         setIsEditOpen(false);
     };
 
-    // Calculate dynamic stats for currently viewed month
     const currentMonthAppointments = appointments.filter(apt => {
         const aptDate = new Date(apt.date + "T00:00:00");
         return aptDate.getFullYear() === year && aptDate.getMonth() === month;
@@ -335,7 +310,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
 
     return (
         <div className="space-y-6 w-full animate-in fade-in duration-500">
-            {/* Top Metrics Cards (Beautifully Color-Coded) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                 <div className="bg-linear-to-br from-white to-blue-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 shadow-inner">
@@ -378,7 +352,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                 </div>
             </div>
 
-            {/* Calendar Controls & Month Switcher */}
             <div className="bg-white border rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
                 <div className="flex items-center gap-2">
                     <button
@@ -417,9 +390,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                 </div>
             </div>
 
-            {/* Gorgeous Full-Page Month Grid */}
             <div className="bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden">
-                {/* Weekday Labels */}
                 <div className="grid grid-cols-7 border-b bg-slate-50/80">
                     {["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map((day, idx) => (
                         <div
@@ -434,7 +405,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                     ))}
                 </div>
 
-                {/* Day Cells */}
                 <div className="grid grid-cols-7 grid-rows-6 divide-x divide-y divide-slate-150">
                     {cells.map((cell, idx) => {
                         const cellApts = appointments.filter(apt => apt.date === cell.dateStr);
@@ -516,7 +486,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                 </div>
             </div>
 
-            {/* Modal: Appointment Action Details */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                 <DialogContent className="sm:max-w-md border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
                     {selectedApt && (
@@ -578,16 +547,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                                         </p>
                                     </div>
 
-                                    {/* Description inside details */}
-                                    {selectedApt.description && (
-                                        <div className="col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-100 mt-2">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                                                <AlignLeft className="h-3 w-3 text-slate-400" />
-                                                Descrição / Observações
-                                            </span>
-                                            <p className="text-xs text-slate-700 mt-1.5 whitespace-pre-wrap font-medium leading-relaxed">{selectedApt.description}</p>
-                                        </div>
-                                    )}
+                                    
                                 </div>
 
                                 {selectedApt.status === "Pendente" && (
@@ -629,7 +589,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                                             if (selectedApt) {
                                                 setEditProcedure(PROCEDURES.includes(selectedApt.procedure) ? selectedApt.procedure : "Outro");
                                                 setEditCustomProcedure(PROCEDURES.includes(selectedApt.procedure) ? "" : selectedApt.procedure);
-                                                setEditDescription(selectedApt.description || "");
+                                                
                                                 setEditDate(selectedApt.date);
                                                 setEditTime(selectedApt.time);
                                                 setEditStatus(selectedApt.status);
@@ -648,7 +608,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                 </DialogContent>
             </Dialog>
 
-            {/* Modal: Add Appointment */}
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                 <DialogContent className="sm:max-w-lg border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
                     <div className="bg-linear-to-r from-blue-600 to-blue-700 px-6 py-6 text-white">
@@ -822,19 +781,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                             )}
                         </div>
 
-                        {/* Optional Description / Comments input */}
-                        <div>
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
-                                Descrição / Observações <span className="text-slate-300">(Opcional)</span>
-                            </label>
-                            <textarea
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Adicione observações, queixas, sintomas ou detalhes específicos sobre o procedimento..."
-                                rows={3}
-                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium resize-none"
-                            />
-                        </div>
+                        
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -885,7 +832,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                 </DialogContent>
             </Dialog>
 
-            {/* Modal: Edit Appointment */}
             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                 <DialogContent className="sm:max-w-lg border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
                     <div className="bg-linear-to-r from-blue-600 to-blue-700 px-6 py-6 text-white">
@@ -903,7 +849,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                     </div>
 
                     <form onSubmit={handleEditSubmit} className="p-6 space-y-5">
-                        {/* Status field */}
                         <div>
                             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
                                 Status do Agendamento
@@ -937,7 +882,6 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                             </div>
                         </div>
 
-                        {/* Procedure Select */}
                         <div ref={editProcedureRef}>
                             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
                                 Procedimento Clínico <span className="text-rose-500">*</span>
@@ -984,21 +928,8 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                             )}
                         </div>
 
-                        {/* Description field */}
-                        <div>
-                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
-                                Descrição / Observações <span className="text-slate-300">(Opcional)</span>
-                            </label>
-                            <textarea
-                                value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
-                                placeholder="Adicione observações, queixas, sintomas ou detalhes específicos sobre o procedimento..."
-                                rows={3}
-                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium resize-none"
-                            />
-                        </div>
+                        
 
-                        {/* Date & Time fields */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">Data</label>

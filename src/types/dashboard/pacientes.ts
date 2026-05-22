@@ -62,7 +62,6 @@ export interface Appointment {
   scheduledAt: string;
   serviceType: string;
   estimatedValue: number;
-  description?: string | null;
   status: "PENDENTE" | "CONFIRMADO" | "CANCELADO" | "REALIZADO";
   createdAt: string;
   updatedAt: string;
@@ -90,7 +89,6 @@ export interface CreateAgendamentoInput {
   scheduledAt: string;
   serviceType: string;
   estimatedValue: number;
-  description?: string;
   status?: Appointment["status"];
 }
 
@@ -98,7 +96,6 @@ export interface UpdateAgendamentoInput {
   scheduledAt?: string;
   serviceType?: string;
   estimatedValue?: number;
-  description?: string;
   status?: Appointment["status"];
 }
 
