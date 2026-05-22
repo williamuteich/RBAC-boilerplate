@@ -17,11 +17,6 @@ const upperTeethLeft = [21, 22, 23, 24, 25, 26, 27, 28];
 const lowerTeethLeft = [38, 37, 36, 35, 34, 33, 32, 31];
 const lowerTeethRight = [41, 42, 43, 44, 45, 46, 47, 48];
 
-const upperTeethRightChild = [55, 54, 53, 52, 51];
-const upperTeethLeftChild = [61, 62, 63, 64, 65];
-const lowerTeethLeftChild = [75, 74, 73, 72, 71];
-const lowerTeethRightChild = [81, 82, 83, 84, 85];
-
 export const statusConfig = {
     SAUDAVEL: { label: "Saudável", color: "bg-emerald-500", border: "border-emerald-500", text: "text-emerald-700", bgLight: "bg-emerald-50/60" },
     CARIE: { label: "Cárie", color: "bg-rose-500", border: "border-rose-500", text: "text-rose-700", bgLight: "bg-rose-50/60" },
@@ -41,15 +36,11 @@ interface CustomTooth {
 }
 
 export default function OdontogramaClient({ patientId, initialOdontogram }: { patientId: string, initialOdontogram: any }) {
-    const [dentitionType, setDentitionType] = useState<"adult" | "child">("adult");
     const [isPending, startTransition] = useTransition();
 
     const [teeth, setTeeth] = useState<Record<number, ToothInfo>>(() => {
         const initial: Record<number, ToothInfo> = {};
-        const allTeeth = [
-            ...upperTeethRight, ...upperTeethLeft, ...lowerTeethLeft, ...lowerTeethRight,
-            ...upperTeethRightChild, ...upperTeethLeftChild, ...lowerTeethLeftChild, ...lowerTeethRightChild
-        ];
+        const allTeeth = [...upperTeethRight, ...upperTeethLeft, ...lowerTeethLeft, ...lowerTeethRight];
         allTeeth.forEach(t => {
             initial[t] = { id: t, status: "SAUDAVEL", notes: "" };
         });
@@ -87,7 +78,7 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
 
     const handleSave = () => {
         const payloadTeeth: any[] = [];
-        
+
         Object.values(teeth).forEach(t => {
             if (t.status !== "SAUDAVEL" || (t.notes && t.notes.trim() !== "")) {
                 payloadTeeth.push({
@@ -180,10 +171,10 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
         }
     };
 
-    const activeUpperRight = dentitionType === "adult" ? upperTeethRight : upperTeethRightChild;
-    const activeUpperLeft = dentitionType === "adult" ? upperTeethLeft : upperTeethLeftChild;
-    const activeLowerLeft = dentitionType === "adult" ? lowerTeethLeft : lowerTeethLeftChild;
-    const activeLowerRight = dentitionType === "adult" ? lowerTeethRight : lowerTeethRightChild;
+    const activeUpperRight = upperTeethRight;
+    const activeUpperLeft = upperTeethLeft;
+    const activeLowerLeft = lowerTeethLeft;
+    const activeLowerRight = lowerTeethRight;
 
     const currentSelectedStatus = selectedTooth !== null
         ? teeth[selectedTooth]?.status || "SAUDAVEL"
@@ -256,34 +247,16 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
                         </p>
                     </div>
 
-                    <div className="flex items-center border border-slate-200 bg-slate-50 p-1 rounded-lg">
-                        <button
-                            onClick={() => {
-                                setDentitionType("adult");
-                                setSelectedTooth(16);
-                                setSelectedCustomToothId(null);
-                            }}
-                            className={cn(
-                                "h-8 px-3 text-xs font-semibold rounded-md transition-all",
-                                dentitionType === "adult" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
+                    <div className="flex justify-end pt-4 border-t mt-4 border-slate-100">
+                        <Button onClick={handleSave} disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-semibold h-11 px-8 rounded-lg gap-2 transition-all">
+                            {isPending ? (
+                                <><Loader2 className="h-4 w-4 animate-spin" /> Salvando...</>
+                            ) : (
+                                <><Save className="h-4 w-4" /> Salvar Odontograma</>
                             )}
-                        >
-                            Dentição Permanente (Adulto)
-                        </button>
-                        <button
-                            onClick={() => {
-                                setDentitionType("child");
-                                setSelectedTooth(51);
-                                setSelectedCustomToothId(null);
-                            }}
-                            className={cn(
-                                "h-8 px-3 text-xs font-semibold rounded-md transition-all",
-                                dentitionType === "child" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
-                            )}
-                        >
-                            Dentição Decídua (Infantil)
-                        </button>
+                        </Button>
                     </div>
+
                 </div>
 
                 <div className="bg-slate-50/50 border border-slate-100 rounded-md p-6 flex flex-col items-center justify-center gap-10 select-none shadow-inner min-h-[350px] relative overflow-hidden">
@@ -412,7 +385,7 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
                                 </h4>
                                 <p className="text-xs text-muted-foreground mt-0.5">
                                     {selectedTooth !== null ? (
-                                        selectedTooth <= (dentitionType === "adult" ? 28 : 65) ? "Arcada Superior" : "Arcada Inferior"
+                                        selectedTooth <= 28 ? "Arcada Superior" : "Arcada Inferior"
                                     ) : (
                                         "Dente Supranumerário / Especial"
                                     )}
@@ -488,18 +461,8 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
                         </p>
                     </div>
                 )}
-                
-                <div className="flex justify-end pt-4 border-t mt-4 border-slate-100">
-                    <Button onClick={handleSave} disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-semibold h-11 px-8 rounded-lg gap-2 transition-all">
-                        {isPending ? (
-                            <><Loader2 className="h-4 w-4 animate-spin" /> Salvando...</>
-                        ) : (
-                            <><Save className="h-4 w-4" /> Salvar Odontograma</>
-                        )}
-                    </Button>
-                </div>
             </div>
-            
+
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
         </div>
     );
