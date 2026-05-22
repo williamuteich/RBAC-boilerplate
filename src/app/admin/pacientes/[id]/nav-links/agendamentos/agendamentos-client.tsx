@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Plus, Clock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Appointment, CreateAgendamentoInput } from "@/src/types/dashboard/pacientes";
-import { createAgendamento } from "@/src/services/pacientes";
+import { Appointment, CreateAgendamentoInput, UpdateAgendamentoInput } from "@/src/types/dashboard/pacientes";
+import { createAgendamento, updateAgendamento } from "@/src/services/pacientes";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -19,18 +19,33 @@ const statusLabel: Record<Appointment["status"], string> = {
 
 export default function AgendamentosClient({ patientId, initialAppointments }: { patientId: string; initialAppointments: Appointment[] }) {
     const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+    const [newlyCreatedIds, setNewlyCreatedIds] = useState<string[]>([]);
     const [isPending, startTransition] = useTransition();
     const [showForm, setShowForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     const [scheduledAt, setScheduledAt] = useState("");
     const [serviceType, setServiceType] = useState("");
     const [estimatedValue, setEstimatedValue] = useState("");
     const [description, setDescription] = useState("");
+    const [status, setStatus] = useState<Appointment["status"]>("PENDENTE");
+
+    const [editScheduledAt, setEditScheduledAt] = useState("");
+    const [editServiceType, setEditServiceType] = useState("");
+    const [editEstimatedValue, setEditEstimatedValue] = useState("");
+    const [editDescription, setEditDescription] = useState("");
+    const [editStatus, setEditStatus] = useState<Appointment["status"]>("PENDENTE");
 
     const sortedAppointments = useMemo(
         () => [...appointments].sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()),
         [appointments]
     );
+
+    const toDateTimeLocalValue = (isoDate: string) => {
+        const date = new Date(isoDate);
+        const pad = (n: number) => String(n).padStart(2, "0");
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    };
 
     const handleCreate = () => {
         if (!scheduledAt || !serviceType || estimatedValue === "") {
@@ -44,7 +59,7 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
             serviceType,
             estimatedValue: Number(estimatedValue),
             description: description.trim() || undefined,
-            status: "PENDENTE",
+            status,
         };
 
         startTransition(async () => {
@@ -55,12 +70,50 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
             }
 
             setAppointments((prev) => [res.data as Appointment, ...prev]);
+            setNewlyCreatedIds((prev) => [res.data!.id, ...prev]);
             setShowForm(false);
             setScheduledAt("");
             setServiceType("");
             setEstimatedValue("");
             setDescription("");
+            setStatus("PENDENTE");
             toast.success("Agendamento criado com sucesso!");
+        });
+    };
+
+    const handleStartEdit = (appointment: Appointment) => {
+        setEditingId(appointment.id);
+        setEditScheduledAt(toDateTimeLocalValue(appointment.scheduledAt));
+        setEditServiceType(appointment.serviceType);
+        setEditEstimatedValue(String(appointment.estimatedValue));
+        setEditDescription(appointment.description || "");
+        setEditStatus(appointment.status);
+    };
+
+    const handleSaveEdit = (id: string) => {
+        if (!editScheduledAt || !editServiceType || editEstimatedValue === "") {
+            toast.error("Preencha data/hora, tipo de serviço e valor estimado para editar.");
+            return;
+        }
+
+        const payload: UpdateAgendamentoInput = {
+            scheduledAt: editScheduledAt,
+            serviceType: editServiceType,
+            estimatedValue: Number(editEstimatedValue),
+            description: editDescription.trim() || undefined,
+            status: editStatus,
+        };
+
+        startTransition(async () => {
+            const res = await updateAgendamento(id, payload);
+            if (!res.success || !res.data) {
+                toast.error(res.error || "Erro ao atualizar agendamento.");
+                return;
+            }
+
+            setAppointments((prev) => prev.map((item) => (item.id === id ? res.data as Appointment : item)));
+            setEditingId(null);
+            toast.success("Agendamento atualizado com sucesso!");
         });
     };
 
@@ -117,6 +170,19 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
                             className="w-full h-9 rounded-md border bg-white px-3 text-sm"
                         />
                     </div>
+                    <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-600">Status</label>
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value as Appointment["status"])}
+                            className="w-full h-9 rounded-md border bg-white px-3 text-sm"
+                        >
+                            <option value="PENDENTE">Pendente</option>
+                            <option value="CONFIRMADO">Confirmado</option>
+                            <option value="CANCELADO">Cancelado</option>
+                            <option value="REALIZADO">Realizado</option>
+                        </select>
+                    </div>
                     <div className="space-y-1 md:col-span-2">
                         <label className="text-xs font-semibold text-slate-600">Descrição (opcional)</label>
                         <textarea
@@ -143,21 +209,33 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
                     {sortedAppointments.map((appt) => (
                         <div
                             key={appt.id}
-                            className="bg-slate-50/50 border hover:border-slate-300 hover:bg-white rounded-md p-5 transition-all duration-300 flex flex-col gap-4 shadow-sm"
+                            className={cn(
+                                "border hover:border-slate-300 hover:bg-white rounded-md p-5 transition-all duration-300 flex flex-col gap-4 shadow-sm",
+                                newlyCreatedIds.includes(appt.id)
+                                    ? "bg-blue-50/70 border-blue-200 shadow-blue-100"
+                                    : "bg-slate-50/50"
+                            )}
                         >
                             <div className="flex items-start justify-between gap-3">
                                 <div className="space-y-1">
-                                    <Badge
-                                        className={cn(
-                                            "font-medium rounded-sm",
-                                            appt.status === "CONFIRMADO" && "bg-emerald-50 text-emerald-700 border-emerald-100",
-                                            appt.status === "PENDENTE" && "bg-blue-50 text-blue-700 border-blue-100",
-                                            appt.status === "CANCELADO" && "bg-rose-50 text-rose-700 border-rose-100",
-                                            appt.status === "REALIZADO" && "bg-slate-100 text-slate-700 border-slate-200"
+                                    <div className="flex items-center gap-2">
+                                        <Badge
+                                            className={cn(
+                                                "font-medium rounded-sm",
+                                                appt.status === "CONFIRMADO" && "bg-emerald-50 text-emerald-700 border-emerald-100",
+                                                appt.status === "PENDENTE" && "bg-blue-50 text-blue-700 border-blue-100",
+                                                appt.status === "CANCELADO" && "bg-rose-50 text-rose-700 border-rose-100",
+                                                appt.status === "REALIZADO" && "bg-slate-100 text-slate-700 border-slate-200"
+                                            )}
+                                        >
+                                            {statusLabel[appt.status]}
+                                        </Badge>
+                                        {newlyCreatedIds.includes(appt.id) && (
+                                            <Badge className="font-medium rounded-sm bg-blue-600 text-white border-blue-600">
+                                                Novo
+                                            </Badge>
                                         )}
-                                    >
-                                        {statusLabel[appt.status]}
-                                    </Badge>
+                                    </div>
                                     <h4 className="font-bold text-slate-800 text-base pt-1">{appt.serviceType}</h4>
                                 </div>
                                 <div className="text-right">
@@ -183,6 +261,58 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
                                     </p>
                                 </div>
                             </div>
+
+                            {editingId === appt.id ? (
+                                <div className="border-t pt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    <input
+                                        type="datetime-local"
+                                        value={editScheduledAt}
+                                        onChange={(e) => setEditScheduledAt(e.target.value)}
+                                        className="w-full h-9 rounded-md border bg-white px-3 text-sm"
+                                    />
+                                    <input
+                                        type="text"
+                                        value={editServiceType}
+                                        onChange={(e) => setEditServiceType(e.target.value)}
+                                        className="w-full h-9 rounded-md border bg-white px-3 text-sm"
+                                    />
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value={editEstimatedValue}
+                                        onChange={(e) => setEditEstimatedValue(e.target.value)}
+                                        className="w-full h-9 rounded-md border bg-white px-3 text-sm"
+                                    />
+                                    <select
+                                        value={editStatus}
+                                        onChange={(e) => setEditStatus(e.target.value as Appointment["status"])}
+                                        className="w-full h-9 rounded-md border bg-white px-3 text-sm"
+                                    >
+                                        <option value="PENDENTE">Pendente</option>
+                                        <option value="CONFIRMADO">Confirmado</option>
+                                        <option value="CANCELADO">Cancelado</option>
+                                        <option value="REALIZADO">Realizado</option>
+                                    </select>
+                                    <textarea
+                                        value={editDescription}
+                                        onChange={(e) => setEditDescription(e.target.value)}
+                                        className="md:col-span-2 w-full h-20 rounded-md border bg-white p-3 text-sm resize-none"
+                                    />
+                                    <div className="md:col-span-2 flex justify-end gap-2">
+                                        <Button variant="outline" onClick={() => setEditingId(null)} disabled={isPending}>Cancelar</Button>
+                                        <Button onClick={() => handleSaveEdit(appt.id)} disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white">
+                                            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar Alterações"}
+                                        </Button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="border-t pt-3 flex justify-end">
+                                    <Button onClick={() => handleStartEdit(appt)} className="text-xs bg-blue-600 hover:bg-blue-700 text-white">
+                                        Editar Agendamento
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>

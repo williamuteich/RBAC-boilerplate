@@ -75,8 +75,9 @@ async function getAppointmentsFromDb(where: any, page: number, limit: number) {
 function mapAppointment(appointment: any): Appointment {
   return {
     id: appointment.id,
-    patientId: appointment.patientId,
-    patientName: appointment.patient?.name || "Paciente",
+    patientId: appointment.patientId || null,
+    patientName: appointment.patient?.name || appointment.guestName || "Paciente",
+    guestName: appointment.guestName || null,
     scheduledAt: appointment.scheduledAt?.toISOString?.() || String(appointment.scheduledAt),
     serviceType: appointment.serviceType,
     estimatedValue: appointment.estimatedValue,
@@ -158,9 +159,13 @@ async function _POST(request: Request) {
 
     const encryptedBody = await encryptData(validated.data);
 
+    const isGuest = !encryptedBody.patientId || encryptedBody.patientId.trim() === "";
+
     const created = await prisma.appointment.create({
       data: {
-        patientId: encryptedBody.patientId,
+        ...(isGuest
+          ? { guestName: encryptedBody.guestName }
+          : { patientId: encryptedBody.patientId }),
         scheduledAt: encryptedBody.scheduledAt,
         serviceType: encryptedBody.serviceType,
         estimatedValue: encryptedBody.estimatedValue,

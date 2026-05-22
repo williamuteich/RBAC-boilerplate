@@ -2,65 +2,56 @@
 
 import { useState } from "react";
 import CalendarGrid from "./calendar-grid";
-import { CalendarDays, Filter } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { CalendarDays } from "lucide-react";
 
-interface Appointment {
+export interface Appointment {
     id: number;
     patientName: string;
     date: string;
     time: string;
     procedure: string;
     status: "Confirmado" | "Pendente" | "Cancelado";
+    isNew?: boolean;
+    isGuest?: boolean;
+}
+
+function mkDate(offsetDays: number) {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    return d.toISOString().split("T")[0];
 }
 
 const INITIAL_APPOINTMENTS: Appointment[] = [
-    {
-        id: 1,
-        patientName: "Matheus Uteich",
-        date: new Date().toISOString().split('T')[0],
-        time: "09:00",
-        procedure: "Implante Dentário",
-        status: "Confirmado"
-    },
-    {
-        id: 2,
-        patientName: "Ana Clara Silva",
-        date: new Date().toISOString().split('T')[0],
-        time: "10:30",
-        procedure: "Profilaxia e Limpeza",
-        status: "Pendente"
-    },
-    {
-        id: 3,
-        patientName: "Carlos Eduardo Souza",
-        date: new Date().toISOString().split('T')[0],
-        time: "14:00",
-        procedure: "Tratamento de Canal",
-        status: "Confirmado"
-    }
+    { id: 1, patientName: "Matheus Uteich", date: mkDate(0), time: "09:00", procedure: "Implante Dentário", status: "Confirmado" },
+    { id: 2, patientName: "Ana Clara Silva", date: mkDate(0), time: "10:30", procedure: "Profilaxia e Limpeza", status: "Pendente" },
+    { id: 3, patientName: "Carlos Eduardo Souza", date: mkDate(0), time: "14:00", procedure: "Tratamento de Canal", status: "Confirmado" },
+    { id: 4, patientName: "Fernanda Lima", date: mkDate(-2), time: "08:00", procedure: "Clareamento Dental", status: "Confirmado" },
+    { id: 5, patientName: "Roberto Santos", date: mkDate(-2), time: "11:00", procedure: "Extração Simples", status: "Cancelado" },
+    { id: 6, patientName: "Juliana Pereira", date: mkDate(1), time: "09:30", procedure: "Ortodontia", status: "Pendente" },
+    { id: 7, patientName: "Bruno Costa", date: mkDate(1), time: "15:00", procedure: "Restauração", status: "Pendente" },
+    { id: 8, patientName: "Mariana Alves", date: mkDate(3), time: "10:00", procedure: "Consulta de Avaliação", status: "Confirmado" },
+    { id: 9, patientName: "Pedro Oliveira", date: mkDate(5), time: "08:30", procedure: "Periodontia", status: "Pendente" },
+    { id: 10, patientName: "Sofia Mendes", date: mkDate(5), time: "13:00", procedure: "Prótese Dentária", status: "Confirmado" },
+    { id: 11, patientName: "Lucas Ferreira", date: mkDate(7), time: "16:00", procedure: "Implante Dentário", status: "Pendente" },
+    { id: 12, patientName: "Camila Ramos", date: mkDate(-5), time: "09:00", procedure: "Clareamento Dental", status: "Confirmado" },
 ];
 
 export default function AgendaContainer() {
     const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_APPOINTMENTS);
-    const [filterStatus, setFilterStatus] = useState("all");
-    const [view, setView] = useState<"day" | "list">("day");
 
     const handleStatusChange = (id: number, newStatus: "Confirmado" | "Cancelado") => {
-        setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a));
+        setAppointments((prev) =>
+            prev.map((a) => (a.id === id ? { ...a, status: newStatus, isNew: false } : a))
+        );
     };
 
-    const filtered = appointments.filter(a => {
-        return filterStatus === "all" || a.status === filterStatus;
-    });
+    const handleAdd = (apt: Omit<Appointment, "id">) => {
+        setAppointments((prev) => [...prev, { ...apt, id: Date.now(), isNew: true }]);
+    };
 
     const hoje = new Date();
-    const dataFormatada = new Intl.DateTimeFormat('pt-BR', { 
-        weekday: 'long', 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
+    const dataFormatada = new Intl.DateTimeFormat("pt-BR", {
+        weekday: "long", day: "numeric", month: "long", year: "numeric",
     }).format(hoje);
 
     return (
@@ -71,57 +62,14 @@ export default function AgendaContainer() {
                         <CalendarDays className="h-6 w-6 text-blue-600" />
                         Agenda
                     </h2>
-                    <p className="text-xs text-slate-500 mt-1 capitalize">
-                        {dataFormatada}
-                    </p>
-                </div>
-
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                    Nova Consulta
-                </Button>
-            </div>
-
-            <div className="bg-white border rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-                <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                        <Filter className="h-4 w-4 text-slate-400" />
-                        Filtrar Status:
-                    </div>
-                    <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value)}
-                        className="h-8.5 px-3 text-xs bg-slate-50 border-none rounded-lg outline-none focus:ring-1 focus:ring-blue-600 font-semibold text-slate-600 cursor-pointer"
-                    >
-                        <option value="all">Todos os Status</option>
-                        <option value="Confirmado">Confirmado</option>
-                        <option value="Pendente">Pendente</option>
-                        <option value="Cancelado">Cancelado</option>
-                    </select>
-                </div>
-
-                <div className="flex items-center gap-1.5 border border-slate-100 p-1 rounded-lg bg-slate-50 w-fit shrink-0">
-                    <button
-                        onClick={() => setView("day")}
-                        className={cn(
-                            "h-7 px-3 text-xs font-bold rounded-md transition-all cursor-pointer",
-                            view === "day" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
-                        )}
-                    >
-                        Dia
-                    </button>
-                    <button
-                        onClick={() => setView("list")}
-                        className={cn(
-                            "h-7 px-3 text-xs font-bold rounded-md transition-all cursor-pointer",
-                            view === "list" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
-                        )}
-                    >
-                        Tabela
-                    </button>
+                    <p className="text-xs text-slate-500 mt-1 capitalize">{dataFormatada}</p>
                 </div>
             </div>
-
-            <CalendarGrid appointments={filtered} view={view} onStatusChange={handleStatusChange} />
+            <CalendarGrid
+                appointments={appointments}
+                onStatusChange={handleStatusChange}
+                onAdd={handleAdd}
+            />
         </div>
     );
 }

@@ -208,8 +208,9 @@ enum ToothStatus {
 model Appointment {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  patientId String  @db.ObjectId
-  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId  String?  @db.ObjectId
+  patient    Patient? @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  guestName  String?
 
   scheduledAt    DateTime
   serviceType    String
@@ -221,7 +222,6 @@ model Appointment {
   updatedAt DateTime @updatedAt
 
   @@index([scheduledAt])
-  @@index([patientId, scheduledAt])
   @@index([status, scheduledAt])
 }
 

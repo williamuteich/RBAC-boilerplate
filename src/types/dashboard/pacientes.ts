@@ -56,8 +56,9 @@ export interface EvolucaoItemProps {
 
 export interface Appointment {
   id: string;
-  patientId: string;
+  patientId: string | null;
   patientName: string;
+  guestName?: string | null;
   scheduledAt: string;
   serviceType: string;
   estimatedValue: number;

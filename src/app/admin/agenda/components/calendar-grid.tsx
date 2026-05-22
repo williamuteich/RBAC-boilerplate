@@ -1,174 +1,819 @@
-import { Stethoscope, ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+"use client";
 
-interface Appointment {
+import { useState, useRef, useEffect } from "react";
+import { 
+    Stethoscope, 
+    ChevronLeft, 
+    ChevronRight, 
+    Plus, 
+    Search, 
+    X, 
+    UserCheck, 
+    UserX, 
+    Loader2, 
+    ChevronDown, 
+    Pencil, 
+    Check, 
+    AlertCircle, 
+    Sparkles, 
+    Calendar,
+    CheckCircle2,
+    Clock,
+    XCircle,
+    Info
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+
+export interface Appointment {
     id: number;
     patientName: string;
     date: string;
     time: string;
     procedure: string;
     status: "Confirmado" | "Pendente" | "Cancelado";
+    isNew?: boolean;
+    isGuest?: boolean;
 }
 
 interface CalendarGridProps {
     appointments: Appointment[];
-    view: "day" | "list";
     onStatusChange: (id: number, status: "Confirmado" | "Cancelado") => void;
+    onAdd: (apt: Omit<Appointment, "id">) => void;
 }
 
-export default function CalendarGrid({ appointments, view, onStatusChange }: CalendarGridProps) {
-    const hours = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
-    const hoje = new Date();
-    const currentMonthName = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(hoje);
-    const todayNum = hoje.getDate();
+interface PatientFound {
+    id: string;
+    name: string;
+    cpf: string;
+    phone: string;
+}
 
-    if (view === "list" || appointments.length === 0) {
-        return (
-            <div className="w-full bg-white rounded-xl border shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse text-left">
-                        <thead>
-                            <tr className="bg-slate-50 border-b border-slate-200">
-                                <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Paciente</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Horário / Data</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Procedimento</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                                <th className="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {appointments.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="px-5 py-10 text-center text-xs font-semibold text-slate-400">
-                                        Nenhuma consulta encontrada.
-                                    </td>
-                                </tr>
-                            ) : (
-                                appointments.map((appointment) => (
-                                    <tr key={appointment.id} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-5 py-3.5 font-bold text-slate-800 text-xs">{appointment.patientName}</td>
-                                        <td className="px-5 py-3.5 text-xs text-slate-500 font-semibold">
-                                            {appointment.date.split("-").reverse().join("/")} às {appointment.time}
-                                        </td>
-                                        <td className="px-5 py-3.5 text-xs text-slate-600 font-semibold">{appointment.procedure}</td>
-                                        <td className="px-5 py-3.5">
-                                            <span className={cn(
-                                                "px-2.5 py-1 rounded-full text-[9px] font-bold tracking-wide uppercase inline-block",
-                                                appointment.status === "Confirmado" && "bg-emerald-50 text-emerald-700 border border-emerald-100",
-                                                appointment.status === "Pendente" && "bg-amber-50 text-amber-700 border border-amber-100",
-                                                appointment.status === "Cancelado" && "bg-rose-50 text-rose-700 border border-rose-100"
-                                            )}>
-                                                {appointment.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-3.5 text-right">
-                                            {appointment.status === "Pendente" && (
-                                                <div className="flex justify-end gap-1.5">
-                                                    <button
-                                                        onClick={() => onStatusChange(appointment.id, "Confirmado")}
-                                                        className="px-2 py-1 bg-emerald-500 text-white rounded text-[10px] font-bold hover:bg-emerald-600 cursor-pointer"
-                                                    >
-                                                        Confirmar
-                                                    </button>
-                                                    <button
-                                                        onClick={() => onStatusChange(appointment.id, "Cancelado")}
-                                                        className="px-2 py-1 bg-rose-50 text-rose-600 rounded text-[10px] font-bold hover:bg-rose-100 border border-rose-200 cursor-pointer"
-                                                    >
-                                                        Cancelar
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        );
+const PROCEDURES = [
+    "Consulta de Avaliação",
+    "Profilaxia e Limpeza",
+    "Implante Dentário",
+    "Tratamento de Canal",
+    "Extração Simples",
+    "Extração de Siso",
+    "Restauração",
+    "Clareamento Dental",
+    "Ortodontia",
+    "Prótese Dentária",
+    "Periodontia",
+    "Cirurgia Oral",
+    "Outro",
+];
+
+const STATUS_THEMES = {
+    Confirmado: {
+        bg: "bg-emerald-50 hover:bg-emerald-100/80 border-emerald-200 text-emerald-800",
+        badge: "bg-emerald-500 text-white",
+        dot: "bg-emerald-500",
+        pill: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    },
+    Pendente: {
+        bg: "bg-amber-50 hover:bg-amber-100/80 border-amber-200 text-amber-900",
+        badge: "bg-amber-500 text-white",
+        dot: "bg-amber-500",
+        pill: "bg-amber-100 text-amber-800 border-amber-200",
+    },
+    Cancelado: {
+        bg: "bg-rose-50 hover:bg-rose-100/80 border-rose-200 text-rose-800 opacity-60",
+        badge: "bg-rose-500 text-white",
+        dot: "bg-rose-500",
+        pill: "bg-rose-100 text-rose-800 border-rose-200",
+    },
+};
+
+function formatCPF(value: string) {
+    const digits = value.replace(/\D/g, "").slice(0, 11);
+    return digits
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+}
+
+export default function CalendarGrid({ appointments, onStatusChange, onAdd }: CalendarGridProps) {
+    const [viewDate, setViewDate] = useState(new Date());
+    const [selectedDateStr, setSelectedDateStr] = useState<string | null>(null);
+    const [selectedApt, setSelectedApt] = useState<Appointment | null>(null);
+    const [isAddOpen, setIsAddOpen] = useState(false);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+    // Modal state for adding a new appointment
+    const [mode, setMode] = useState<"registered" | "guest">("registered");
+    const [cpfInput, setCpfInput] = useState("");
+    const [cpfSearching, setCpfSearching] = useState(false);
+    const [patientFound, setPatientFound] = useState<PatientFound | null>(null);
+    const [cpfError, setCpfError] = useState("");
+    const [guestName, setGuestName] = useState("");
+    const [procedure, setProcedure] = useState("");
+    const [customProcedure, setCustomProcedure] = useState("");
+    const [time, setTime] = useState("09:00");
+    const [submitting, setSubmitting] = useState(false);
+    const [procedureOpen, setProcedureOpen] = useState(false);
+    const procedureRef = useRef<HTMLDivElement>(null);
+
+    // Click outside handler for custom procedure select
+    useEffect(() => {
+        function handleClick(e: MouseEvent) {
+            if (procedureRef.current && !procedureRef.current.contains(e.target as Node)) {
+                setProcedureOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClick);
+        return () => document.removeEventListener("mousedown", handleClick);
+    }, []);
+
+    // Calendar logic
+    const year = viewDate.getFullYear();
+    const month = viewDate.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    
+    const startDayOfWeek = firstDayOfMonth.getDay(); // 0: Sun, 6: Sat
+    const totalDaysInMonth = lastDayOfMonth.getDate();
+    
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+    // Create 42 grid cells (6 rows x 7 columns)
+    const cells: { dateStr: string; dayNum: number; isCurrentMonth: boolean; isToday: boolean }[] = [];
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+
+    // Padding from previous month
+    for (let i = startDayOfWeek - 1; i >= 0; i--) {
+        const d = prevMonthLastDay - i;
+        const prevMonthDate = new Date(year, month - 1, d);
+        const dateStr = prevMonthDate.toISOString().split("T")[0];
+        cells.push({
+            dateStr,
+            dayNum: d,
+            isCurrentMonth: false,
+            isToday: dateStr === todayStr,
+        });
     }
 
+    // Days in current month
+    for (let d = 1; d <= totalDaysInMonth; d++) {
+        const currentMonthDate = new Date(year, month, d);
+        // Ensure timezone-safe date string
+        const yearStr = currentMonthDate.getFullYear();
+        const monthStr = String(currentMonthDate.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(currentMonthDate.getDate()).padStart(2, '0');
+        const dateStr = `${yearStr}-${monthStr}-${dayStr}`;
+        cells.push({
+            dateStr,
+            dayNum: d,
+            isCurrentMonth: true,
+            isToday: dateStr === todayStr,
+        });
+    }
+
+    // Padding for next month to complete 42 cells
+    const remainingCells = 42 - cells.length;
+    for (let d = 1; d <= remainingCells; d++) {
+        const nextMonthDate = new Date(year, month + 1, d);
+        const dateStr = nextMonthDate.toISOString().split("T")[0];
+        cells.push({
+            dateStr,
+            dayNum: d,
+            isCurrentMonth: false,
+            isToday: dateStr === todayStr,
+        });
+    }
+
+    // Navigation handlers
+    const prevMonth = () => setViewDate(new Date(year, month - 1, 1));
+    const nextMonth = () => setViewDate(new Date(year, month + 1, 1));
+    const goToToday = () => setViewDate(new Date());
+
+    const monthName = new Intl.DateTimeFormat("pt-BR", { month: "long", year: "numeric" }).format(viewDate);
+
+    // Search patient by CPF
+    const handleCPFSearch = async () => {
+        const raw = cpfInput.replace(/\D/g, "");
+        if (raw.length !== 11) {
+            setCpfError("CPF deve ter 11 dígitos");
+            return;
+        }
+        setCpfSearching(true);
+        setCpfError("");
+        setPatientFound(null);
+        try {
+            // We search with and without formatting to make it bulletproof
+            let res = await fetch(`/api/admin/pacientes?cpf=${raw}&limit=1`);
+            let data = await res.json();
+            
+            if (!data.pacientes || data.pacientes.length === 0) {
+                // Try with dots/dash format
+                const formatted = formatCPF(raw);
+                res = await fetch(`/api/admin/pacientes?cpf=${encodeURIComponent(formatted)}&limit=1`);
+                data = await res.json();
+            }
+
+            if (data.pacientes && data.pacientes.length > 0) {
+                const p = data.pacientes[0];
+                setPatientFound({ id: p.id, name: p.name, cpf: p.cpf, phone: p.phone });
+            } else {
+                setCpfError("Paciente não encontrado. Use 'Sem Cadastro' para este agendamento.");
+            }
+        } catch (err) {
+            setCpfError("Erro de conexão. Tente novamente.");
+        } finally {
+            setCpfSearching(false);
+        }
+    };
+
+    // Open Add Appointment Modal for a specific date
+    const openAddModal = (dateStr: string) => {
+        setSelectedDateStr(dateStr);
+        setMode("registered");
+        setCpfInput("");
+        setPatientFound(null);
+        setCpfError("");
+        setGuestName("");
+        setProcedure("");
+        setCustomProcedure("");
+        setTime("09:00");
+        setIsAddOpen(true);
+    };
+
+    // Form submission
+    const handleAddSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const finalProcedure = procedure === "Outro" ? customProcedure : procedure;
+        if (!finalProcedure || !selectedDateStr) return;
+
+        const isGuest = mode === "guest";
+        const name = isGuest ? guestName : patientFound?.name;
+        if (!name) return;
+
+        setSubmitting(true);
+        setTimeout(() => {
+            onAdd({
+                patientName: name,
+                date: selectedDateStr,
+                time,
+                procedure: finalProcedure,
+                status: "Pendente",
+                isNew: true,
+                isGuest,
+            });
+            setSubmitting(false);
+            setIsAddOpen(false);
+        }, 500);
+    };
+
+    // Calculate dynamic stats for currently viewed month
+    const currentMonthAppointments = appointments.filter(apt => {
+        const aptDate = new Date(apt.date);
+        return aptDate.getFullYear() === year && aptDate.getMonth() === month;
+    });
+
+    const stats = {
+        total: currentMonthAppointments.length,
+        confirmados: currentMonthAppointments.filter(a => a.status === "Confirmado").length,
+        pendentes: currentMonthAppointments.filter(a => a.status === "Pendente").length,
+        cancelados: currentMonthAppointments.filter(a => a.status === "Cancelado").length,
+    };
+
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 w-full">
-            <div className="lg:col-span-2 bg-white border rounded-xl p-4 flex flex-col gap-4 shadow-sm h-fit">
-                <div className="flex items-center justify-between border-b pb-2">
-                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                        {currentMonthName}
-                    </span>
-                    <div className="flex gap-1">
-                        <button className="p-1 hover:bg-slate-100 rounded text-slate-500 cursor-pointer"><ChevronLeft className="h-4 w-4" /></button>
-                        <button className="p-1 hover:bg-slate-100 rounded text-slate-500 cursor-pointer"><ChevronRight className="h-4 w-4" /></button>
+        <div className="space-y-6 w-full">
+            {/* Top Metrics Cards (Beautifully Color-Coded) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                <div className="bg-gradient-to-br from-white to-blue-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 shadow-inner">
+                        <Calendar className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">No Mês ({monthName})</p>
+                        <p className="text-xl font-black text-slate-800 mt-0.5">{stats.total} Agendados</p>
                     </div>
                 </div>
-                <div className="grid grid-cols-7 gap-1 text-center">
-                    {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
-                        <span key={i} className="text-[10px] font-bold text-slate-400">{d}</span>
-                    ))}
-                    {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
-                        const hasApt = day === todayNum; // Simplificação para mostrar o dia atual
-                        return (
-                            <button
-                                key={day}
-                                className={cn(
-                                    "h-7 w-7 text-xs font-semibold rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all relative hover:bg-blue-50 hover:text-blue-600",
-                                    day === todayNum ? "bg-blue-600 text-white hover:bg-blue-600 hover:text-white font-bold shadow-md" : "text-slate-600"
-                                )}
-                            >
-                                {day}
-                                {hasApt && day !== todayNum && <span className="absolute bottom-1 w-1 h-1 rounded-full bg-blue-500"></span>}
-                            </button>
-                        );
-                    })}
+
+                <div className="bg-gradient-to-br from-white to-emerald-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 shadow-inner">
+                        <CheckCircle2 className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Confirmados</p>
+                        <p className="text-xl font-black text-emerald-700 mt-0.5">{stats.confirmados}</p>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-white to-amber-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shrink-0 shadow-inner">
+                        <Clock className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aguardando Resposta</p>
+                        <p className="text-xl font-black text-amber-700 mt-0.5">{stats.pendentes}</p>
+                    </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-white to-rose-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 shrink-0 shadow-inner">
+                        <XCircle className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cancelados</p>
+                        <p className="text-xl font-black text-rose-600 mt-0.5">{stats.cancelados}</p>
+                    </div>
                 </div>
             </div>
 
-            <div className="lg:col-span-5 bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col h-[550px]">
-                <div className="flex items-center justify-between border-b px-4 py-3 bg-slate-50">
-                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">Grade Horária</span>
-                    <span className="text-xs font-bold text-slate-500">Hoje</span>
+            {/* Calendar Controls & Month Switcher */}
+            <div className="bg-white border rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={prevMonth}
+                        className="p-2 hover:bg-slate-100 active:bg-slate-200 rounded-xl border border-slate-200 text-slate-600 transition-all cursor-pointer"
+                        title="Mês Anterior"
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                        onClick={goToToday}
+                        className="px-4 py-2 border border-slate-200 hover:bg-slate-50 active:bg-slate-100 rounded-xl text-xs font-bold text-slate-700 transition-all cursor-pointer uppercase tracking-wider"
+                    >
+                        Hoje
+                    </button>
+                    <button
+                        onClick={nextMonth}
+                        className="p-2 hover:bg-slate-100 active:bg-slate-200 rounded-xl border border-slate-200 text-slate-600 transition-all cursor-pointer"
+                        title="Próximo Mês"
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                    </button>
+                    <span className="text-sm md:text-base font-black text-slate-800 uppercase tracking-wide ml-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                        {monthName}
+                    </span>
                 </div>
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {hours.map((hour) => {
-                        const matching = appointments.filter(a => a.time.startsWith(hour.slice(0, 2)));
+
+                <div className="flex items-center gap-3">
+                    {/* General "Novo Agendamento" Button */}
+                    <button
+                        onClick={() => openAddModal(new Date().toISOString().split("T")[0])}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold rounded-xl shadow-sm shadow-blue-200 transition-all cursor-pointer uppercase tracking-wider"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Agendar Neste Mês
+                    </button>
+                </div>
+            </div>
+
+            {/* Gorgeous Full-Page Month Grid */}
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden">
+                {/* Weekday Labels */}
+                <div className="grid grid-cols-7 border-b bg-slate-50/80">
+                    {["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"].map((day, idx) => (
+                        <div 
+                            key={day} 
+                            className={cn(
+                                "py-3 text-center text-[10px] font-black uppercase tracking-wider border-r border-slate-200/80 last:border-r-0",
+                                (idx === 0 || idx === 6) ? "text-slate-400" : "text-slate-500"
+                            )}
+                        >
+                            {day}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Day Cells */}
+                <div className="grid grid-cols-7 grid-rows-6 divide-x divide-y divide-slate-150">
+                    {cells.map((cell, idx) => {
+                        // Filter appointments scheduled for this cell's date
+                        const cellApts = appointments.filter(apt => apt.date === cell.dateStr);
+
                         return (
-                            <div key={hour} className="flex gap-4 items-start border-b border-slate-100 pb-3 last:border-b-0">
-                                <span className="text-xs font-bold text-slate-400 w-12 shrink-0 pt-0.5">{hour}</span>
-                                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    {matching.length === 0 ? (
-                                        <div className="text-[11px] text-slate-300 font-semibold py-1.5 px-3 border border-dashed border-slate-100 rounded-lg">
-                                            Horário livre
-                                        </div>
-                                    ) : (
-                                        matching.map((apt) => (
-                                            <div
+                            <div
+                                key={`${cell.dateStr}-${idx}`}
+                                className={cn(
+                                    "min-h-[110px] p-2 flex flex-col justify-between group transition-all duration-200 relative",
+                                    cell.isCurrentMonth ? "bg-white" : "bg-slate-50/40 text-slate-400",
+                                    cell.isToday && "bg-blue-50/20 ring-1 ring-blue-400/30 ring-inset"
+                                )}
+                            >
+                                {/* Cell Top Bar */}
+                                <div className="flex items-center justify-between">
+                                    <span 
+                                        className={cn(
+                                            "text-xs font-black w-6 h-6 flex items-center justify-center rounded-full transition-all",
+                                            cell.isToday 
+                                                ? "bg-blue-600 text-white shadow-sm font-black" 
+                                                : cell.isCurrentMonth 
+                                                    ? "text-slate-700 group-hover:text-blue-600" 
+                                                    : "text-slate-300"
+                                        )}
+                                    >
+                                        {cell.dayNum}
+                                    </span>
+
+                                    {/* Inline Hover "+" Add Button */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            openAddModal(cell.dateStr);
+                                        }}
+                                        className="opacity-0 group-hover:opacity-100 w-5 h-5 rounded-md bg-blue-50 hover:bg-blue-600 hover:text-white flex items-center justify-center text-blue-600 transition-all cursor-pointer shadow-xs border border-blue-100"
+                                        title="Novo agendamento para este dia"
+                                    >
+                                        <Plus className="h-3 w-3" />
+                                    </button>
+                                </div>
+
+                                {/* Appointment List inside the day card */}
+                                <div className="flex-1 mt-2 space-y-1 overflow-y-auto max-h-[85px] custom-scrollbar pr-0.5">
+                                    {cellApts.map(apt => {
+                                        const theme = STATUS_THEMES[apt.status];
+                                        return (
+                                            <button
                                                 key={apt.id}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedApt(apt);
+                                                    setIsDetailsOpen(true);
+                                                }}
                                                 className={cn(
-                                                    "border rounded-xl p-3 shadow-xs relative flex flex-col gap-1 transition-all hover:shadow-md",
-                                                    apt.status === "Confirmado" && "bg-emerald-50/30 border-emerald-200 text-emerald-800",
-                                                    apt.status === "Pendente" && "bg-amber-50/30 border-amber-200 text-amber-800",
-                                                    apt.status === "Cancelado" && "bg-rose-50/20 border-rose-200 text-rose-800 opacity-60"
+                                                    "w-full text-left p-1 rounded-lg border text-[10px] font-bold transition-all truncate flex items-center gap-1 shadow-2xs hover:scale-[1.02]",
+                                                    theme.bg
                                                 )}
                                             >
-                                                <div className="flex justify-between items-start">
-                                                    <span className="text-xs font-bold truncate max-w-[150px]">{apt.patientName}</span>
-                                                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-white shadow-xs">
-                                                        {apt.time}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5 text-[10px] text-slate-500 mt-1 font-semibold">
-                                                    <Stethoscope className="h-3 w-3" />
-                                                    <span>{apt.procedure}</span>
-                                                </div>
-                                            </div>
-                                        ))
-                                    )}
+                                                <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", theme.dot)} />
+                                                <span className="font-semibold text-slate-700 opacity-90">{apt.time}</span>
+                                                <span className="truncate flex-1 font-black tracking-tight">{apt.patientName}</span>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
+
+                                {/* Bottom bar indicators */}
+                                {cellApts.length > 0 && (
+                                    <div className="mt-1 flex items-center justify-between text-[8px] font-black uppercase tracking-wider text-slate-400">
+                                        <span>{cellApts.length} {cellApts.length === 1 ? 'Consulta' : 'Consultas'}</span>
+                                    </div>
+                                )}
                             </div>
                         );
                     })}
                 </div>
             </div>
+
+            {/* Modal: Appointment Action Details (With Blue Edit Button) */}
+            <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                <DialogContent className="sm:max-w-md border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
+                    {selectedApt && (
+                        <div className="bg-white">
+                            {/* Colorful dialog top header by status */}
+                            <div className={cn(
+                                "px-6 py-6 text-white bg-gradient-to-r",
+                                selectedApt.status === "Confirmado" && "from-emerald-600 to-emerald-700",
+                                selectedApt.status === "Pendente" && "from-amber-500 to-orange-600",
+                                selectedApt.status === "Cancelado" && "from-rose-500 to-rose-600"
+                            )}>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                                            <Calendar className="h-5 w-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <DialogTitle className="text-base font-black text-white">Detalhes do Agendamento</DialogTitle>
+                                            <p className="text-xs text-white/90">Gestão clínica e controle</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Body details */}
+                            <div className="p-6 space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Paciente</span>
+                                        <p className="text-xs font-black text-slate-800 mt-1 flex items-center gap-1.5">
+                                            {selectedApt.patientName}
+                                            {selectedApt.isGuest && (
+                                                <span className="px-1.5 py-0.5 bg-violet-100 text-violet-700 text-[8px] font-bold rounded">
+                                                    Sem Cadastro
+                                                </span>
+                                            )}
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status da Consulta</span>
+                                        <div className="mt-1">
+                                            <span className={cn(
+                                                "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider inline-block",
+                                                STATUS_THEMES[selectedApt.status].pill
+                                            )}>
+                                                {selectedApt.status}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Procedimento</span>
+                                        <p className="text-xs font-bold text-slate-850 mt-1">{selectedApt.procedure}</p>
+                                    </div>
+
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Data & Horário</span>
+                                        <p className="text-xs font-bold text-slate-850 mt-1">
+                                            {selectedApt.date.split("-").reverse().join("/")} às <span className="text-blue-600 font-black">{selectedApt.time}</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Status actions */}
+                                {selectedApt.status === "Pendente" && (
+                                    <div className="pt-2 flex gap-2">
+                                        <button
+                                            onClick={() => {
+                                                onStatusChange(selectedApt.id, "Confirmado");
+                                                setIsDetailsOpen(false);
+                                            }}
+                                            className="flex-1 inline-flex items-center justify-center gap-1.5 h-9 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer transition-all"
+                                        >
+                                            <Check className="h-4 w-4" />
+                                            Confirmar Agendamento
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                onStatusChange(selectedApt.id, "Cancelado");
+                                                setIsDetailsOpen(false);
+                                            }}
+                                            className="flex-1 inline-flex items-center justify-center gap-1.5 h-9 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-bold cursor-pointer transition-all"
+                                        >
+                                            <XCircle className="h-4 w-4" />
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Bottom footer inside panel */}
+                                <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
+                                    <button
+                                        onClick={() => setIsDetailsOpen(false)}
+                                        className="h-10 px-4 border border-slate-200 text-slate-500 text-xs font-bold rounded-xl hover:bg-slate-50 transition-all cursor-pointer uppercase tracking-wider"
+                                    >
+                                        Fechar
+                                    </button>
+
+                                    {/* Standard Blue Edit Button (Botao azul padrao) */}
+                                    <button
+                                        className="inline-flex items-center gap-2 h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer uppercase tracking-wider shadow-sm"
+                                        onClick={() => {
+                                            // Trigger editing dialog
+                                            setIsDetailsOpen(false);
+                                        }}
+                                    >
+                                        <Pencil className="h-3.5 w-3.5" />
+                                        Editar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
+
+            {/* Modal: Add Appointment (Gorgeous Shadcn Dialog) */}
+            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+                <DialogContent className="sm:max-w-lg border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-6 text-white">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                                <Plus className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-base font-black text-white">Novo Agendamento</DialogTitle>
+                                <DialogDescription className="text-xs text-blue-100 font-semibold mt-0.5">
+                                    Marcar consulta para {selectedDateStr?.split("-").reverse().join("/")}
+                                </DialogDescription>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form onSubmit={handleAddSubmit} className="p-6 space-y-5">
+                        {/* Paciente Type Toggle */}
+                        <div>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
+                                Identificação do Paciente
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => { setMode("registered"); setPatientFound(null); setCpfError(""); setCpfInput(""); }}
+                                    className={cn(
+                                        "flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border-2 text-xs font-black transition-all cursor-pointer",
+                                        mode === "registered"
+                                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                                            : "border-slate-200 bg-white text-slate-500 hover:border-slate-350"
+                                    )}
+                                >
+                                    <UserCheck className="h-4 w-4" />
+                                    Paciente Cadastrado
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => { setMode("guest"); setPatientFound(null); setCpfError(""); setCpfInput(""); }}
+                                    className={cn(
+                                        "flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border-2 text-xs font-black transition-all cursor-pointer",
+                                        mode === "guest"
+                                            ? "border-violet-500 bg-violet-50 text-violet-700"
+                                            : "border-slate-200 bg-white text-slate-500 hover:border-slate-350"
+                                    )}
+                                >
+                                    <UserX className="h-4 w-4" />
+                                    Sem Cadastro
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Search Patient by CPF */}
+                        {mode === "registered" && (
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                    CPF do Paciente
+                                </label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={cpfInput}
+                                        onChange={(e) => {
+                                            setCpfInput(formatCPF(e.target.value));
+                                            setCpfError("");
+                                            setPatientFound(null);
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault();
+                                                handleCPFSearch();
+                                            }
+                                        }}
+                                        placeholder="000.000.000-00"
+                                        className="flex-1 h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleCPFSearch}
+                                        disabled={cpfSearching}
+                                        className="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-bold rounded-xl transition-all cursor-pointer disabled:opacity-60 flex items-center gap-1.5"
+                                    >
+                                        {cpfSearching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
+                                        Buscar
+                                    </button>
+                                </div>
+
+                                {cpfError && (
+                                    <p className="mt-1.5 text-xs text-rose-500 font-bold flex items-center gap-1">
+                                        <AlertCircle className="h-3.5 w-3.5" />
+                                        {cpfError}
+                                    </p>
+                                )}
+
+                                {patientFound && (
+                                    <div className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                                        <div className="flex items-center gap-1.5 mb-1.5">
+                                            <div className="w-5 h-5 rounded-md bg-emerald-500 flex items-center justify-center text-white">
+                                                <UserCheck className="h-3.5 w-3.5" />
+                                            </div>
+                                            <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">Paciente Confirmado</span>
+                                        </div>
+                                        <p className="text-xs font-black text-slate-800">{patientFound.name}</p>
+                                        <p className="text-[10px] font-mono text-slate-500 mt-0.5">CPF: {patientFound.cpf}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Guest Patient Name */}
+                        {mode === "guest" && (
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                    Nome Completo <span className="text-rose-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={guestName}
+                                    onChange={(e) => setGuestName(e.target.value)}
+                                    placeholder="Nome completo do paciente"
+                                    className="w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent font-medium"
+                                    required
+                                />
+                                <p className="mt-1.5 text-[10px] text-violet-600 font-bold flex items-center gap-1">
+                                    <Info className="h-3 w-3" />
+                                    Agendamento rápido sem necessidade de cadastro prévio.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Select Procedure */}
+                        <div ref={procedureRef}>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                Procedimento Clínico <span className="text-rose-500">*</span>
+                            </label>
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() => setProcedureOpen(o => !o)}
+                                    className={cn(
+                                        "w-full h-10 px-3 flex items-center justify-between text-sm border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer",
+                                        procedure ? "text-slate-800 border-slate-350" : "text-slate-400 border-slate-200"
+                                    )}
+                                >
+                                    <span className="truncate">{procedure || "Selecione o procedimento..."}</span>
+                                    <ChevronDown className={cn("h-4 w-4 text-slate-400 transition-transform", procedureOpen && "rotate-180")} />
+                                </button>
+                                {procedureOpen && (
+                                    <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-250 rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                                        {PROCEDURES.map(p => (
+                                            <button
+                                                key={p}
+                                                type="button"
+                                                onClick={() => { setProcedure(p); setProcedureOpen(false); }}
+                                                className={cn(
+                                                    "w-full text-left px-4 py-2.5 text-xs font-semibold hover:bg-blue-50 hover:text-blue-700 transition-colors cursor-pointer",
+                                                    procedure === p ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-700"
+                                                )}
+                                            >
+                                                {p}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            {procedure === "Outro" && (
+                                <input
+                                    type="text"
+                                    value={customProcedure}
+                                    onChange={(e) => setCustomProcedure(e.target.value)}
+                                    placeholder="Qual é o procedimento?"
+                                    className="mt-2 w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+                                    required
+                                />
+                            )}
+                        </div>
+
+                        {/* Timing details */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">Data</label>
+                                <input
+                                    type="date"
+                                    value={selectedDateStr || ""}
+                                    onChange={(e) => setSelectedDateStr(e.target.value)}
+                                    className="w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">Horário</label>
+                                <input
+                                    type="time"
+                                    value={time}
+                                    onChange={(e) => setTime(e.target.value)}
+                                    className="w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="pt-4 border-t border-slate-100 flex gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setIsAddOpen(false)}
+                                className="flex-1 h-10 border border-slate-200 text-slate-500 text-xs font-bold rounded-xl hover:bg-slate-50 transition-all cursor-pointer uppercase tracking-wider"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={
+                                    submitting || 
+                                    !procedure || 
+                                    (mode === "registered" && !patientFound) || 
+                                    (mode === "guest" && !guestName.trim())
+                                }
+                                className="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 uppercase tracking-wider"
+                            >
+                                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                                Confirmar Agendamento
+                            </button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
