@@ -47,10 +47,6 @@ const encryptData = (data: any) => processData(data, ENCRYPTED_FIELDS);
 const decryptData = (data: any) => processData(data, DECRYPT_FIELDS);
 
 async function getAppointmentFromDb(id: string) {
-  "use cache";
-  cacheLife("hours");
-  cacheTag("agenda-list");
-
   return prisma.appointment.findUnique({
     where: { id },
     include: {

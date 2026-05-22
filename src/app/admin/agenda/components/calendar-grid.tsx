@@ -50,6 +50,7 @@ interface CalendarGridProps {
     viewDate: Date;
     setViewDate: (date: Date) => void;
     onStatusChange: (id: string | number, status: "Confirmado" | "Cancelado") => void;
+    onUpdate: (id: string | number, updatedFields: Partial<Appointment>) => void;
     onAdd: (apt: Omit<Appointment, "id">) => void;
 }
 
@@ -105,11 +106,12 @@ function formatCPF(value: string) {
         .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
 
-export default function CalendarGrid({ appointments, viewDate, setViewDate, onStatusChange, onAdd }: CalendarGridProps) {
+export default function CalendarGrid({ appointments, viewDate, setViewDate, onStatusChange, onUpdate, onAdd }: CalendarGridProps) {
     const [selectedDateStr, setSelectedDateStr] = useState<string | null>(null);
     const [selectedApt, setSelectedApt] = useState<Appointment | null>(null);
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
 
     // Modal state for adding a new appointment
     const [mode, setMode] = useState<"registered" | "guest">("registered");
@@ -126,11 +128,24 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
     const [procedureOpen, setProcedureOpen] = useState(false);
     const procedureRef = useRef<HTMLDivElement>(null);
 
+    // Modal state for editing an appointment
+    const [editProcedure, setEditProcedure] = useState("");
+    const [editCustomProcedure, setEditCustomProcedure] = useState("");
+    const [editDescription, setEditDescription] = useState("");
+    const [editDate, setEditDate] = useState("");
+    const [editTime, setEditTime] = useState("");
+    const [editStatus, setEditStatus] = useState<"Confirmado" | "Pendente" | "Cancelado">("Pendente");
+    const [editProcedureOpen, setEditProcedureOpen] = useState(false);
+    const editProcedureRef = useRef<HTMLDivElement>(null);
+
     // Click outside handler for custom procedure select
     useEffect(() => {
         function handleClick(e: MouseEvent) {
             if (procedureRef.current && !procedureRef.current.contains(e.target as Node)) {
                 setProcedureOpen(false);
+            }
+            if (editProcedureRef.current && !editProcedureRef.current.contains(e.target as Node)) {
+                setEditProcedureOpen(false);
             }
         }
         document.addEventListener("mousedown", handleClick);
@@ -261,7 +276,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         setIsAddOpen(true);
     };
 
-    // Form submission
+    // Form submission for adding
     const handleAddSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const finalProcedure = procedure === "Outro" ? customProcedure : procedure;
@@ -285,6 +300,24 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         } as any);
         setSubmitting(false);
         setIsAddOpen(false);
+    };
+
+    // Form submission for updating
+    const handleEditSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedApt) return;
+        const finalProcedure = editProcedure === "Outro" ? editCustomProcedure : editProcedure;
+        if (!finalProcedure) return;
+
+        onUpdate(selectedApt.id, {
+            procedure: finalProcedure,
+            description: editDescription.trim() || undefined,
+            date: editDate,
+            time: editTime,
+            status: editStatus,
+        });
+
+        setIsEditOpen(false);
     };
 
     // Calculate dynamic stats for currently viewed month
@@ -324,7 +357,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                     </div>
                 </div>
 
-                <div className="bg-linear-to-brrom-white to-amber-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="bg-linear-to-br from-white to-amber-50/20 border border-slate-200/80 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
                     <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shrink-0 shadow-inner">
                         <Clock className="h-5 w-5" />
                     </div>
@@ -593,7 +626,16 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                                     <button
                                         className="inline-flex items-center gap-2 h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer uppercase tracking-wider shadow-sm"
                                         onClick={() => {
-                                            setIsDetailsOpen(false);
+                                            if (selectedApt) {
+                                                setEditProcedure(PROCEDURES.includes(selectedApt.procedure) ? selectedApt.procedure : "Outro");
+                                                setEditCustomProcedure(PROCEDURES.includes(selectedApt.procedure) ? "" : selectedApt.procedure);
+                                                setEditDescription(selectedApt.description || "");
+                                                setEditDate(selectedApt.date);
+                                                setEditTime(selectedApt.time);
+                                                setEditStatus(selectedApt.status);
+                                                setIsDetailsOpen(false);
+                                                setIsEditOpen(true);
+                                            }
                                         }}
                                     >
                                         <Pencil className="h-3.5 w-3.5" />
@@ -837,6 +879,164 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                             >
                                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                                 Confirmar Agendamento
+                            </button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Modal: Edit Appointment */}
+            <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                <DialogContent className="sm:max-w-lg border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
+                    <div className="bg-linear-to-r from-blue-600 to-blue-700 px-6 py-6 text-white">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                                <Pencil className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-base font-black text-white">Editar Agendamento</DialogTitle>
+                                <DialogDescription className="text-xs text-blue-100 font-semibold mt-0.5">
+                                    Alterar dados da consulta de {selectedApt?.patientName}
+                                </DialogDescription>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form onSubmit={handleEditSubmit} className="p-6 space-y-5">
+                        {/* Status field */}
+                        <div>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
+                                Status do Agendamento
+                            </label>
+                            <div className="grid grid-cols-3 gap-2">
+                                {["Pendente", "Confirmado", "Cancelado"].map((statusOption) => (
+                                    <button
+                                        key={statusOption}
+                                        type="button"
+                                        onClick={() => setEditStatus(statusOption as any)}
+                                        className={cn(
+                                            "flex items-center justify-center gap-1.5 px-2 py-2 rounded-xl border-2 text-[10px] font-black transition-all cursor-pointer uppercase tracking-wider",
+                                            editStatus === statusOption
+                                                ? statusOption === "Confirmado"
+                                                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                                                    : statusOption === "Cancelado"
+                                                        ? "border-rose-500 bg-rose-50 text-rose-700"
+                                                        : "border-amber-500 bg-amber-50 text-amber-705"
+                                                : "border-slate-200 bg-white text-slate-500 hover:border-slate-350"
+                                        )}
+                                    >
+                                        <span className={cn(
+                                            "w-2 h-2 rounded-full",
+                                            statusOption === "Confirmado" && "bg-emerald-500",
+                                            statusOption === "Cancelado" && "bg-rose-500",
+                                            statusOption === "Pendente" && "bg-amber-500"
+                                        )} />
+                                        {statusOption}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Procedure Select */}
+                        <div ref={editProcedureRef}>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                Procedimento Clínico <span className="text-rose-500">*</span>
+                            </label>
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditProcedureOpen(o => !o)}
+                                    className={cn(
+                                        "w-full h-10 px-3 flex items-center justify-between text-sm border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer",
+                                        editProcedure ? "text-slate-800 border-slate-350" : "text-slate-400 border-slate-200"
+                                    )}
+                                >
+                                    <span className="truncate">{editProcedure || "Selecione o procedimento..."}</span>
+                                    <ChevronDown className={cn("h-4 w-4 text-slate-400 transition-transform", editProcedureOpen && "rotate-180")} />
+                                </button>
+                                {editProcedureOpen && (
+                                    <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-250 rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                                        {PROCEDURES.map(p => (
+                                            <button
+                                                key={p}
+                                                type="button"
+                                                onClick={() => { setEditProcedure(p); setEditProcedureOpen(false); }}
+                                                className={cn(
+                                                    "w-full text-left px-4 py-2.5 text-xs font-semibold hover:bg-blue-50 hover:text-blue-700 transition-colors cursor-pointer",
+                                                    editProcedure === p ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-700"
+                                                )}
+                                            >
+                                                {p}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            {editProcedure === "Outro" && (
+                                <input
+                                    type="text"
+                                    value={editCustomProcedure}
+                                    onChange={(e) => setEditCustomProcedure(e.target.value)}
+                                    placeholder="Qual é o procedimento?"
+                                    className="mt-2 w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+                                    required
+                                />
+                            )}
+                        </div>
+
+                        {/* Description field */}
+                        <div>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                Descrição / Observações <span className="text-slate-300">(Opcional)</span>
+                            </label>
+                            <textarea
+                                value={editDescription}
+                                onChange={(e) => setEditDescription(e.target.value)}
+                                placeholder="Adicione observações, queixas, sintomas ou detalhes específicos sobre o procedimento..."
+                                rows={3}
+                                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium resize-none"
+                            />
+                        </div>
+
+                        {/* Date & Time fields */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">Data</label>
+                                <input
+                                    type="date"
+                                    value={editDate}
+                                    onChange={(e) => setEditDate(e.target.value)}
+                                    className="w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">Horário</label>
+                                <input
+                                    type="time"
+                                    value={editTime}
+                                    onChange={(e) => setEditTime(e.target.value)}
+                                    className="w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="pt-4 border-t border-slate-100 flex gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setIsEditOpen(false)}
+                                className="flex-1 h-10 border border-slate-200 text-slate-500 text-xs font-bold rounded-xl hover:bg-slate-50 transition-all cursor-pointer uppercase tracking-wider"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={!editProcedure}
+                                className="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5 uppercase tracking-wider"
+                            >
+                                <Check className="h-4 w-4" />
+                                Salvar Alterações
                             </button>
                         </div>
                     </form>

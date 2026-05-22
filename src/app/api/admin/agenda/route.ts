@@ -47,10 +47,6 @@ const encryptData = (data: any) => processData(data, ENCRYPTED_FIELDS);
 const decryptData = (data: any) => processData(data, DECRYPT_FIELDS);
 
 async function getAppointmentsFromDb(where: any, page: number, limit: number) {
-  "use cache";
-  cacheLife("hours");
-  cacheTag("agenda-list");
-
   const [appointments, total] = await Promise.all([
     prisma.appointment.findMany({
       where,

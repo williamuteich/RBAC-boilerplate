@@ -111,6 +111,36 @@ export default function AgendaContainer() {
         }
     };
 
+    const handleUpdate = async (id: string | number, updatedFields: Partial<Appointment>) => {
+        try {
+            const scheduledAt = updatedFields.date && updatedFields.time 
+                ? new Date(`${updatedFields.date}T${updatedFields.time}:00`).toISOString()
+                : undefined;
+
+            const body = {
+                ...(scheduledAt ? { scheduledAt } : {}),
+                ...(updatedFields.procedure ? { serviceType: updatedFields.procedure } : {}),
+                ...(updatedFields.description !== undefined ? { description: updatedFields.description } : {}),
+                ...(updatedFields.status ? { 
+                    status: updatedFields.status === "Confirmado" ? "CONFIRMADO" : 
+                            updatedFields.status === "Cancelado" ? "CANCELADO" : "PENDENTE" 
+                } : {}),
+            };
+
+            const res = await fetch(`/api/admin/agenda/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+
+            if (!res.ok) throw new Error();
+            fetchAppointments();
+        } catch (error) {
+            console.error("Erro ao atualizar agendamento:", error);
+            alert("Erro ao salvar as alterações do agendamento.");
+        }
+    };
+
     const handleAdd = async (apt: Omit<Appointment, "id">) => {
         try {
             const scheduledAt = new Date(`${apt.date}T${apt.time}:00`);
@@ -172,6 +202,7 @@ export default function AgendaContainer() {
                 viewDate={viewDate}
                 setViewDate={setViewDate}
                 onStatusChange={handleStatusChange}
+                onUpdate={handleUpdate}
                 onAdd={handleAdd}
             />
         </div>
