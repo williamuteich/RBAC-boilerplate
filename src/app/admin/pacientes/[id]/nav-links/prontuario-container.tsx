@@ -175,7 +175,7 @@ export default function ProntuarioContainer({
                     />
                 )}
                 {activeTab === "anamnese" && <AnamneseTab patientId={patientId} initialAnamnese={initialAnamnese} />}
-                {activeTab === "agendamentos" && <AgendamentosTab />}
+                {activeTab === "agendamentos" && <AgendamentosTab patientId={patientId} />}
                 {activeTab === "cadastro" && (
                     <Suspense fallback={"carregando..."}>
                         <CadastroTab paciente={paciente} />
