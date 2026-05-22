@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Stethoscope, HelpCircle, Info, Check, Plus, Trash2, Save, Loader2 } from "lucide-react";
@@ -75,6 +76,7 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
 
     const [selectedTooth, setSelectedTooth] = useState<number | null>(16);
     const [selectedCustomToothId, setSelectedCustomToothId] = useState<string | null>(null);
+    const [isSelectionOpen, setIsSelectionOpen] = useState(false);
 
     const handleSave = () => {
         const payloadTeeth: any[] = [];
@@ -162,6 +164,7 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
         setCustomTeeth(prev => [...prev, newTooth]);
         setSelectedTooth(null);
         setSelectedCustomToothId(newId);
+        setIsSelectionOpen(true);
     };
 
     const removeCustomTooth = (id: string) => {
@@ -213,9 +216,10 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
                 onClick={() => {
                     setSelectedTooth(toothId);
                     setSelectedCustomToothId(null);
+                    setIsSelectionOpen(true);
                 }}
                 className={cn(
-                    "flex flex-col items-center p-2 rounded-md transition-all duration-300 relative border",
+                    "flex flex-col items-center p-2 rounded-md transition-all duration-300 relative border shrink-0",
                     active
                         ? "border-blue-600 bg-blue-50/50 shadow-md shadow-blue-50/80 scale-110 z-10"
                         : "border-transparent hover:bg-slate-50 hover:scale-105"
@@ -234,9 +238,9 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8 w-full animate-in fade-in duration-300">
+        <div className="flex flex-col gap-8 w-full animate-in fade-in duration-300">
             <div className="flex-1 space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex flex-col gap-4">
                     <div>
                         <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                             <Stethoscope className="h-5 w-5 text-blue-600" />
@@ -247,8 +251,11 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
                         </p>
                     </div>
 
-                    <div className="flex justify-end pt-4 border-t mt-4 border-slate-100">
-                        <Button onClick={handleSave} disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-semibold h-11 px-8 rounded-lg gap-2 transition-all">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-4 border-t mt-4 border-slate-100 w-full">
+                        <Button onClick={addCustomTooth} size="sm" variant="outline" className="w-full sm:w-auto text-xs h-9 px-4 border-indigo-200 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-300 text-indigo-700 font-semibold gap-1.5 rounded-xl">
+                            <Plus className="h-3.5 w-3.5" /> Adicionar caso especial
+                        </Button>
+                        <Button onClick={handleSave} disabled={isPending} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-semibold h-11 px-8 rounded-lg gap-2 transition-all">
                             {isPending ? (
                                 <><Loader2 className="h-4 w-4 animate-spin" /> Salvando...</>
                             ) : (
@@ -259,40 +266,40 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
 
                 </div>
 
-                <div className="bg-slate-50/50 border border-slate-100 rounded-md p-6 flex flex-col items-center justify-center gap-10 select-none shadow-inner min-h-[350px] relative overflow-hidden">
+                <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-center gap-8 select-none shadow-inner min-h-[350px] relative overflow-hidden">
                     <div className="absolute top-3 left-4 text-[9px] font-bold text-slate-400 tracking-wider">ARCADA SUPERIOR</div>
                     <div className="absolute bottom-3 left-4 text-[9px] font-bold text-slate-400 tracking-wider">ARCADA INFERIOR</div>
 
-                    <div className="flex flex-col items-center gap-2 w-full max-w-2xl">
-                        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 w-full">
-                            <div className="flex gap-1.5 sm:gap-2">
-                                {activeUpperRight.map((t) => (
-                                    <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
-                                ))}
+                    <div className="w-full max-w-4xl pb-2">
+                        <div className="flex flex-col items-center gap-4 px-2 sm:px-0">
+                            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 w-full">
+                                <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
+                                    {activeUpperRight.map((t) => (
+                                        <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
+                                    ))}
+                                </div>
+                                <div className="w-px bg-slate-200 self-stretch my-2"></div>
+                                <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
+                                    {activeUpperLeft.map((t) => (
+                                        <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
+                                    ))}
+                                </div>
                             </div>
-                            <div className="w-px bg-slate-200 self-stretch my-2"></div>
-                            <div className="flex gap-1.5 sm:gap-2">
-                                {activeUpperLeft.map((t) => (
-                                    <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="w-full max-w-2xl border-t border-dashed border-slate-200"></div>
+                            <div className="w-full max-w-2xl border-t border-dashed border-slate-200" />
 
-                    <div className="flex flex-col items-center gap-2 w-full max-w-2xl">
-                        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 w-full">
-                            <div className="flex gap-1.5 sm:gap-2">
-                                {activeLowerLeft.map((t) => (
-                                    <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
-                                ))}
-                            </div>
-                            <div className="w-px bg-slate-200 self-stretch my-2"></div>
-                            <div className="flex gap-1.5 sm:gap-2">
-                                {activeLowerRight.map((t) => (
-                                    <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
-                                ))}
+                            <div className="flex flex-wrap justify-center gap-2 sm:gap-3 w-full">
+                                <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
+                                    {activeLowerLeft.map((t) => (
+                                        <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
+                                    ))}
+                                </div>
+                                <div className="w-px bg-slate-200 self-stretch my-2"></div>
+                                <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
+                                    {activeLowerRight.map((t) => (
+                                        <ToothSvg key={t} toothId={t} active={selectedTooth === t} />
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -308,14 +315,6 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
                                 Utilize esta seção para cadastrar dentes extras, sisos inclusos atípicos ou outras variações anatômicas.
                             </p>
                         </div>
-                        <Button
-                            onClick={addCustomTooth}
-                            size="sm"
-                            variant="outline"
-                            className="text-xs h-8 px-3 border-indigo-200 bg-indigo-50 hover:bg-indigo-100 hover:border-indigo-300 text-indigo-700 font-semibold gap-1.5"
-                        >
-                            <Plus className="h-3.5 w-3.5" /> Adicionar Caso Clínico Especial
-                        </Button>
                     </div>
 
                     {customTeeth.length === 0 ? (
@@ -375,93 +374,97 @@ export default function OdontogramaClient({ patientId, initialOdontogram }: { pa
                 </div>
             </div>
 
-            <div className="w-full lg:w-[320px] bg-slate-50 border rounded-md p-5 flex flex-col gap-5 self-stretch shadow-sm">
-                {(selectedTooth !== null || selectedCustomToothId !== null) ? (
-                    <div className="space-y-4 animate-in fade-in duration-300">
-                        <div className="flex items-center justify-between border-b pb-3">
-                            <div>
-                                <h4 className="font-bold text-slate-800 text-lg">
-                                    {selectedTooth !== null ? `Dente #${selectedTooth}` : selectedCustomToothId}
-                                </h4>
-                                <p className="text-xs text-muted-foreground mt-0.5">
-                                    {selectedTooth !== null ? (
-                                        selectedTooth <= 28 ? "Arcada Superior" : "Arcada Inferior"
-                                    ) : (
-                                        "Dente Supranumerário / Especial"
-                                    )}
-                                </p>
+            <Dialog open={isSelectionOpen} onOpenChange={setIsSelectionOpen}>
+                <DialogContent className="sm:max-w-lg border-none p-0 overflow-hidden shadow-2xl rounded-2xl">
+                    {(selectedTooth !== null || selectedCustomToothId !== null) ? (
+                        <div className="bg-white">
+                            <div className="border-b border-slate-200 bg-white px-6 py-5 text-slate-900">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <DialogTitle className="text-base font-black text-slate-900">
+                                            {selectedTooth !== null ? `Dente #${selectedTooth}` : selectedCustomToothId}
+                                        </DialogTitle>
+                                        <DialogDescription className="text-xs text-slate-500 mt-0.5">
+                                            {selectedTooth !== null
+                                                ? (selectedTooth <= 28 ? "Arcada Superior" : "Arcada Inferior")
+                                                : "Dente Supranumerário / Especial"}
+                                        </DialogDescription>
+                                    </div>
+                                    <Badge className={cn("font-semibold py-1 px-2.5 border rounded-full", statusConfig[currentSelectedStatus].bgLight, statusConfig[currentSelectedStatus].text)}>
+                                        {statusConfig[currentSelectedStatus].label}
+                                    </Badge>
+                                </div>
                             </div>
-                            <Badge className={cn("font-semibold py-1 px-2.5 border rounded-sm", statusConfig[currentSelectedStatus].bgLight, statusConfig[currentSelectedStatus].text)}>
-                                {statusConfig[currentSelectedStatus].label}
-                            </Badge>
-                        </div>
 
-                        {selectedCustomToothId !== null && (
-                            <div className="space-y-1.5">
-                                <Label htmlFor="customDescription" className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Nome / Descrição da Anomalia</Label>
-                                <Input
-                                    id="customDescription"
-                                    value={customTeeth.find(ct => ct.id === selectedCustomToothId)?.description || ""}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCustomDescriptionUpdate(e.target.value)}
-                                    placeholder="Ex: Mesiodens extra, Siso semi-incluso..."
-                                    className="h-8.5 text-xs bg-white focus-visible:ring-1 focus-visible:ring-blue-600 font-semibold"
-                                />
+                            <div className="p-6 space-y-4">
+                                {selectedCustomToothId !== null && (
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="customDescription" className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Nome / Descrição da Anomalia</Label>
+                                        <Input
+                                            id="customDescription"
+                                            value={customTeeth.find(ct => ct.id === selectedCustomToothId)?.description || ""}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleCustomDescriptionUpdate(e.target.value)}
+                                            placeholder="Ex: Mesiodens extra, Siso semi-incluso..."
+                                            className="h-10 text-sm bg-white focus-visible:ring-1 focus-visible:ring-blue-600 font-semibold rounded-xl"
+                                        />
+                                    </div>
+                                )}
+
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Alterar Diagnóstico</Label>
+                                    <div className="grid grid-cols-1 gap-2 max-h-72 overflow-y-auto pr-1">
+                                        {Object.entries(statusConfig).map(([key, value]) => (
+                                            <button
+                                                key={key}
+                                                type="button"
+                                                onClick={() => handleToothStatusUpdate(key as ToothStatus)}
+                                                className={cn(
+                                                    "flex items-center gap-3 p-3 rounded-xl border text-sm transition-all duration-300 font-semibold cursor-pointer",
+                                                    currentSelectedStatus === key
+                                                        ? "bg-blue-50 border-blue-600 shadow-sm text-blue-700"
+                                                        : "bg-white border-slate-100 hover:border-slate-300 text-slate-600"
+                                                )}
+                                            >
+                                                <span className={cn("w-3.5 h-3.5 rounded-full shrink-0 border border-black/5", value.color)} />
+                                                <span>{value.label}</span>
+                                                {currentSelectedStatus === key && (
+                                                    <Check className="h-4 w-4 text-blue-600 ml-auto" />
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-1.5 pt-1">
+                                    <Label htmlFor="toothNotes" className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Observações do Prontuário</Label>
+                                    <textarea
+                                        id="toothNotes"
+                                        value={currentSelectedNotes}
+                                        onChange={(e) => handleToothNoteUpdate(e.target.value)}
+                                        placeholder="Registre restaurações, cáries ou anomalias..."
+                                        className="w-full h-28 rounded-xl border bg-white p-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-600 transition-all placeholder:text-slate-400 resize-none leading-normal font-medium text-slate-700"
+                                    />
+                                </div>
+
+                                <div className="bg-blue-50/60 border border-blue-100 rounded-xl p-3 flex gap-2.5">
+                                    <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+                                    <p className="text-[10px] text-blue-700 leading-normal">
+                                        As alterações são salvas no odontograma do paciente quando você tocar em "Salvar Odontograma".
+                                    </p>
+                                </div>
                             </div>
-                        )}
-
-                        <div className="space-y-2">
-                            <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Alterar Diagnóstico</Label>
-                            <div className="grid grid-cols-1 gap-2">
-                                {Object.entries(statusConfig).map(([key, value]) => (
-                                    <button
-                                        key={key}
-                                        type="button"
-                                        onClick={() => handleToothStatusUpdate(key as ToothStatus)}
-                                        className={cn(
-                                            "flex items-center gap-3 p-2.5 rounded-md border text-sm transition-all duration-300 font-semibold cursor-pointer",
-                                            currentSelectedStatus === key
-                                                ? "bg-white border-blue-600 shadow-sm text-blue-700"
-                                                : "bg-white/60 border-slate-100 hover:border-slate-350 text-slate-600"
-                                        )}
-                                    >
-                                        <span className={cn("w-3.5 h-3.5 rounded-full shrink-0 border border-black/5", value.color)}></span>
-                                        <span>{value.label}</span>
-                                        {currentSelectedStatus === key && (
-                                            <Check className="h-4 w-4 text-blue-600 ml-auto" />
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
                         </div>
-
-                        <div className="space-y-1.5 pt-2">
-                            <Label htmlFor="toothNotes" className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Observações do Prontuário</Label>
-                            <textarea
-                                id="toothNotes"
-                                value={currentSelectedNotes}
-                                onChange={(e) => handleToothNoteUpdate(e.target.value)}
-                                placeholder="Registre restaurações, cáries ou anomalias..."
-                                className="w-full h-24 rounded-md border bg-white p-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-600 transition-all placeholder:text-slate-400 resize-none leading-normal font-medium text-slate-700"
-                            />
-                        </div>
-
-                        <div className="bg-blue-50/50 border border-blue-100 rounded-md p-3 flex gap-2.5">
-                            <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
-                            <p className="text-[10px] text-blue-700 leading-normal">
-                                As informações clínicas do odontograma e diagnósticos especiais são armazenadas diretamente no prontuário digital seguro do paciente.
+                    ) : (
+                        <div className="p-6 text-center">
+                            <HelpCircle className="h-10 w-10 text-slate-300 mx-auto mb-2 animate-pulse" />
+                            <h5 className="font-semibold text-slate-700 text-sm">Selecione um dente</h5>
+                            <p className="text-xs text-muted-foreground max-w-xs mx-auto mt-1">
+                                Toque em um dente para editar o status e as observações sem precisar rolar a tela.
                             </p>
                         </div>
-                    </div>
-                ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-center py-10">
-                        <HelpCircle className="h-10 w-10 text-slate-300 mb-2 animate-pulse" />
-                        <h5 className="font-semibold text-slate-700 text-sm">Selecione um Dente</h5>
-                        <p className="text-xs text-muted-foreground max-w-xs mt-1">
-                            Clique em um dente ou no botão de anomalias abaixo para lançar novos diagnósticos clínicos no prontuário.
-                        </p>
-                    </div>
-                )}
-            </div>
+                    )}
+                </DialogContent>
+            </Dialog>
 
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
         </div>

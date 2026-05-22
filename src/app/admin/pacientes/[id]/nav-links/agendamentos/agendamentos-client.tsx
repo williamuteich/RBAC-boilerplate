@@ -4,12 +4,13 @@ import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Plus, Clock, Loader2, ChevronRight, Wallet, ListChecks } from "lucide-react";
+import { Calendar, Plus, Clock, Loader2, ChevronRight, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Appointment, CreateAgendamentoInput, UpdateAgendamentoInput } from "@/src/types/dashboard/pacientes";
-import { createAgendamento, updateAgendamento } from "@/src/services/pacientes";
+import { Appointment, UpdateAgendamentoInput } from "@/src/types/dashboard/pacientes";
+import { updateAgendamento } from "@/src/services/pacientes";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AgendamentoCreateModal from "./agendamentos-create-modal";
 
 const statusLabel: Record<Appointment["status"], string> = {
     PENDENTE: "Pendente",
@@ -22,19 +23,12 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
     const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
     const [newlyCreatedIds, setNewlyCreatedIds] = useState<string[]>([]);
     const [isPending, startTransition] = useTransition();
-    const [showForm, setShowForm] = useState(false);
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-
-    const [scheduledAt, setScheduledAt] = useState("");
-    const [serviceType, setServiceType] = useState("");
-    const [estimatedValue, setEstimatedValue] = useState("");
-    
-    const [status, setStatus] = useState<Appointment["status"]>("PENDENTE");
 
     const [editScheduledAt, setEditScheduledAt] = useState("");
     const [editServiceType, setEditServiceType] = useState("");
     const [editEstimatedValue, setEditEstimatedValue] = useState("");
-    
     const [editStatus, setEditStatus] = useState<Appointment["status"]>("PENDENTE");
 
     const sortedAppointments = useMemo(
@@ -57,45 +51,11 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
         return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
     };
 
-    const handleCreate = () => {
-        if (!scheduledAt || !serviceType || estimatedValue === "") {
-            toast.error("Preencha data/hora, tipo de serviço e valor estimado.");
-            return;
-        }
-
-        const payload: CreateAgendamentoInput = {
-            patientId,
-            scheduledAt,
-            serviceType,
-            estimatedValue: Number(estimatedValue),
-            status,
-        };
-
-        startTransition(async () => {
-            const res = await createAgendamento(payload);
-            if (!res.success || !res.data) {
-                toast.error(res.error || "Erro ao criar agendamento.");
-                return;
-            }
-
-            setAppointments((prev) => [res.data as Appointment, ...prev]);
-            setNewlyCreatedIds((prev) => [res.data!.id, ...prev]);
-            setShowForm(false);
-            setScheduledAt("");
-            setServiceType("");
-            setEstimatedValue("");
-        
-            setStatus("PENDENTE");
-            toast.success("Agendamento criado com sucesso!");
-        });
-    };
-
     const handleStartEdit = (appointment: Appointment) => {
         setEditingId(appointment.id);
         setEditScheduledAt(toDateTimeLocalValue(appointment.scheduledAt));
         setEditServiceType(appointment.serviceType);
         setEditEstimatedValue(String(appointment.estimatedValue));
-        
         setEditStatus(appointment.status);
     };
 
@@ -147,7 +107,7 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
 
                     <div className="flex flex-wrap gap-3">
                         <Button
-                            onClick={() => setShowForm((v) => !v)}
+                            onClick={() => setIsCreateOpen(true)}
                             className="h-10 rounded-xl bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs shadow-sm"
                         >
                             <Plus className="mr-1 h-3.5 w-3.5" /> Novo Agendamento
@@ -184,78 +144,6 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
                     <p className="text-xs text-blue-700/80 mt-1">somatório dos agendamentos</p>
                 </div>
             </div>
-
-            {showForm && (
-                <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                    <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-blue-500 via-cyan-500 to-emerald-500" />
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                        <div>
-                            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Novo lançamento</p>
-                            <h4 className="text-lg font-bold text-slate-900">Criar agendamento</h4>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={() => setShowForm(false)}
-                            className="text-xs font-bold text-slate-500 hover:text-slate-900"
-                        >
-                            Fechar
-                        </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-600">Data e Hora</label>
-                        <input
-                            type="datetime-local"
-                            value={scheduledAt}
-                            onChange={(e) => setScheduledAt(e.target.value)}
-                            className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                        />
-                    </div>
-                        <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-600">Tipo de Serviço</label>
-                        <input
-                            type="text"
-                            value={serviceType}
-                            onChange={(e) => setServiceType(e.target.value)}
-                            placeholder="Ex: Limpeza e profilaxia"
-                                className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                        />
-                    </div>
-                        <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-600">Valor Estimado</label>
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={estimatedValue}
-                            onChange={(e) => setEstimatedValue(e.target.value)}
-                            placeholder="Ex: 250"
-                                className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                        />
-                    </div>
-                        <div className="space-y-1.5">
-                        <label className="text-xs font-semibold text-slate-600">Status</label>
-                        <select
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value as Appointment["status"])}
-                                className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                        >
-                            <option value="PENDENTE">Pendente</option>
-                            <option value="CONFIRMADO">Confirmado</option>
-                            <option value="CANCELADO">Cancelado</option>
-                            <option value="REALIZADO">Realizado</option>
-                        </select>
-                    </div>
-                    </div>
-
-                    <div className="mt-4 flex justify-end">
-                        <Button onClick={handleCreate} disabled={isPending} className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">
-                            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar Agendamento"}
-                        </Button>
-                    </div>
-                </div>
-            )}
 
             {sortedAppointments.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 p-10 text-center text-sm text-slate-500">
@@ -380,6 +268,16 @@ export default function AgendamentosClient({ patientId, initialAppointments }: {
                     ))}
                 </div>
             )}
+
+            <AgendamentoCreateModal
+                patientId={patientId}
+                open={isCreateOpen}
+                onOpenChange={setIsCreateOpen}
+                onCreated={(appointment) => {
+                    setAppointments((prev) => [appointment, ...prev]);
+                    setNewlyCreatedIds((prev) => [String(appointment.id), ...prev]);
+                }}
+            />
 
             <ToastContainer position="top-right" autoClose={3000} theme="colored" />
         </div>
