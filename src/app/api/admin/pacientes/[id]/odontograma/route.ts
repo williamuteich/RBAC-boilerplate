@@ -93,7 +93,7 @@ async function _POST(request: Request, ctx: Ctx) {
         }
 
         const encryptedBody = await encryptData(validated.data);
-        const { teeth, ...odontogramRest } = encryptedBody;
+        const { id: _removedId, teeth, ...odontogramRest } = encryptedBody;
 
         const odontogram = await prisma.$transaction(async (tx) => {
             const created = await tx.odontogram.create({
@@ -158,7 +158,7 @@ async function _PUT(request: Request, ctx: Ctx) {
         }
 
         const encryptedBody = await encryptData(validated.data);
-        const { teeth: teethList, ...odontogramRest } = encryptedBody;
+        const { id: _removedId, teeth: teethList, ...odontogramRest } = encryptedBody;
 
         const updatedOdontogram = await prisma.$transaction(async (tx) => {
             await tx.tooth.deleteMany({
