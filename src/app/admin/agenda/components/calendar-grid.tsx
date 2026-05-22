@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import {
     ChevronLeft,
     ChevronRight,
@@ -34,6 +35,7 @@ export interface Appointment {
     date: string;
     time: string;
     procedure: string;
+    estimatedValue: number;
     status: "Confirmado" | "Pendente" | "Cancelado";
     isNew?: boolean;
     isGuest?: boolean;
@@ -116,6 +118,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
     const [guestName, setGuestName] = useState("");
     const [procedure, setProcedure] = useState("");
     const [customProcedure, setCustomProcedure] = useState("");
+    const [estimatedValue, setEstimatedValue] = useState("");
     const [time, setTime] = useState("09:00");
     const [submitting, setSubmitting] = useState(false);
     const [procedureOpen, setProcedureOpen] = useState(false);
@@ -123,6 +126,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
 
     const [editProcedure, setEditProcedure] = useState("");
     const [editCustomProcedure, setEditCustomProcedure] = useState("");
+    const [editEstimatedValue, setEditEstimatedValue] = useState("");
     const [editDate, setEditDate] = useState("");
     const [editTime, setEditTime] = useState("");
     const [editStatus, setEditStatus] = useState<"Confirmado" | "Pendente" | "Cancelado">("Pendente");
@@ -252,6 +256,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         setGuestName("");
         setProcedure("");
         setCustomProcedure("");
+        setEstimatedValue("");
         setTime("09:00");
         setIsAddOpen(true);
     };
@@ -264,6 +269,8 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         const isGuest = mode === "guest";
         const name = isGuest ? guestName : patientFound?.name;
         if (!name) return;
+        const parsedEstimatedValue = Number(estimatedValue);
+        if (Number.isNaN(parsedEstimatedValue) || parsedEstimatedValue < 0) return;
 
         setSubmitting(true);
             onAdd({
@@ -271,6 +278,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
             date: selectedDateStr,
             time,
             procedure: finalProcedure,
+            estimatedValue: parsedEstimatedValue,
             status: "Pendente",
             isNew: true,
             isGuest,
@@ -285,9 +293,12 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
         if (!selectedApt) return;
         const finalProcedure = editProcedure === "Outro" ? editCustomProcedure : editProcedure;
         if (!finalProcedure) return;
+        const parsedEditEstimatedValue = Number(editEstimatedValue);
+        if (Number.isNaN(parsedEditEstimatedValue) || parsedEditEstimatedValue < 0) return;
 
         onUpdate(selectedApt.id, {
             procedure: finalProcedure,
+            estimatedValue: parsedEditEstimatedValue,
             date: editDate,
             time: editTime,
             status: editStatus,
@@ -455,13 +466,15 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                                     {cellApts.map(apt => {
                                         const theme = STATUS_THEMES[apt.status] || STATUS_THEMES.Pendente;
                                         return (
-                                            <button
+                                            <div
                                                 key={apt.id}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setSelectedApt(apt);
                                                     setIsDetailsOpen(true);
                                                 }}
+                                                role="button"
+                                                tabIndex={0}
                                                 className={cn(
                                                     "w-full text-left p-1 rounded-lg border text-[10px] font-bold transition-all truncate flex items-center gap-1 shadow-2xs hover:scale-[1.02]",
                                                     theme.bg
@@ -470,7 +483,16 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                                                 <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", theme.dot)} />
                                                 <span className="font-semibold text-slate-700 opacity-90">{apt.time}</span>
                                                 <span className="truncate flex-1 font-black tracking-tight">{apt.patientName}</span>
-                                            </button>
+                                                {apt.patientId && !apt.isGuest && (
+                                                    <Link
+                                                        href={`/admin/pacientes/${apt.patientId}`}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="ml-1 rounded-md bg-white/70 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider text-blue-700 border border-blue-100 hover:bg-blue-600 hover:text-white transition-colors"
+                                                    >
+                                                        Prontuário
+                                                    </Link>
+                                                )}
+                                            </div>
                                         );
                                     })}
                                 </div>
@@ -541,13 +563,29 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                                     </div>
 
                                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Valor Estimado</span>
+                                        <p className="text-xs font-bold text-slate-850 mt-1">
+                                            {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(selectedApt.estimatedValue || 0)}
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Data & Horário</span>
                                         <p className="text-xs font-bold text-slate-850 mt-1">
                                             {selectedApt.date.split("-").reverse().join("/")} às <span className="text-blue-600 font-black">{selectedApt.time}</span>
                                         </p>
                                     </div>
 
-                                    
+                                    {selectedApt.patientId && !selectedApt.isGuest && (
+                                        <div className="col-span-2">
+                                            <Link
+                                                href={`/admin/pacientes/${selectedApt.patientId}`}
+                                                className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2 hover:bg-blue-600 hover:text-white transition-colors"
+                                            >
+                                                Abrir prontuário
+                                            </Link>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {selectedApt.status === "Pendente" && (
@@ -589,7 +627,7 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                                             if (selectedApt) {
                                                 setEditProcedure(PROCEDURES.includes(selectedApt.procedure) ? selectedApt.procedure : "Outro");
                                                 setEditCustomProcedure(PROCEDURES.includes(selectedApt.procedure) ? "" : selectedApt.procedure);
-                                                
+                                                    setEditEstimatedValue(String(selectedApt.estimatedValue ?? 0));
                                                 setEditDate(selectedApt.date);
                                                 setEditTime(selectedApt.time);
                                                 setEditStatus(selectedApt.status);
@@ -781,7 +819,21 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                             )}
                         </div>
 
-                        
+                        <div>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                Valor Estimado <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={estimatedValue}
+                                onChange={(e) => setEstimatedValue(e.target.value)}
+                                placeholder="Ex: 250"
+                                className="w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -928,7 +980,20 @@ export default function CalendarGrid({ appointments, viewDate, setViewDate, onSt
                             )}
                         </div>
 
-                        
+                        <div>
+                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                Valor Estimado <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={editEstimatedValue}
+                                onChange={(e) => setEditEstimatedValue(e.target.value)}
+                                className="w-full h-10 px-3 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>

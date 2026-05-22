@@ -107,7 +107,7 @@ export default async function ProntuarioContainer({
                         <Calendar className="h-4.5 w-4.5" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Próxima Consulta</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Última Consulta</p>
                         {lastAppointment ? (
                             <>
                                 <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">{new Date(lastAppointment.scheduledAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })} • {new Date(lastAppointment.scheduledAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</p>

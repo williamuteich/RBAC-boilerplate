@@ -66,8 +66,10 @@ export default function AgendaContainer() {
                         date: getLocalDateString(apt.scheduledAt),
                         time: getLocalTimeString(apt.scheduledAt),
                         procedure: apt.serviceType || "Consulta",
+                        estimatedValue: Number(apt.estimatedValue || 0),
                         status: mappedStatus,
                         isGuest: !apt.patientId || apt.patientId === "",
+                        patientId: apt.patientId || undefined,
                     };
                 });
                 setAppointments(mapped);
@@ -113,6 +115,7 @@ export default function AgendaContainer() {
             const body = {
                 ...(scheduledAt ? { scheduledAt } : {}),
                 ...(updatedFields.procedure ? { serviceType: updatedFields.procedure } : {}),
+                ...(typeof updatedFields.estimatedValue === "number" ? { estimatedValue: updatedFields.estimatedValue } : {}),
                 
                 ...(updatedFields.status ? { 
                     status: updatedFields.status === "Confirmado" ? "CONFIRMADO" : 
@@ -143,8 +146,7 @@ export default function AgendaContainer() {
                 ...(isGuest ? { guestName: apt.patientName } : { patientId: (apt as any).patientId }),
                 scheduledAt: scheduledAt.toISOString(),
                 serviceType: apt.procedure,
-                
-                estimatedValue: 0,
+                estimatedValue: apt.estimatedValue,
                 status: "PENDENTE",
             };
 
