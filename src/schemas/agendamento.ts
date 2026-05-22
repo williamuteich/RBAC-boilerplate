@@ -23,6 +23,18 @@ export const createAppointmentSchema = z.object({
   status: appointmentStatusSchema.default("PENDENTE").optional(),
 });
 
+export const updateAppointmentSchema = createAppointmentSchema
+  .omit({ patientId: true })
+  .partial()
+  .extend({
+    scheduledAt: z.coerce.date({ message: "Data e hora inválidas" }).optional(),
+    serviceType: z.string().min(2, "Tipo de serviço é obrigatório").optional(),
+    estimatedValue: z.coerce
+      .number({ message: "Valor estimado inválido" })
+      .min(0, "Valor estimado não pode ser negativo")
+      .optional(),
+  });
+
 export const listAppointmentsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
@@ -34,4 +46,5 @@ export const listAppointmentsQuerySchema = z.object({
 
 export type AppointmentStatusInput = z.infer<typeof appointmentStatusSchema>;
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>;
+export type UpdateAppointmentInput = z.infer<typeof updateAppointmentSchema>;
 export type ListAppointmentsQueryInput = z.infer<typeof listAppointmentsQuerySchema>;

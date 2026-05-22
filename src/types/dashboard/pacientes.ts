@@ -55,13 +55,50 @@ export interface EvolucaoItemProps {
 }
 
 export interface Appointment {
-  id: number;
-  date: string;
-  time: string;
-  type: string;
-  doctor: string;
-  status: string;
-  price: string;
+  id: string;
+  patientId: string;
+  patientName: string;
+  scheduledAt: string;
+  serviceType: string;
+  estimatedValue: number;
+  description?: string | null;
+  status: "PENDENTE" | "CONFIRMADO" | "CANCELADO" | "REALIZADO";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AgendamentosResponse {
+  agendamentos: Appointment[];
+  total: number;
+  page: number;
+  totalPages: number;
+  limit: number;
+}
+
+export interface AgendamentoFilters {
+  page?: number;
+  limit?: number;
+  patientId?: string;
+  startDate?: string;
+  endDate?: string;
+  status?: Appointment["status"];
+}
+
+export interface CreateAgendamentoInput {
+  patientId: string;
+  scheduledAt: string;
+  serviceType: string;
+  estimatedValue: number;
+  description?: string;
+  status?: Appointment["status"];
+}
+
+export interface UpdateAgendamentoInput {
+  scheduledAt?: string;
+  serviceType?: string;
+  estimatedValue?: number;
+  description?: string;
+  status?: Appointment["status"];
 }
 
 export interface Budget {
