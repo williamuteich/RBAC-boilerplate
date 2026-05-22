@@ -90,9 +90,10 @@ model Patient {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  history    PatientHistory[]
-  anamneses  Anamnese[]
-  odontogram Odontogram?
+  history      PatientHistory[]
+  anamneses    Anamnese[]
+  odontogram   Odontogram?
+  appointments Appointment[]
 }
 
 model PatientHistory {
@@ -164,31 +165,31 @@ model ContinuousMedication {
 }
 
 model Odontogram {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  patientId String   @unique @db.ObjectId
-  patient   Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId String  @unique @db.ObjectId
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  teeth     Tooth[]
+  teeth Tooth[]
 }
 
 model Tooth {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  
-  odontogramId String      @db.ObjectId
-  odontogram   Odontogram  @relation(fields: [odontogramId], references: [id], onDelete: Cascade)
-  
-  toothKey     String      
-  isCustom     Boolean     @default(false)
-  customName   String?     
-  status       ToothStatus
-  notes        String?     
-  
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  odontogramId String     @db.ObjectId
+  odontogram   Odontogram @relation(fields: [odontogramId], references: [id], onDelete: Cascade)
+
+  toothKey   String
+  isCustom   Boolean     @default(false)
+  customName String?
+  status     ToothStatus
+  notes      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([odontogramId, toothKey])
 }
@@ -202,4 +203,31 @@ enum ToothStatus {
   EXTRAIDO
   RETIDO
   OUTRO
+}
+
+model Appointment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  patientId String  @db.ObjectId
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  scheduledAt    DateTime
+  serviceType    String
+  estimatedValue Float
+  description    String?
+  status         AppointmentStatus @default(PENDENTE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([scheduledAt])
+  @@index([patientId, scheduledAt])
+  @@index([status, scheduledAt])
+}
+
+enum AppointmentStatus {
+  PENDENTE
+  CONFIRMADO
+  CANCELADO
+  REALIZADO
 }
