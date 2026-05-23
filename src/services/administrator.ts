@@ -2,11 +2,11 @@
 import { Role, AdminsResponse, AdminFilters } from "@/src/types/dashboard/admins";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { getServerBaseUrl } from "@/src/lib/server-base-url";
 
 export async function getUsuariosInit(filters: AdminFilters = { page: 1, limit: 20 }): Promise<{ admins: AdminsResponse; roles: Role[] } | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const params = new URLSearchParams();
     if (filters.page) params.set("page", String(filters.page));
     if (filters.limit) params.set("limit", String(filters.limit));
@@ -32,6 +32,7 @@ export async function getUsuariosInit(filters: AdminFilters = { page: 1, limit: 
 
 export async function getAdmins(filters: AdminFilters = { page: 1, limit: 20 }): Promise<AdminsResponse | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const params = new URLSearchParams();
     if (filters.page) params.set("page", String(filters.page));
     if (filters.limit) params.set("limit", String(filters.limit));
@@ -46,6 +47,7 @@ export async function getAdmins(filters: AdminFilters = { page: 1, limit: 20 }):
 
 export async function getRoles(): Promise<Role[] | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/roles`, { headers: { Cookie: cookie } });
     if (res.status === 403 || res.status === 401) return null;
     if (!res.ok) throw new Error("Failed to fetch roles");
@@ -55,6 +57,7 @@ export async function getRoles(): Promise<Role[] | null> {
 
 export async function createAdmin(data: { name: string; email: string; roleId: string }): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/usuarios`, {
         method: "POST",
         headers: {
@@ -74,6 +77,7 @@ export async function createAdmin(data: { name: string; email: string; roleId: s
 
 export async function updateAdmin(id: string, data: { name: string; email: string; roleId: string; active: boolean }): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/usuarios/${id}`, {
         method: "PUT",
         headers: {
@@ -93,6 +97,7 @@ export async function updateAdmin(id: string, data: { name: string; email: strin
 
 export async function deleteAdmin(id: string): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/usuarios/${id}`, {
         method: "DELETE",
         headers: { Cookie: cookie }

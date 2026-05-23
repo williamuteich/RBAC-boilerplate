@@ -2,11 +2,11 @@
 import { Role } from "@/src/types/dashboard/admins";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { getServerBaseUrl } from "@/src/lib/server-base-url";
 
 export async function getRoles(): Promise<Role[] | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/roles`, {
         headers: { Cookie: cookie }
     });
@@ -18,6 +18,7 @@ export async function getRoles(): Promise<Role[] | null> {
 
 export async function createRole(data: { name: string; description: string; permissions: { resource: string; action: string }[] }): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/roles`, {
         method: "POST",
         headers: {
@@ -37,6 +38,7 @@ export async function createRole(data: { name: string; description: string; perm
 
 export async function updateRole(id: string, data: { name: string; description: string; permissions: { resource: string; action: string }[] }): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/roles/${id}`, {
         method: "PUT",
         headers: {
@@ -56,6 +58,7 @@ export async function updateRole(id: string, data: { name: string; description: 
 
 export async function deleteRole(id: string): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/roles/${id}`, {
         method: "DELETE",
         headers: { Cookie: cookie }

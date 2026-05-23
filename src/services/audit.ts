@@ -1,13 +1,13 @@
 "use server";
 import { headers } from "next/headers";
 import { AuditFilters, AuditLogsResponse } from "../types/dashboard/audit";
-
-const API_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+import { getServerBaseUrl } from "@/src/lib/server-base-url";
 
 export async function getAuditLogs(
     filters: AuditFilters = {}
 ): Promise<AuditLogsResponse | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
 
     const params = new URLSearchParams();
     if (filters.page) params.set("page", String(filters.page));

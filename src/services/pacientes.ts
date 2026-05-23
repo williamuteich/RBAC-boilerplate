@@ -4,11 +4,11 @@ import { IAnamnese } from "@/src/types/dashboard/anamnese";
 import { IOdontogram } from "@/src/types/dashboard/odontograma";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-
-const API_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+import { getServerBaseUrl } from "@/src/lib/server-base-url";
 
 export async function getPacientes(filters: PacienteFilters = { page: 1, limit: 20 }): Promise<PacientesResponse | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const params = new URLSearchParams();
     if (filters.page) params.set("page", String(filters.page));
     if (filters.limit) params.set("limit", String(filters.limit));
@@ -28,6 +28,7 @@ export async function getPacientes(filters: PacienteFilters = { page: 1, limit: 
 
 export async function getPaciente(id: string): Promise<Paciente | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${id}`, {
         headers: { Cookie: cookie },
     });
@@ -37,6 +38,7 @@ export async function getPaciente(id: string): Promise<Paciente | null> {
 
 export async function createPaciente(data: Omit<Paciente, "id" | "createdAt" | "updatedAt">): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes`, {
         method: "POST",
         headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -50,6 +52,7 @@ export async function createPaciente(data: Omit<Paciente, "id" | "createdAt" | "
 
 export async function updatePaciente(id: string, data: Partial<Paciente>): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${id}`, {
         method: "PUT",
         headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -64,6 +67,7 @@ export async function updatePaciente(id: string, data: Partial<Paciente>): Promi
 
 export async function deletePaciente(id: string): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${id}`, {
         method: "DELETE",
         headers: { Cookie: cookie },
@@ -77,6 +81,7 @@ export async function deletePaciente(id: string): Promise<{ success: boolean; er
 // AGENDAMENTOS
 export async function getAgendamentos(filters: AgendamentoFilters = { page: 1, limit: 20 }): Promise<AgendamentosResponse | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const params = new URLSearchParams();
     if (filters.page) params.set("page", String(filters.page));
     if (filters.limit) params.set("limit", String(filters.limit));
@@ -98,6 +103,7 @@ export async function getAgendamentos(filters: AgendamentoFilters = { page: 1, l
 
 export async function createAgendamento(data: CreateAgendamentoInput): Promise<{ success: boolean; data?: Appointment; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/agenda`, {
         method: "POST",
         headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -112,6 +118,7 @@ export async function createAgendamento(data: CreateAgendamentoInput): Promise<{
 
 export async function getAgendamento(id: string): Promise<Appointment | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/agenda/${id}`, {
         headers: { Cookie: cookie },
     });
@@ -121,6 +128,7 @@ export async function getAgendamento(id: string): Promise<Appointment | null> {
 
 export async function updateAgendamento(id: string, data: UpdateAgendamentoInput): Promise<{ success: boolean; data?: Appointment; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/agenda/${id}`, {
         method: "PUT",
         headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -135,6 +143,7 @@ export async function updateAgendamento(id: string, data: UpdateAgendamentoInput
 
 export async function deleteAgendamento(id: string): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/agenda/${id}`, {
         method: "DELETE",
         headers: { Cookie: cookie },
@@ -149,6 +158,7 @@ export async function deleteAgendamento(id: string): Promise<{ success: boolean;
 // HISTÓRICO DO PACIENTE
 export async function getHistoricoPaciente(id: string): Promise<HistoricoPatient[] | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${id}/historico`, {
         headers: { Cookie: cookie },
     });
@@ -158,6 +168,7 @@ export async function getHistoricoPaciente(id: string): Promise<HistoricoPatient
 
 export async function createHistoricoPaciente(patientId: string, description: string): Promise<{ success: boolean; data?: any; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/historico`, {
         method: "POST",
         headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -171,6 +182,7 @@ export async function createHistoricoPaciente(patientId: string, description: st
 
 export async function updateHistoricoPaciente(patientId: string, historyId: string, description: string): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/historico`, {
         method: "PUT",
         headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -184,6 +196,7 @@ export async function updateHistoricoPaciente(patientId: string, historyId: stri
 
 export async function deleteHistoricoPaciente(patientId: string, historyId: string): Promise<{ success: boolean; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/historico?historyId=${historyId}`, {
         method: "DELETE",
         headers: { Cookie: cookie },
@@ -197,6 +210,7 @@ export async function deleteHistoricoPaciente(patientId: string, historyId: stri
 // ANAMNESE DO PACIENTE
 export async function getAnamnesePaciente(patientId: string): Promise<IAnamnese | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/anamnese`, {
         headers: { Cookie: cookie }
     });
@@ -206,6 +220,7 @@ export async function getAnamnesePaciente(patientId: string): Promise<IAnamnese 
 
 export async function saveAnamnesePaciente(patientId: string, data: any): Promise<{ success: boolean; data?: IAnamnese; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/anamnese`, {
         method: "POST",
         headers: { Cookie: cookie, "Content-Type": "application/json" },
@@ -220,6 +235,7 @@ export async function saveAnamnesePaciente(patientId: string, data: any): Promis
 // ODONTOGRAMA DO PACIENTE
 export async function getOdontogramaPaciente(patientId: string): Promise<IOdontogram | null> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/odontograma`, {
         headers: { Cookie: cookie }
     });
@@ -229,6 +245,7 @@ export async function getOdontogramaPaciente(patientId: string): Promise<IOdonto
 
 export async function saveOdontogramaPaciente(patientId: string, data: any): Promise<{ success: boolean; data?: IOdontogram; error?: string }> {
     const cookie = (await headers()).get("cookie") || "";
+    const API_URL = await getServerBaseUrl();
     const isUpdate = !!data.id;
     const res = await fetch(`${API_URL}/api/admin/pacientes/${patientId}/odontograma`, {
         method: isUpdate ? "PUT" : "POST",
