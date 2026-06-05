@@ -2,18 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi } from "@/src/lib/auth-helpers-server";
 import { AdminActionType } from "@/generated/prisma/client";
-
-type AnyContext = { params?: Promise<Record<string, string>> };
-type RouteHandler<Ctx extends AnyContext = AnyContext> = (
-    req: Request,
-    ctx: Ctx
-) => Promise<NextResponse>;
-
-interface AuditOptions<Ctx extends AnyContext = AnyContext> {
-    resource: string;
-    getResourceId?: (ctx: Ctx) => Promise<string | undefined> | string | undefined;
-    getResourceName?: (data: unknown) => string | undefined;
-}
+import { AnyContext, RouteHandler, AuditOptions } from "@/src/types/dashboard/audit";
 
 const METHOD_TO_ACTION: Record<string, AdminActionType | undefined> = {
     POST: AdminActionType.CREATE,

@@ -1,3 +1,11 @@
+import { z } from "zod";
+import { roleSchema, adminSchema, idParamSchema, getAdminsQuerySchema } from "@/src/schemas/admin";
+
+export type RoleInput = z.infer<typeof roleSchema>;
+export type AdminInput = z.infer<typeof adminSchema>;
+export type IdParamInput = z.infer<typeof idParamSchema>;
+export type GetAdminsQueryInput = z.infer<typeof getAdminsQuerySchema>;
+
 export interface Admin {
     id: number;
     email: string;

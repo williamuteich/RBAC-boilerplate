@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
 import { AdminActionType } from "@/generated/prisma/client";
+import { getAuditoriaQuerySchema } from "@/src/schemas/admin";
 
 export async function GET(request: Request) {
     const session = await checkAdminApi();
@@ -13,15 +14,12 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
-    const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit") ?? "20")));
-    const resource = searchParams.get("resource") || undefined;
-    const action = searchParams.get("action") || undefined;
-    const userName = searchParams.get("userName") || undefined;
-    const administratorId = searchParams.get("administratorId")
-        ? Number(searchParams.get("administratorId"))
-        : undefined;
+    const queryParams = Object.fromEntries(new URL(request.url).searchParams.entries());
+    const validated = getAuditoriaQuerySchema.safeParse(queryParams);
+    if (!validated.success) {
+        return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
+    }
+    const { page, limit, resource, action, userName, administratorId } = validated.data;
 
     const where = {
         ...(resource && { resource }),

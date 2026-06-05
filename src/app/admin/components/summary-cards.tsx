@@ -3,10 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShieldCheck } from "lucide-react";
-
-interface Stats {
-    admins: number;
-}
+import { Stats } from "@/src/types/components";
 
 export function DashboardSummary() {
     const [stats, setStats] = useState<Stats>({ admins: 0 });
@@ -16,10 +13,10 @@ export function DashboardSummary() {
         async function fetchStats() {
             try {
                 const adminsRes = await fetch("/api/admin/usuarios");
-                const admins = await adminsRes.json();
+                const data = await adminsRes.json();
 
                 setStats({
-                    admins: Array.isArray(admins) ? admins.length : 0,
+                    admins: data && Array.isArray(data.admins) ? data.admins.length : 0,
                 });
             } catch (error) {
                 console.error("Erro ao buscar estatísticas:", error);

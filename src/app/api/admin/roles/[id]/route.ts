@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
-import { roleSchema } from "@/src/schemas/admin";
+import { roleSchema, idParamSchema } from "@/src/schemas/admin";
 import { withAudit } from "@/src/lib/audit";
 
 async function _DELETE(
@@ -15,11 +15,15 @@ async function _DELETE(
         return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
     }
 
-    const { id } = await params;
+    const validatedParams = idParamSchema.safeParse(await params);
+    if (!validatedParams.success) {
+        return NextResponse.json({ error: validatedParams.error.issues[0].message }, { status: 400 });
+    }
+    const { id } = validatedParams.data;
 
     try {
         const roleToDelete = await prisma.adminRole.findUnique({
-            where: { id: Number(id) }
+            where: { id }
         });
 
         if (roleToDelete?.name === "Admin") {
@@ -27,7 +31,7 @@ async function _DELETE(
         }
 
         await prisma.adminRole.delete({
-            where: { id: Number(id) },
+            where: { id },
         });
         return NextResponse.json({ success: true });
     } catch (error) {
@@ -52,11 +56,15 @@ async function _PUT(
         return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
     }
 
-    const { id } = await params;
+    const validatedParams = idParamSchema.safeParse(await params);
+    if (!validatedParams.success) {
+        return NextResponse.json({ error: validatedParams.error.issues[0].message }, { status: 400 });
+    }
+    const { id } = validatedParams.data;
 
     try {
         const roleToUpdate = await prisma.adminRole.findUnique({
-            where: { id: Number(id) }
+            where: { id }
         });
 
         if (roleToUpdate?.name === "Admin") {
@@ -74,13 +82,13 @@ async function _PUT(
 
         const role = await prisma.$transaction(async (tx) => {
             const updatedRole = await tx.adminRole.update({
-                where: { id: Number(id) },
+                where: { id },
                 data: { name, description },
             });
 
             if (permissions) {
                 await tx.adminRolePermission.deleteMany({
-                    where: { adminRoleId: Number(id) },
+                    where: { adminRoleId: id },
                 });
 
                 for (const perm of permissions) {

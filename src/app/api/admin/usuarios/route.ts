@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
-import { adminSchema } from "@/src/schemas/admin";
+import { adminSchema, getAdminsQuerySchema } from "@/src/schemas/admin";
 import { withAudit } from "@/src/lib/audit";
 
 export async function GET(request: Request) {
@@ -15,10 +15,12 @@ export async function GET(request: Request) {
     }
 
     try {
-        const { searchParams } = new URL(request.url);
-        const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
-        const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit") ?? "20")));
-        const name = searchParams.get("name") || undefined;
+        const queryParams = Object.fromEntries(new URL(request.url).searchParams.entries());
+        const validatedParams = getAdminsQuerySchema.safeParse(queryParams);
+        if (!validatedParams.success) {
+            return NextResponse.json({ error: validatedParams.error.issues[0].message }, { status: 400 });
+        }
+        const { page, limit, name } = validatedParams.data;
 
         const where = {
             ...(name && {

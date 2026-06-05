@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
-import { adminSchema } from "@/src/schemas/admin";
+import { adminSchema, idParamSchema } from "@/src/schemas/admin";
 import { withAudit } from "@/src/lib/audit";
 
 async function _DELETE(
@@ -15,11 +15,15 @@ async function _DELETE(
         return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
     }
 
-    const { id } = await params;
+    const validatedParams = idParamSchema.safeParse(await params);
+    if (!validatedParams.success) {
+        return NextResponse.json({ error: validatedParams.error.issues[0].message }, { status: 400 });
+    }
+    const { id } = validatedParams.data;
 
     try {
         const adminToDelete = await prisma.administrator.findUnique({
-            where: { id: Number(id) },
+            where: { id },
             include: { role: true }
         });
 
@@ -28,7 +32,7 @@ async function _DELETE(
         }
 
         await prisma.administrator.delete({
-            where: { id: Number(id) },
+            where: { id },
         });
         return NextResponse.json({ success: true });
     } catch (error) {
@@ -53,11 +57,15 @@ async function _PUT(
         return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
     }
 
-    const { id } = await params;
+    const validatedParams = idParamSchema.safeParse(await params);
+    if (!validatedParams.success) {
+        return NextResponse.json({ error: validatedParams.error.issues[0].message }, { status: 400 });
+    }
+    const { id } = validatedParams.data;
 
     try {
         const adminToUpdate = await prisma.administrator.findUnique({
-            where: { id: Number(id) },
+            where: { id },
             include: { role: true }
         });
 
@@ -75,7 +83,7 @@ async function _PUT(
         const { email, name, roleId, active } = validated.data;
 
         const admin = await prisma.administrator.update({
-            where: { id: Number(id) },
+            where: { id },
             data: {
                 email,
                 name,
