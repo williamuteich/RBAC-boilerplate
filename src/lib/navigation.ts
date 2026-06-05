@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShieldCheck, Key, Calendar, UserRound, History } from "lucide-react";
+import { LayoutDashboard, ShieldCheck, Key, History } from "lucide-react";
 import { NavConfig } from "@/src/types/components";
 
 export const ADMIN_NAVIGATION: NavConfig[] = [
@@ -28,18 +28,6 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         icon: History,
         resource: "auditoria",
         section: "MAIN MENU"
-    },
-    {
-        title: "Calendário",
-        href: "#",
-        icon: Calendar,
-        section: "SISTEMA"
-    },
-    {
-        title: "Perfil",
-        href: "#",
-        icon: UserRound,
-        section: "SISTEMA"
     }
 ];
 

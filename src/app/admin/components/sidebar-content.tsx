@@ -13,16 +13,17 @@ export function SidebarContent({ onClose }: { onClose?: () => void }) {
 
     if (!session) return null;
 
-    const sections = ["MAIN MENU", "SISTEMA"] as const;
+    const sections = ["MAIN MENU"] as const;
 
     return (
         <div className="flex flex-col h-full bg-white border-r border-slate-200 lg:border-none">
-            <div className="h-20 flex items-center px-6 border-b border-transparent shrink-0">
+            <div className="h-20 flex items-center px-6 border-b border-slate-100 shrink-0">
                 <div className="flex items-center gap-3 font-semibold text-2xl text-slate-800 tracking-tight">
-                    <div className="w-8 h-8 rounded-full bg-linear-to-tr from-indigo-600 to-purple-600 flex items-center justify-center shadow-sm">
-                        <div className="w-3 h-3 bg-white rounded-full"></div>
+                    <div className="relative w-9 h-9 rounded-xl bg-linear-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center shadow-md shadow-indigo-100">
+                        <div className="absolute inset-0.5 rounded-lg border border-white/20"></div>
+                        <span className="text-white font-black text-base tracking-tighter">A</span>
                     </div>
-                    NextAdmin
+                    <span className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent font-black tracking-tight text-xl">AdminCore</span>
                 </div>
             </div>
 

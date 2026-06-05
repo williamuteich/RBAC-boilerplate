@@ -8,7 +8,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Settings, LogOut, ChevronDown } from "lucide-react";
+import { LogOut, ChevronDown } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
 export function UserDropdown() {
@@ -43,19 +43,6 @@ export function UserDropdown() {
                         <span className="text-xs text-slate-500 truncate">{user.email}</span>
                     </div>
                 </div>
-                <DropdownMenuSeparator className="bg-slate-100" />
-
-                <div className="py-1">
-                    <DropdownMenuItem className="gap-3 py-2 cursor-pointer focus:bg-slate-50 focus:text-indigo-600 rounded-md">
-                        <User className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm font-medium">Ver perfil</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="gap-3 py-2 cursor-pointer focus:bg-slate-50 focus:text-indigo-600 rounded-md">
-                        <Settings className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm font-medium">Configurações da conta</span>
-                    </DropdownMenuItem>
-                </div>
-
                 <DropdownMenuSeparator className="bg-slate-100" />
                 <div className="py-1">
                     <DropdownMenuItem 

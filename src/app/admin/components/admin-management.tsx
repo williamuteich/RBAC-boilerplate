@@ -127,7 +127,7 @@ export function AdminManagement({
                 </div>
 
                 <Dialog open={open} onOpenChange={(val) => { if (!val) { setEditingAdmin(null); setError(""); } setOpen(val); }}>
-                    <DialogTrigger render={<Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200 h-10"><Plus className="mr-2 h-4 w-4" /> Novo Administrador</Button>} />
+                    <DialogTrigger render={<Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm h-10"><Plus className="mr-2 h-4 w-4" /> Novo Administrador</Button>} />
                     <DialogContent className="sm:max-w-[425px]">
                         <form key={editingAdmin?.id || "new-admin"} action={handleAction}>
                             <DialogHeader>
