@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShieldCheck, Key, History } from "lucide-react";
+import { ShieldCheck, Key, History } from "lucide-react";
 import { NavConfig } from "@/src/types/dashboard/components";
 
 export const ADMIN_NAVIGATION: NavConfig[] = [
@@ -25,10 +25,11 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
     }
 ];
 
-export const PERMISSION_RESOURCES = ADMIN_NAVIGATION
-    .filter(nav => nav.resource)
-    .map(nav => nav.resource as string);
-export const EXTRA_RESOURCES = ["configuracoes", "relatorios", "auditoria"];
+export const RESOURCE_ACTIONS: Record<string, string[]> = {
+    usuarios: ["visualizar", "criar", "editar", "deletar"],
+    cargos: ["visualizar", "criar", "editar", "deletar"],
+    relatorios: ["visualizar", "criar", "editar", "deletar"],
+    auditoria: ["visualizar"]
+};
 
-export const ALL_RESOURCES = [...new Set([...PERMISSION_RESOURCES, ...EXTRA_RESOURCES])];
-export const ALL_ACTIONS = ["visualizar", "criar", "editar", "deletar"];
+export const ALL_RESOURCES = Object.keys(RESOURCE_ACTIONS);

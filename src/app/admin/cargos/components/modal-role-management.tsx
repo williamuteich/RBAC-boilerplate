@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Role, PermissionToRole } from "@/src/types/dashboard/admins";
-import { ALL_RESOURCES, ALL_ACTIONS } from "@/src/lib/navigation";
+import { ALL_RESOURCES, RESOURCE_ACTIONS } from "@/src/lib/navigation";
 import { ViewPermissions } from "./modal-view-permissions";
 import { createRole, updateRole, deleteRole } from "@/src/services/roles";
 
@@ -84,7 +84,9 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                 </div>
 
                 <Dialog open={open} onOpenChange={(val) => { if (!val) { setEditingRole(null); setSelectedPermissions([]); setError(""); } setOpen(val); }}>
-                    <DialogTrigger render={<Button className="bg-indigo-600 hover:bg-indigo-700"><Plus className="mr-2 h-4 w-4" /> Novo Cargo</Button>} />
+                    <DialogTrigger asChild>
+                        <Button className="bg-indigo-600 hover:bg-indigo-700"><Plus className="mr-2 h-4 w-4" /> Novo Cargo</Button>
+                    </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px] border-none shadow-2xl overflow-y-auto max-h-[90vh]">
                         <form key={editingRole?.id || "new-role"} action={handleAction} className="space-y-6 py-4">
                             <DialogHeader>
@@ -110,7 +112,7 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                         <div key={resource} className="space-y-2 border rounded-lg p-3 bg-muted/30">
                                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{resource}</h4>
                                             <div className="grid grid-cols-2 gap-2">
-                                                {ALL_ACTIONS.map(action => {
+                                                {(RESOURCE_ACTIONS[resource] || []).map(action => {
                                                     const isSelected = selectedPermissions.some(p => p.resource === resource && p.action === action);
                                                     return (
                                                         <button key={action} type="button" onClick={() => togglePermission(resource, action)}
@@ -160,7 +162,9 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                             <>
                                                 <Button variant="ghost" size="icon-sm" onClick={() => { setEditingRole(role); setSelectedPermissions(role.permissions.map((p: PermissionToRole) => ({ resource: p.permission.resource, action: p.permission.action }))); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
                                                 <AlertDialog>
-                                                    <AlertDialogTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending}><Trash2 className="h-4 w-4 text-red-500" /></Button>} />
+                                                    <AlertDialogTrigger asChild>
+                                                        <Button variant="ghost" size="icon-sm" disabled={isPending}><Trash2 className="h-4 w-4 text-red-500" /></Button>
+                                                    </AlertDialogTrigger>
                                                     <AlertDialogContent className="border-red-100">
                                                         <AlertDialogHeader>
                                                             <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-2"><AlertTriangle className="h-6 w-6 text-red-600" /></div>

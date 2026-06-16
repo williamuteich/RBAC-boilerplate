@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2 } from "lucide-react";
 
@@ -29,13 +29,16 @@ export function SearchInput({
     const queryValue = searchParamKey ? (searchParams.get(searchParamKey) || "") : initialValue;
     const [value, setValue] = useState(queryValue);
     const [debouncedValue] = useDebounce(value, 750);
+    const lastSearchedValue = useRef(queryValue);
 
     useEffect(() => {
         setValue(queryValue);
+        lastSearchedValue.current = queryValue;
     }, [queryValue]);
 
     useEffect(() => {
-        if (debouncedValue === queryValue) return;
+        if (debouncedValue === lastSearchedValue.current) return;
+        lastSearchedValue.current = debouncedValue;
 
         if (onSearchChange) {
             onSearchChange(debouncedValue);
@@ -51,7 +54,7 @@ export function SearchInput({
                 router.push(`?${params.toString()}`);
             });
         }
-    }, [debouncedValue, queryValue, onSearchChange, searchParamKey, searchParams, router]);
+    }, [debouncedValue, onSearchChange, searchParamKey, searchParams, router]);
 
     return (
         <div className="relative flex items-center w-full max-w-[280px]">

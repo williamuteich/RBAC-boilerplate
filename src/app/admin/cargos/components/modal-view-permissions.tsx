@@ -31,12 +31,12 @@ export function ViewPermissions({ permissions, roleName }: ViewPermissionsProps)
 
     return (
         <Dialog>
-            <DialogTrigger render={
+            <DialogTrigger asChild>
                 <button className="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-200 shadow-sm cursor-pointer">
                     <Fingerprint className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
                     <span className="text-[11px] font-bold uppercase tracking-wider">Ver Acessos</span>
                 </button>
-            } />
+            </DialogTrigger>
 
             <DialogContent className="max-w-md sm:max-w-lg border-none shadow-2xl">
                 <DialogHeader>

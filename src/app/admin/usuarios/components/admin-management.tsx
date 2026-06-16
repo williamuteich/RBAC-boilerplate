@@ -110,7 +110,9 @@ export function AdminManagement({
                 </div>
 
                 <Dialog open={open} onOpenChange={(val) => { if (!val) { setEditingAdmin(null); setError(""); } setOpen(val); }}>
-                    <DialogTrigger render={<Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm h-10"><Plus className="mr-2 h-4 w-4" /> Novo Administrador</Button>} />
+                    <DialogTrigger asChild>
+                        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm h-10"><Plus className="mr-2 h-4 w-4" /> Novo Administrador</Button>
+                    </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <form key={editingAdmin?.id || "new-admin"} action={handleAction}>
                             <DialogHeader>
@@ -192,7 +194,9 @@ export function AdminManagement({
                                                 <>
                                                     <Button variant="ghost" size="icon-sm" onClick={() => { setEditingAdmin(admin); setOpen(true); }} disabled={isPending}><Pencil className="h-4 w-4 text-slate-500" /></Button>
                                                     <AlertDialog>
-                                                        <AlertDialogTrigger render={<Button variant="ghost" size="icon-sm" disabled={isPending}><Trash2 className="h-4 w-4 text-red-500" /></Button>} />
+                                                        <AlertDialogTrigger asChild>
+                                                            <Button variant="ghost" size="icon-sm" disabled={isPending}><Trash2 className="h-4 w-4 text-red-500" /></Button>
+                                                        </AlertDialogTrigger>
                                                         <AlertDialogContent className="border-red-100">
                                                             <AlertDialogHeader>
                                                                 <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-2"><AlertTriangle className="h-6 w-6 text-red-600" /></div>

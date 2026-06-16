@@ -7,12 +7,16 @@ const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const resources = ["usuarios", "cargos", "configuracoes", "relatorios"];
-  const actions = ["visualizar", "criar", "editar", "deletar"];
+  const RESOURCE_ACTIONS: Record<string, string[]> = {
+    usuarios: ["visualizar", "criar", "editar", "deletar"],
+    cargos: ["visualizar", "criar", "editar", "deletar"],
+    relatorios: ["visualizar", "criar", "editar", "deletar"],
+    auditoria: ["visualizar"]
+  };
 
   console.log('👑 Criando cargo Admin...');
   const permissionsList: { resource: string; action: string }[] = [];
-  for (const resource of resources) {
+  for (const [resource, actions] of Object.entries(RESOURCE_ACTIONS)) {
     for (const action of actions) {
       permissionsList.push({ resource, action });
     }

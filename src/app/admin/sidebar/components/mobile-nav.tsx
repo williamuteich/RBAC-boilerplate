@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,19 +8,15 @@ import {
 import { SidebarContent } from "../sidebar";
 
 export function MobileNav() {
-    const [open, setOpen] = useState(false);
-
     return (
-        <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger
-                render={
-                    <Button variant="ghost" size="icon" className="lg:hidden mr-2">
-                        <Menu className="w-6 h-6" />
-                    </Button>
-                }
-            />
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="lg:hidden mr-2">
+                    <Menu className="w-6 h-6" />
+                </Button>
+            </SheetTrigger>
             <SheetContent side="left" className="p-0 w-72 border-none">
-                <SidebarContent onClose={() => setOpen(false)} />
+                <SidebarContent />
             </SheetContent>
         </Sheet>
     );
