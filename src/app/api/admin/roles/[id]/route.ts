@@ -80,46 +80,29 @@ async function _PUT(
 
         const { name, description, permissions } = validated.data;
 
-        const role = await prisma.$transaction(async (tx) => {
-            const updatedRole = await tx.adminRole.update({
-                where: { id },
-                data: { name, description },
-            });
-
-            if (permissions) {
-                await tx.adminRolePermission.deleteMany({
-                    where: { adminRoleId: id },
-                });
-
-                for (const perm of permissions) {
-                    const permission = await tx.adminPermission.upsert({
-                        where: {
-                            resource_action: {
-                                resource: perm.resource,
-                                action: perm.action,
-                            }
-                        },
-                        update: {},
-                        create: {
-                            resource: perm.resource,
-                            action: perm.action,
-                            description: `${perm.action} ${perm.resource}`,
-                        },
-                    });
-
-                    await tx.adminRolePermission.create({
-                        data: {
-                            adminRoleId: updatedRole.id,
-                            adminPermissionId: permission.id,
-                        },
-                    });
-                }
-            }
-
-            return updatedRole;
+        const updatedRole = await prisma.adminRole.update({
+            where: { id },
+            data: {
+                name,
+                description,
+                permissions: permissions || [],
+            },
         });
 
-        return NextResponse.json(role);
+        const rawPermissions = updatedRole.permissions as Array<{ resource: string, action: string }> || [];
+        const roleResponse = {
+            id: updatedRole.id,
+            name: updatedRole.name,
+            description: updatedRole.description,
+            permissions: rawPermissions.map(p => ({
+                permission: {
+                    resource: p.resource,
+                    action: p.action
+                }
+            }))
+        };
+
+        return NextResponse.json(roleResponse);
     } catch (error) {
         console.error("Erro ao atualizar cargo:", error);
         return NextResponse.json({ error: "Erro ao atualizar cargo" }, { status: 500 });

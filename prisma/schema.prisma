@@ -27,34 +27,11 @@ model AdminRole {
   id          Int      @id @default(autoincrement())
   name        String   @unique
   description String?
+  permissions Json     @default("[]")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   administrators Administrator[]
-  permissions    AdminRolePermission[]
-}
-
-model AdminPermission {
-  id          Int     @id @default(autoincrement())
-  resource    String
-  action      String
-  description String?
-
-  roles AdminRolePermission[]
-
-  @@unique([resource, action])
-}
-
-model AdminRolePermission {
-  id                Int      @id @default(autoincrement())
-  adminRoleId       Int
-  adminPermissionId Int
-  createdAt         DateTime @default(now())
-
-  role       AdminRole       @relation(fields: [adminRoleId], references: [id], onDelete: Cascade)
-  permission AdminPermission @relation(fields: [adminPermissionId], references: [id], onDelete: Cascade)
-
-  @@unique([adminRoleId, adminPermissionId])
 }
 
 model LogAdmin {

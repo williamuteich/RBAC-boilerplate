@@ -12,25 +12,25 @@ export async function GET() {
 
     try {
         const roles = await prisma.adminRole.findMany({
-            orderBy: { name: "asc" },
-            select: {
-                id: true,
-                name: true,
-                description: true,
-                permissions: {
-                    select: {
-                        permission: {
-                            select: {
-                                resource: true,
-                                action: true,
-                            }
-                        }
-                    }
-                }
-            }
+            orderBy: { name: "asc" }
         });
 
-        return NextResponse.json(roles);
+        const mappedRoles = roles.map(role => {
+            const rawPermissions = role.permissions as Array<{ resource: string, action: string }> || [];
+            return {
+                id: role.id,
+                name: role.name,
+                description: role.description,
+                permissions: rawPermissions.map(p => ({
+                    permission: {
+                        resource: p.resource,
+                        action: p.action
+                    }
+                }))
+            };
+        });
+
+        return NextResponse.json(mappedRoles);
     } catch (error) {
         console.error("Erro ao buscar cargos:", error);
         return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
@@ -57,53 +57,28 @@ async function _POST(request: Request) {
 
         const { name, description, permissions } = validated.data;
 
-        const role = await prisma.$transaction(async (tx) => {
-            const newRole = await tx.adminRole.create({
-                data: { name, description },
-            });
-
-            for (const perm of permissions) {
-                const permission = await tx.adminPermission.upsert({
-                    where: {
-                        resource_action: {
-                            resource: perm.resource,
-                            action: perm.action,
-                        }
-                    },
-                    update: {},
-                    create: {
-                        resource: perm.resource,
-                        action: perm.action,
-                        description: `${perm.action} ${perm.resource}`,
-                    },
-                });
-
-                await tx.adminRolePermission.create({
-                    data: {
-                        adminRoleId: newRole.id,
-                        adminPermissionId: permission.id,
-                    },
-                });
-            }
-
-            return tx.adminRole.findUnique({
-                where: { id: newRole.id },
-                select: {
-                    id: true,
-                    name: true,
-                    description: true,
-                    permissions: {
-                        select: {
-                            permission: {
-                                select: { resource: true, action: true }
-                            }
-                        }
-                    }
-                }
-            });
+        const newRole = await prisma.adminRole.create({
+            data: { 
+                name, 
+                description,
+                permissions: permissions || []
+            },
         });
 
-        return NextResponse.json(role, { status: 201 });
+        const rawPermissions = newRole.permissions as Array<{ resource: string, action: string }> || [];
+        const roleResponse = {
+            id: newRole.id,
+            name: newRole.name,
+            description: newRole.description,
+            permissions: rawPermissions.map(p => ({
+                permission: {
+                    resource: p.resource,
+                    action: p.action
+                }
+            }))
+        };
+
+        return NextResponse.json(roleResponse, { status: 201 });
     } catch (error: any) {
         if (error.code === 'P2002') {
             return NextResponse.json({ error: "Cargo já existe" }, { status: 400 });

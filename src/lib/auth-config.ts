@@ -40,28 +40,13 @@ export const auth: NextAuthOptions = {
                 const admin = await prisma.administrator.findUnique({
                     where: { email: token.email },
                     include: {
-                        role: {
-                            include: {
-                                permissions: {
-                                    include: { permission: true },
-                                },
-                            },
-                        },
+                        role: true,
                     },
                 });
 
                 if (admin) {
                     token.id = String(admin.id);
                     token.tipo = "ADMINISTRATOR";
-                    if (admin.role?.name === "Admin") {
-                        token.permissions = ["all:all"];
-                    } else {
-                        token.permissions = admin.role
-                            ? admin.role.permissions.map(
-                                (p) => `${p.permission.resource}:${p.permission.action}`
-                            )
-                            : ["all:all"];
-                    }
                 }
             }
 
@@ -69,10 +54,37 @@ export const auth: NextAuthOptions = {
         },
 
         async session({ session, token }) {
-            if (session.user) {
-                session.user.id = token.id as string;
-                session.user.tipo = token.tipo as "ADMINISTRATOR";
-                session.user.permissions = token.permissions as string[];
+            if (session.user && token.id) {
+                const admin = await prisma.administrator.findUnique({
+                    where: { id: Number(token.id) },
+                    include: {
+                        role: true,
+                    },
+                });
+
+                if (!admin || !admin.active) {
+                    return {} as any;
+                }
+
+                const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+                if (!admin.lastLogin || admin.lastLogin < oneHourAgo) {
+                    await prisma.administrator.update({
+                        where: { id: admin.id },
+                        data: { lastLogin: new Date() },
+                    });
+                }
+
+                session.user.id = String(admin.id);
+                session.user.tipo = "ADMINISTRATOR";
+
+                if (admin.role?.name === "Admin") {
+                    session.user.permissions = ["all:all"];
+                } else {
+                    const rawPermissions = admin.role?.permissions as Array<{ resource: string; action: string }> || [];
+                    session.user.permissions = rawPermissions.map(
+                        (p) => `${p.resource}:${p.action}`
+                    );
+                }
             }
             return session;
         },

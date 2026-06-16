@@ -10,43 +10,26 @@ async function main() {
   const resources = ["usuarios", "cargos", "configuracoes", "relatorios"];
   const actions = ["visualizar", "criar", "editar", "deletar"];
 
-  console.log('📦 Criando permissões...');
+  console.log('👑 Criando cargo Admin...');
+  const permissionsList: { resource: string; action: string }[] = [];
   for (const resource of resources) {
     for (const action of actions) {
-      await prisma.adminPermission.upsert({
-        where: { resource_action: { resource, action } },
-        update: {},
-        create: { resource, action }
-      });
+      permissionsList.push({ resource, action });
     }
   }
 
-  console.log('👑 Criando cargo Admin...');
   const adminRole = await prisma.adminRole.upsert({
     where: { name: 'Admin' },
-    update: { description: 'Cargo mestre do sistema. Único e protegido.' },
+    update: { 
+      description: 'Cargo mestre do sistema. Único e protegido.',
+      permissions: permissionsList
+    },
     create: {
       name: 'Admin',
-      description: 'Cargo mestre do sistema. Único e protegido.'
+      description: 'Cargo mestre do sistema. Único e protegido.',
+      permissions: permissionsList
     }
   });
-
-  const allPermissions = await prisma.adminPermission.findMany();
-  for (const perm of allPermissions) {
-    await prisma.adminRolePermission.upsert({
-      where: {
-        adminRoleId_adminPermissionId: {
-          adminRoleId: adminRole.id,
-          adminPermissionId: perm.id
-        }
-      },
-      update: {},
-      create: {
-        adminRoleId: adminRole.id,
-        adminPermissionId: perm.id
-      }
-    });
-  }
 
   console.log('👤 Configurando usuário mestre...');
   await prisma.administrator.upsert({
