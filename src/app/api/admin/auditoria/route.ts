@@ -19,20 +19,12 @@ export async function GET(request: Request) {
     if (!validated.success) {
         return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
     }
-    const { page, limit, resource, action, userName, administratorId } = validated.data;
+    const { page, limit, resource, action, administratorId } = validated.data;
 
     const where = {
         ...(resource && { resource }),
         ...(action && { action: action as AdminActionType }),
         ...(administratorId && { administratorId }),
-        ...(userName && {
-            administrator: {
-                name: {
-                    contains: userName,
-                    mode: "insensitive" as const,
-                },
-            },
-        }),
     };
 
     try {

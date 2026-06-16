@@ -14,7 +14,6 @@ export async function getAuditLogs(
     if (filters.limit) params.set("limit", String(filters.limit));
     if (filters.resource) params.set("resource", filters.resource);
     if (filters.action) params.set("action", filters.action);
-    if (filters.userName) params.set("userName", filters.userName);
     if (filters.administratorId)
         params.set("administratorId", String(filters.administratorId));
 

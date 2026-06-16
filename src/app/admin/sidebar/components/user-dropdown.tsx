@@ -45,7 +45,7 @@ export function UserDropdown() {
                 </div>
                 <DropdownMenuSeparator className="bg-slate-100" />
                 <div className="py-1">
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                         onClick={() => signOut({ callbackUrl: "/" })}
                         className="gap-3 py-2 cursor-pointer text-slate-600 focus:bg-red-50 focus:text-red-600 rounded-md"
                     >

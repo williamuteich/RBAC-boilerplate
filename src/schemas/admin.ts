@@ -31,6 +31,5 @@ export const getAuditoriaQuerySchema = z.object({
   limit: z.coerce.number().int().positive("Limite inválido").max(100, "Limite máximo de 100").default(20),
   resource: z.string().optional(),
   action: z.string().optional(),
-  userName: z.string().optional(),
   administratorId: z.coerce.number().int().positive("ID do administrador inválido").optional()
 });

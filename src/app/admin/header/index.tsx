@@ -1,9 +1,9 @@
 "use client";
 
 import { Bell, Moon, Search } from "lucide-react";
-import { UserDropdown } from "../components/user-dropdown";
+import { UserDropdown } from "../sidebar/components/user-dropdown";
 import { Button } from "@/components/ui/button";
-import { MobileNav } from "../components/mobile-nav";
+import { MobileNav } from "../sidebar/components/mobile-nav";
 
 export function Header() {
     return (
@@ -17,9 +17,6 @@ export function Header() {
                         placeholder="Search"
                         className="bg-transparent border-none outline-none text-sm w-full placeholder:text-slate-400 text-slate-600"
                     />
-                </div>
-                <div className="md:hidden font-semibold text-lg text-slate-800">
-                    Dashboard
                 </div>
             </div>
 

@@ -8,7 +8,7 @@ import {
     SheetContent,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { SidebarContent } from "../sidebar/sidebar";
+import { SidebarContent } from "../sidebar";
 
 export function MobileNav() {
     const [open, setOpen] = useState(false);

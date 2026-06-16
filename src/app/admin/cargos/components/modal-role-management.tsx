@@ -36,7 +36,7 @@ import {
 
 import { Role, PermissionToRole } from "@/src/types/dashboard/admins";
 import { ALL_RESOURCES, ALL_ACTIONS } from "@/src/lib/navigation";
-import { ViewPermissions } from "./view-permissions";
+import { ViewPermissions } from "./modal-view-permissions";
 import { createRole, updateRole, deleteRole } from "@/src/services/roles";
 
 export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {

@@ -46,6 +46,5 @@ export interface AuditFilters {
     limit?: number;
     resource?: string;
     action?: string;
-    userName?: string;
     administratorId?: number;
 }

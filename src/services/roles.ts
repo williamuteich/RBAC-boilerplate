@@ -31,7 +31,6 @@ export async function createRole(data: { name: string; description: string; perm
     const result = await res.json();
     if (!res.ok) return { success: false, error: result.error || "Erro ao criar cargo" };
 
-    // Atualiza a página automaticamente
     revalidatePath("/admin/cargos");
     return { success: true };
 }

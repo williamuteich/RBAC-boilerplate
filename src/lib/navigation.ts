@@ -3,13 +3,7 @@ import { NavConfig } from "@/src/types/dashboard/components";
 
 export const ADMIN_NAVIGATION: NavConfig[] = [
     {
-        title: "Dashboard",
-        href: "/admin",
-        icon: LayoutDashboard,
-        section: "MAIN MENU"
-    },
-    {
-        title: "Administradores",
+        title: "Usuários",
         href: "/admin/usuarios",
         icon: ShieldCheck,
         resource: "usuarios",
