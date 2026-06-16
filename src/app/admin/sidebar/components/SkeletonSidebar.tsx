@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { SidebarContent } from "../components/sidebar-content";
+import { SidebarContent } from "../../components/sidebar-content";
 import { auth } from "@/src/lib/auth-config";
 
 export async function Sidebar() {

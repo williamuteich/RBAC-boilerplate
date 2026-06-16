@@ -1,15 +1,17 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import { NavItem } from "./nav-item";
 import { hasPermission } from "@/src/lib/auth-helpers";
 import { ADMIN_NAVIGATION } from "@/src/lib/navigation";
 import React from "react";
 
-export function SidebarContent({ onClose }: { onClose?: () => void }) {
+export function SidebarContent({ session: propSession, onClose }: { session?: Session; onClose?: () => void }) {
     const pathname = usePathname();
-    const { data: session } = useSession();
+    const { data: hookSession } = useSession();
+    const session = propSession || hookSession;
 
     if (!session) return null;
 
