@@ -1,5 +1,5 @@
 import { LayoutDashboard, ShieldCheck, Key, History } from "lucide-react";
-import { NavConfig } from "@/src/types/components";
+import { NavConfig } from "@/src/types/dashboard/components";
 
 export const ADMIN_NAVIGATION: NavConfig[] = [
     {

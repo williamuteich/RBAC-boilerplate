@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Role } from "./dashboard/admins";
+import { Role } from "./admins";
 import { LucideIcon } from "lucide-react";
 
 export interface NavItemProps {
