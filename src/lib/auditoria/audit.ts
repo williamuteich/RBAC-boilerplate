@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
-import { checkAdminApi } from "@/src/lib/auth-helpers-server";
+import { checkAdminApi } from "@/src/lib/auth-helpers/auth-helpers-server";
 import { AdminActionType } from "@/generated/prisma/client";
 import { AnyContext, RouteHandler, AuditOptions } from "@/src/types/dashboard/audit";
 

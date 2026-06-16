@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
-import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
+import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 import { roleSchema, idParamSchema } from "@/src/schemas/admin";
-import { withAudit } from "@/src/lib/audit";
+import { withAudit } from "@/src/lib/auditoria/audit";
 
 async function _DELETE(
     request: Request,
@@ -72,7 +72,7 @@ async function _PUT(
         }
 
         const body = await request.json();
-        
+
         const validated = roleSchema.safeParse(body);
         if (!validated.success) {
             return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });

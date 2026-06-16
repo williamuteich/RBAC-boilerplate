@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
-import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
+import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 import { adminSchema, getAdminsQuerySchema } from "@/src/schemas/admin";
-import { withAudit } from "@/src/lib/audit";
+import { withAudit } from "@/src/lib/auditoria/audit";
 
 export async function GET(request: Request) {
     const session = await checkAdminApi();

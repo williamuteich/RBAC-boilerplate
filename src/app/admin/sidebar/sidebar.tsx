@@ -3,8 +3,8 @@
 import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
-import { NavItem } from "./nav-item";
-import { hasPermission } from "@/src/lib/auth-helpers";
+import { NavItem } from "../components/nav-item";
+import { hasPermission } from "@/src/lib/auth-helpers/auth-helpers";
 import { ADMIN_NAVIGATION } from "@/src/lib/navigation";
 import React from "react";
 

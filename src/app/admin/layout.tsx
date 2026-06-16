@@ -1,7 +1,7 @@
 import { ReactNode, Suspense } from "react";
 import { Header } from "./header";
-import { Sidebar, SkeletonSidebar } from "./sidebar";
-import { requireAdminContext } from "@/src/lib/auth-helpers-server";
+import { Sidebar, SkeletonSidebar } from "./sidebar/components";
+import { requireAdminContext } from "@/src/lib/auth-helpers/auth-helpers-server";
 
 async function AuthGuard() {
     await requireAdminContext();

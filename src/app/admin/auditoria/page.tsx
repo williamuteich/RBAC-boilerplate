@@ -1,4 +1,4 @@
-import { requirePermission } from "@/src/lib/auth-helpers-server";
+import { requirePermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 import { getAuditLogs } from "@/src/services/audit";
 import { AuditManagement } from "../components/audit-management";
 import { redirect } from "next/navigation";

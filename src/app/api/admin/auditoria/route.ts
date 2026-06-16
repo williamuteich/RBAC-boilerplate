@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
-import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers-server";
+import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 import { AdminActionType } from "@/generated/prisma/client";
 import { getAuditoriaQuerySchema } from "@/src/schemas/admin";
 
