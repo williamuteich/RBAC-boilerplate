@@ -2,8 +2,9 @@ import { AdminManagement } from "../components/admin-management";
 import { ShieldCheck } from "lucide-react";
 import { getAdmins, getRoles } from "@/src/services/administrator";
 import NotAuthorized from "@/src/app/components/notAuthorized";
+import { Suspense } from "react";
 
-export default async function UsuariosAdminPage() {
+async function UsersContent() {
     const initialAdmins = await getAdmins();
     const initialRoles = await getRoles();
 
@@ -11,6 +12,15 @@ export default async function UsuariosAdminPage() {
         return <NotAuthorized />;
     }
 
+    return (
+        <AdminManagement
+            initialData={initialAdmins}
+            initialRoles={initialRoles}
+        />
+    );
+}
+
+export default function UsuariosAdminPage() {
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
@@ -23,10 +33,9 @@ export default async function UsuariosAdminPage() {
                 </p>
             </div>
 
-            <AdminManagement
-                initialData={initialAdmins}
-                initialRoles={initialRoles}
-            />
+            <Suspense fallback={<div className="flex items-center justify-center p-8 text-slate-500">Carregando administradores...</div>}>
+                <UsersContent />
+            </Suspense>
         </div>
     );
 }

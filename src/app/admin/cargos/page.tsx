@@ -2,14 +2,19 @@ import { RoleManagement } from "../components/role-management";
 import { Key } from "lucide-react";
 import { getRoles } from "@/src/services/roles";
 import NotAuthorized from "@/src/app/components/notAuthorized";
+import { Suspense } from "react";
 
-export default async function AdminCargosPage() {
+async function RolesContent() {
     const initialRoles = await getRoles();
 
     if (initialRoles === null) {
         return <NotAuthorized />;
     }
 
+    return <RoleManagement initialRoles={initialRoles} />;
+}
+
+export default function AdminCargosPage() {
     return (
         <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
@@ -22,7 +27,9 @@ export default async function AdminCargosPage() {
                 </p>
             </div>
 
-            <RoleManagement initialRoles={initialRoles} />
+            <Suspense fallback={<div className="flex items-center justify-center p-8 text-slate-500">Carregando cargos e permissões...</div>}>
+                <RolesContent />
+            </Suspense>
         </div>
     );
 }

@@ -1,4 +1,3 @@
-import { DashboardSummary } from "./components/summary-cards";
 import { LayoutDashboard } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -13,8 +12,6 @@ export default function AdminDashboardPage() {
                     Bem-vindo ao painel de controle central. Utilize o menu lateral para gerenciar o sistema.
                 </p>
             </div>
-
-            <DashboardSummary />
 
             <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-xl border bg-card/50 backdrop-blur-sm p-6">

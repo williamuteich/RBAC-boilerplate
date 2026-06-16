@@ -6,7 +6,7 @@ import { LoginForm } from "./components/auth/LoginForm";
 
 export default async function LoginPage() {
   const session = await getServerSession(auth);
-  
+
   if (session) {
     redirect("/admin");
   }
