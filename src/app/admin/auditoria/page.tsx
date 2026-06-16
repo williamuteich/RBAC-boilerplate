@@ -125,30 +125,26 @@ async function AuditContent({
     );
 }
 
-import { NuqsAdapter } from "nuqs/adapters/next/app";
-
 export default async function AuditoriaPage({
     searchParams
 }: {
     searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
     return (
-        <NuqsAdapter>
-            <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-                        <History className="h-8 w-8 text-indigo-600" />
-                        Auditoria do Sistema
-                    </h1>
-                    <p className="text-muted-foreground mt-2">
-                        Acompanhe todas as ações realizadas pelos usuários na plataforma de forma detalhada.
-                    </p>
-                </div>
-
-                <Suspense fallback={<div className="flex items-center justify-center p-8 text-slate-500">Carregando dados de auditoria...</div>}>
-                    <AuditContent searchParamsPromise={searchParams} />
-                </Suspense>
+        <div className="flex flex-col gap-8 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+                    <History className="h-8 w-8 text-indigo-600" />
+                    Auditoria do Sistema
+                </h1>
+                <p className="text-muted-foreground mt-2">
+                    Acompanhe todas as ações realizadas pelos usuários na plataforma de forma detalhada.
+                </p>
             </div>
-        </NuqsAdapter>
+
+            <Suspense fallback={<div className="flex items-center justify-center p-8 text-slate-500">Carregando dados de auditoria...</div>}>
+                <AuditContent searchParamsPromise={searchParams} />
+            </Suspense>
+        </div>
     );
 }
