@@ -1,11 +1,10 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useTransition, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Loader2 } from "lucide-react";
-
 import { useDebounce } from "use-debounce";
+import { useQueryState } from "nuqs";
 
 interface SearchInputProps {
     placeholder?: string;
@@ -22,11 +21,14 @@ export function SearchInput({
     searchParamKey,
     disabled = false,
 }: SearchInputProps) {
-    const router = useRouter();
-    const searchParams = useSearchParams();
+    const [queryState, setQueryState] = useQueryState(searchParamKey || "q", {
+        defaultValue: "",
+        shallow: false
+    });
+    const [_, setPage] = useQueryState("page", { defaultValue: "1", shallow: false });
     const [isPending, startTransition] = useTransition();
 
-    const queryValue = searchParamKey ? (searchParams.get(searchParamKey) || "") : initialValue;
+    const queryValue = searchParamKey ? queryState : initialValue;
     const [value, setValue] = useState(queryValue);
     const [debouncedValue] = useDebounce(value, 750);
     const lastSearchedValue = useRef(queryValue);
@@ -43,18 +45,12 @@ export function SearchInput({
         if (onSearchChange) {
             onSearchChange(debouncedValue);
         } else if (searchParamKey) {
-            startTransition(() => {
-                const params = new URLSearchParams(searchParams.toString());
-                if (debouncedValue) {
-                    params.set(searchParamKey, debouncedValue);
-                } else {
-                    params.delete(searchParamKey);
-                }
-                params.set("page", "1");
-                router.push(`?${params.toString()}`);
+            startTransition(async () => {
+                await setQueryState(debouncedValue || null);
+                await setPage(null);
             });
         }
-    }, [debouncedValue, onSearchChange, searchParamKey, searchParams, router]);
+    }, [debouncedValue, onSearchChange, searchParamKey, setQueryState, setPage]);
 
     return (
         <div className="relative flex items-center w-full max-w-[280px]">

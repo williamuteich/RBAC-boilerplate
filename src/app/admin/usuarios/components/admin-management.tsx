@@ -32,6 +32,7 @@ import {
     Clock,
     AlertTriangle
 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Pagination } from "@/src/app/admin/components/pagination";
 import { SearchInput } from "@/src/app/admin/components/search-input";
 import {
@@ -45,39 +46,22 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Admin, Role, AdminsResponse, AdminFilters } from "@/src/types/dashboard/admins";
-import { createAdmin, updateAdmin, deleteAdmin, getAdmins } from "@/src/services/administrator";
+import { Admin, Role, AdminsResponse } from "@/src/types/dashboard/admins";
+import { createAdmin, updateAdmin, deleteAdmin } from "@/src/services/administrator";
 
 export function AdminManagement({
-    initialData,
+    initialData: data,
     initialRoles
 }: {
     initialData: AdminsResponse,
     initialRoles: Role[]
 }) {
-    const [data, setData] = useState<AdminsResponse>(initialData);
-    const [filters, setFilters] = useState<AdminFilters>({
-        page: 1,
-        limit: 20
-    });
+    const router = useRouter();
+    const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
     const [open, setOpen] = useState(false);
     const [error, setError] = useState("");
     const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
-
-    const fetchAdmins = (newFilters: AdminFilters) => {
-        startTransition(async () => {
-            const result = await getAdmins(newFilters);
-            if (result) {
-                setData(result);
-                setFilters(newFilters);
-            }
-        });
-    };
-
-    const handlePageChange = (newPage: number) => {
-        fetchAdmins({ ...filters, page: newPage });
-    };
 
     const handleAction = (formData: FormData) => {
         startTransition(async () => {
@@ -91,11 +75,17 @@ export function AdminManagement({
 
             if (res.success) {
                 setOpen(false);
-                fetchAdmins(filters);
+                router.refresh();
             } else {
                 setError(res.error || "Erro ao salvar");
             }
         });
+    };
+
+    const getPageUrl = (pageNumber: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", String(pageNumber));
+        return `?${params.toString()}`;
     };
 
     return (
@@ -104,7 +94,7 @@ export function AdminManagement({
                 <div className="flex flex-wrap items-center gap-2">
                     <SearchInput
                         placeholder="Buscar administrador..."
-                        onSearchChange={(val) => fetchAdmins({ ...filters, name: val || undefined, page: 1 })}
+                        searchParamKey="name"
                         disabled={isPending}
                     />
                 </div>
@@ -208,7 +198,7 @@ export function AdminManagement({
                                                                 <AlertDialogAction disabled={isPending} onClick={() => startTransition(async () => {
                                                                     const res = await deleteAdmin(admin.id);
                                                                     if (res.success) {
-                                                                        fetchAdmins(filters);
+                                                                        router.refresh();
                                                                     } else {
                                                                         setError(res.error || "Erro ao excluir");
                                                                     }
@@ -231,7 +221,7 @@ export function AdminManagement({
                     totalPages={data.totalPages}
                     total={data.total}
                     limit={data.limit}
-                    onPageChange={handlePageChange}
+                    getPageUrl={getPageUrl}
                     disabled={isPending}
                 />
             </div>

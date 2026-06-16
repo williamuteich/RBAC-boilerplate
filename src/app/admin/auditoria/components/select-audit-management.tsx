@@ -1,26 +1,18 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
+import { useQueryState } from "nuqs";
 
 export function SelectAuditManagement() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
+    const [action, setAction] = useQueryState("action", { defaultValue: "", shallow: false });
+    const [_, setPage] = useQueryState("page", { defaultValue: "1", shallow: false });
     const [isPending, startTransition] = useTransition();
 
-    const currentAction = searchParams.get("action") || "";
-
     const handleFilterChange = (value: string) => {
-        startTransition(() => {
-            const params = new URLSearchParams(searchParams.toString());
-            if (value) {
-                params.set("action", value);
-            } else {
-                params.delete("action");
-            }
-            params.set("page", "1");
-            router.push(`?${params.toString()}`);
+        startTransition(async () => {
+            await setAction(value || null);
+            await setPage(null);
         });
     };
 
@@ -28,7 +20,7 @@ export function SelectAuditManagement() {
         <div className="flex items-center gap-2">
             <select
                 className="h-10 px-3 py-2 border rounded-md bg-white text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 min-w-[160px]"
-                value={currentAction}
+                value={action}
                 onChange={(e) => handleFilterChange(e.target.value)}
             >
                 <option value="">Todas as Ações</option>
