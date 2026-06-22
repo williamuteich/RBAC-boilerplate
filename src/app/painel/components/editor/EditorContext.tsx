@@ -21,6 +21,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [letterBody, setLetterBody] = useState("");
 
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
+  const [pendingFiles, setPendingFiles] = useState<Record<string, File>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -47,7 +48,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     loadData();
   }, []);
 
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
@@ -58,40 +59,36 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    const newPhotos: PhotoItem[] = [];
+    const newPendingFiles = { ...pendingFiles };
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const res = await fetch("/api/painel/upload", {
-          method: "POST",
-          body: formData
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          const newItem: PhotoItem = {
-            id: `${Date.now()}-${i}`,
-            url: data.url,
-            label: file.name.split(".")[0] || `Foto ${photos.length + i + 1}`,
-          };
-          setPhotos((prev) => [...prev, newItem]);
-        } else {
-          const errData = await res.json().catch(() => ({}));
-          setErrorMessage(errData.error || "Erro no upload do arquivo.");
-          setTimeout(() => setErrorMessage(""), 5000);
-        }
-      } catch (err) {
-        console.error("Erro ao fazer upload da imagem:", err);
-        setErrorMessage("Erro de rede ao carregar a imagem.");
-        setTimeout(() => setErrorMessage(""), 5000);
-      }
+      const localUrl = URL.createObjectURL(file);
+      const newItem: PhotoItem = {
+        id: `temp-${Date.now()}-${i}-${Math.random()}`,
+        url: localUrl,
+        label: file.name.split(".")[0] || `Foto ${photos.length + i + 1}`,
+      };
+      newPhotos.push(newItem);
+      newPendingFiles[localUrl] = file;
     }
+
+    setPhotos((prev) => [...prev, ...newPhotos]);
+    setPendingFiles(newPendingFiles);
     e.target.value = "";
   };
 
   const removePhoto = (id: string) => {
+    const photoToRemove = photos.find((p) => p.id === id);
+    if (photoToRemove && photoToRemove.url.startsWith("blob:")) {
+      URL.revokeObjectURL(photoToRemove.url);
+      setPendingFiles((prev) => {
+        const copy = { ...prev };
+        delete copy[photoToRemove.url];
+        return copy;
+      });
+    }
     setPhotos((prev) => prev.filter((photo) => photo.id !== id));
   };
 
@@ -105,6 +102,39 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setIsSaving(true);
     setErrorMessage("");
     try {
+      const updatedPhotos = [...photos];
+
+      // 1. Fazer upload de todas as fotos novas que estão como blob:
+      for (let i = 0; i < updatedPhotos.length; i++) {
+        const photo = updatedPhotos[i];
+        if (photo.url.startsWith("blob:")) {
+          const file = pendingFiles[photo.url];
+          if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await fetch("/api/painel/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!res.ok) {
+              const errData = await res.json().catch(() => ({}));
+              throw new Error(errData.error || `Erro ao fazer upload da imagem ${photo.label}`);
+            }
+
+            const data = await res.json();
+            URL.revokeObjectURL(photo.url); // libera o blob da memória
+            
+            updatedPhotos[i] = {
+              ...photo,
+              url: data.url, // URL final do servidor (ex: /uploads/nome.png)
+            };
+          }
+        }
+      }
+
+      // 2. Salvar os dados finais no banco
       const res = await updatePainelData({
         partnerA,
         partnerB,
@@ -115,17 +145,19 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         songUrl,
         letterTitle,
         letterBody,
-        photos
+        photos: updatedPhotos,
       });
 
       if (res.success) {
+        setPhotos(updatedPhotos);
+        setPendingFiles({});
         setSaveSuccess(true);
       } else {
         setErrorMessage(res.error || "Erro ao salvar alterações.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro ao salvar dados do painel:", err);
-      setErrorMessage("Erro de conexão ao salvar.");
+      setErrorMessage(err.message || "Erro de conexão ao salvar.");
     } finally {
       setIsSaving(false);
     }
