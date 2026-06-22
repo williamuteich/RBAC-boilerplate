@@ -21,7 +21,7 @@ export function PublishSection() {
 
   const absoluteUrl = typeof window !== "undefined" 
     ? `${window.location.origin}/p/${slug}` 
-    : `https://eterno.love/${slug}`;
+    : `https://eterno.love/p/${slug}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(absoluteUrl);

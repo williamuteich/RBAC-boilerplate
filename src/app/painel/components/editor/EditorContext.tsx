@@ -124,7 +124,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const pageUrl = `eterno.love/${slug}`;
+  const pageUrl = `eterno.love/p/${slug}`;
 
   return (
     <EditorContext.Provider

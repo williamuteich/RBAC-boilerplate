@@ -1,0 +1,305 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Heart, ChevronDown, SkipBack, SkipForward, Shuffle, Repeat, Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { CalendarWidget } from "@/src/app/components/CalendarWidget";
+import { LoveLetterWidget } from "@/src/app/components/LoveLetterWidget";
+import { PhotoItem } from "@/src/types/love-widgets";
+
+export function PublicTributeRenderer({
+  data
+}: {
+  data: {
+    partnerA: string;
+    partnerB: string;
+    anniversary: string;
+    theme: "spotify" | "story";
+    songTitle: string;
+    songArtist: string;
+    songUrl: string;
+    letterTitle: string;
+    letterLines: string[];
+    photos: PhotoItem[];
+  }
+}) {
+  const [unlocked, setUnlocked] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+  const [progress, setProgress] = useState(65);
+  const [hearts, setHearts] = useState<{ id: number; left: number; size: number; delay: number }[]>([]);
+
+  const getYouTubeId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+  };
+
+  const videoId = getYouTubeId(data.songUrl);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActivePhotoIdx((prev) => (prev + 1) % data.photos.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [data.photos.length]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isPlaying) {
+      timer = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) return 0;
+          return prev + 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const list: { id: number; left: number; size: number; delay: number }[] = [];
+    for (let i = 0; i < 20; i++) {
+      list.push({
+        id: i,
+        left: Math.random() * 100,
+        size: Math.random() * 14 + 8,
+        delay: Math.random() * 10,
+      });
+    }
+    setHearts(list);
+  }, []);
+
+  const handleUnlock = () => {
+    setUnlocked(true);
+    setIsPlaying(true);
+  };
+
+  return (
+    <div className="min-h-screen w-full flex justify-center items-start font-sans relative overflow-x-hidden select-none bg-[#FAF9FF]">
+      
+      <div className={`fixed inset-0 bg-[#0F0D19]/95 backdrop-blur-md flex flex-col items-center justify-center z-50 p-6 text-center transition-all duration-1000 ease-in-out ${unlocked ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+        <div className="max-w-xs flex flex-col items-center gap-6">
+          <div className="relative">
+            <div className="absolute inset-0 bg-rose-500/20 rounded-full animate-ping scale-150"></div>
+            <div className="w-20 h-20 rounded-full bg-linear-to-tr from-rose-500 to-pink-600 flex items-center justify-center text-white shadow-xl shadow-rose-500/30 relative">
+              <Heart className="w-10 h-10 fill-current animate-pulse" />
+            </div>
+          </div>
+          <div>
+            <h1 className="text-xl font-black text-white tracking-tight">Uma Surpresa Especial</h1>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Você recebeu uma homenagem de amor especial de <span className="text-rose-400 font-bold">{data.partnerA}</span>.
+            </p>
+          </div>
+          <button
+            onClick={handleUnlock}
+            className="cursor-pointer w-full bg-linear-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-rose-500/20 text-xs tracking-wider uppercase transition-all active:scale-[0.98]"
+          >
+            Abrir Homenagem
+          </button>
+        </div>
+      </div>
+
+      {isPlaying && videoId && (
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&enablejsapi=1&mute=${isMuted ? 1 : 0}`}
+          className="hidden"
+          allow="autoplay"
+        />
+      )}
+
+      <div className="absolute inset-0 pointer-events-none z-0">
+        {hearts.map((h) => (
+          <div
+            key={h.id}
+            className="absolute bottom-[-20px] text-rose-400/20 animate-float fill-current"
+            style={{
+              left: `${h.left}%`,
+              width: `${h.size}px`,
+              height: `${h.size}px`,
+              animationDelay: `${h.delay}s`,
+              animationDuration: `${10 + Math.random() * 10}s`,
+            }}
+          >
+            <Heart className="w-full h-full fill-current" />
+          </div>
+        ))}
+      </div>
+
+      <div className="w-full max-w-md min-h-screen z-10 flex flex-col">
+        {data.theme === "spotify" ? (
+          <div className="w-full min-h-screen bg-[#FAF9FF] text-[#2D2A4A] relative flex flex-col px-4 pt-4 pb-12 gap-5 animate-in fade-in duration-500">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(244,63,94,0.04),transparent_50%)] pointer-events-none"></div>
+
+            <div className="w-full flex items-center justify-between text-[#2D2A4A] z-10 mt-1">
+              <ChevronDown className="w-5 h-5 text-[#2D2A4A] shrink-0" />
+              <span className="font-extrabold text-[10px] text-center tracking-tight text-rose-600 truncate max-w-[200px] uppercase">
+                {data.partnerA} &amp; {data.partnerB}
+              </span>
+              <button
+                onClick={() => setIsMuted(!isMuted)}
+                className="p-1 hover:bg-slate-100 rounded-lg text-[#2D2A4A] shrink-0 transition-colors"
+              >
+                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+            </div>
+
+            <div className="w-full h-[230px] md:h-[260px] relative overflow-hidden bg-slate-900 rounded-lg border border-rose-100/10 shadow-xs z-10">
+              {data.photos.map((photo, index) => {
+                const isActive = index === activePhotoIdx;
+                return (
+                  <img
+                    key={photo.id}
+                    src={photo.url}
+                    alt={photo.label}
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${isActive ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-95"
+                      }`}
+                  />
+                );
+              })}
+              <div className="absolute bottom-3 left-4 z-20 bg-black/40 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-white/5">
+                <span className="text-[8px] font-bold text-white uppercase tracking-wider">
+                  {data.photos[activePhotoIdx]?.label || "Nossos Momentos"}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full flex items-center justify-between mt-1 z-10 px-0.5">
+              <div className="min-w-0 pr-4">
+                <h4 className="text-base font-black tracking-tight text-[#2D2A4A] truncate">
+                  {data.songTitle}
+                </h4>
+                <p className="text-xs font-bold text-rose-600 mt-0.5 truncate">
+                  {data.songArtist} • Tema de {data.partnerA} &amp; {data.partnerB}
+                </p>
+              </div>
+              <Heart className={`w-5 h-5 text-rose-500 fill-rose-500 shrink-0 ${isPlaying ? "animate-pulse" : ""}`} />
+            </div>
+
+            <div className="w-full flex flex-col gap-1 relative py-1 z-10">
+              <div className="w-full h-1 bg-slate-200 rounded-full overflow-visible relative">
+                <div
+                  className="h-full bg-rose-500 rounded-full relative transition-all duration-1000"
+                  style={{ width: `${progress}%` }}
+                >
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1.5 w-3 h-3 bg-white border-2 border-rose-500 rounded-full flex items-center justify-center shadow-md">
+                    <Heart className="w-1.5 h-1.5 text-rose-500 fill-rose-500" />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex justify-between text-[7px] text-[#696684] font-semibold mt-1">
+                <span>Nosso Começo</span>
+                <span>Para Sempre</span>
+              </div>
+            </div>
+
+            <div className="w-full flex items-center justify-between px-6 z-10">
+              <Shuffle className="w-3.5 h-3.5 text-[#696684]" />
+              <SkipBack className="w-4 h-4 text-[#2D2A4A] fill-current" />
+              <button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className={`cursor-pointer w-10 h-10 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center text-white shadow-md shadow-rose-500/20 active:scale-95 transition-all ${isPlaying ? "animate-pulse" : ""}`}
+              >
+                <Heart className="w-4.5 h-4.5 fill-current text-white" />
+              </button>
+              <SkipForward className="w-4 h-4 text-[#2D2A4A] fill-current" />
+              <Repeat className="w-3.5 h-3.5 text-[#696684]" />
+            </div>
+
+            <div className="w-full flex flex-col gap-5 z-10 mt-1">
+              <LoveLetterWidget notes={data.letterLines} size="md" dark={false} />
+              <CalendarWidget dateStr={data.anniversary} size="md" dark={false} />
+            </div>
+
+            <div className="w-full text-center mt-auto pt-6 opacity-40 text-[7px] text-[#696684] font-bold tracking-wider z-10">
+              Criado com amor via eterno.love
+            </div>
+          </div>
+        ) : (
+          <div className="w-full min-h-screen bg-[#121212] text-white flex flex-col px-4 pt-4 pb-12 gap-4 relative animate-in fade-in duration-500">
+            
+            <div className="w-full flex gap-1 z-30 px-1">
+              {data.photos.map((_, index) => {
+                const isCompleted = index < activePhotoIdx;
+                const isActive = index === activePhotoIdx;
+                return (
+                  <div key={index} className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-white transition-all ${isCompleted ? "w-full" : isActive ? "w-full" : "w-0"
+                        }`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="w-full flex justify-between items-center mt-1 z-30 px-1">
+              <div className="flex flex-col">
+                <h3 className="text-sm font-black tracking-tight text-white uppercase">
+                  {data.letterTitle || "Meu Porto Seguro"}
+                </h3>
+                <p className="text-[9px] text-white/80 leading-relaxed max-w-[240px] font-medium mt-1">
+                  {data.letterLines.slice(0, 2).join(" ")}
+                </p>
+              </div>
+              <button
+                onClick={() => setIsMuted(!isMuted)}
+                className="p-1 hover:bg-white/10 rounded-full text-white transition-colors"
+              >
+                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+            </div>
+
+            <div className="w-full h-[230px] md:h-[260px] relative overflow-hidden bg-slate-900 rounded-lg border border-white/5 my-1 z-10">
+              <img
+                src={data.photos[activePhotoIdx]?.url}
+                alt="Story content"
+                className="w-full h-full object-cover transition-all duration-700 ease-in-out"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+            </div>
+
+            <div className="bg-white/10 border border-white/15 p-2.5 rounded-2xl flex items-center justify-between gap-2.5 z-10 shadow-lg text-white">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white/10">
+                  <img
+                    src={data.photos[activePhotoIdx]?.url}
+                    alt="Mini Album"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xs font-extrabold truncate leading-tight">{data.songTitle}</span>
+                  <span className="text-[10px] text-white/70 truncate mt-0.5">{data.songArtist} • Tema do Casal</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="cursor-pointer w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center border border-white/15 shrink-0 transition-colors"
+              >
+                {isPlaying ? <Pause className="w-3.5 h-3.5 text-white fill-current" /> : <Play className="w-3.5 h-3.5 text-white fill-current translate-x-0.5" />}
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 z-10">
+              <LoveLetterWidget notes={data.letterLines} size="md" dark={true} />
+              <CalendarWidget dateStr={data.anniversary} size="md" dark={true} />
+            </div>
+
+            <div className="w-full flex flex-col items-center gap-3 mt-2 z-10">
+              <div className="bg-linear-to-r from-rose-500 to-pink-600 px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-white shadow-md">
+                <Heart className="w-2.5 h-2.5 fill-current text-white animate-ping shrink-0" />
+                <span className="text-[7.5px] font-black tracking-widest uppercase">DESDE {data.anniversary}</span>
+              </div>
+              
+              <div className="bg-black/40 backdrop-blur-xs px-3 py-0.5 rounded-full border border-white/5 text-[6px] text-white/40 font-mono">
+                eterno.love — Homenagem Especial
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
