@@ -24,13 +24,19 @@ async function AuthGuard() {
   return null;
 }
 
-export default async function PainelLayout({ children }: { children: ReactNode }) {
+async function ImpersonationBannerContainer() {
   const session = await getServerSession(auth);
-  const cookieStore = await cookies();
-  const impersonatedEmail = session?.user.tipo === "ADMINISTRATOR" 
-    ? cookieStore.get("impersonated_client_email")?.value || null 
-    : null;
+  if (session?.user.tipo === "ADMINISTRATOR") {
+    const cookieStore = await cookies();
+    const email = cookieStore.get("impersonated_client_email")?.value;
+    if (email) {
+      return <ImpersonationBanner email={email} />;
+    }
+  }
+  return null;
+}
 
+export default function PainelLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Suspense fallback={null}>
@@ -38,7 +44,9 @@ export default async function PainelLayout({ children }: { children: ReactNode }
       </Suspense>
 
       <div className="flex flex-col h-screen bg-[#FAF9FF] overflow-hidden text-slate-900 font-sans">
-        {impersonatedEmail && <ImpersonationBanner email={impersonatedEmail} />}
+        <Suspense fallback={null}>
+          <ImpersonationBannerContainer />
+        </Suspense>
         <div className="flex flex-1 overflow-hidden w-full max-w-full">
           <aside className="w-64 bg-white hidden lg:flex flex-col h-full shrink-0 relative">
             <Sidebar />
