@@ -23,11 +23,28 @@ export async function proxy(request: NextRequest) {
         }
     }
 
+    if (pathname.startsWith("/painel") || pathname.startsWith("/api/painel")) {
+        const token = await getToken({
+            req: request,
+            secret: process.env.NEXTAUTH_SECRET,
+        });
+
+        if (!token || (token.tipo !== "USER" && token.tipo !== "ADMINISTRATOR")) {
+            redirectUrl.pathname = "/login";
+
+            if (pathname.startsWith("/api/")) {
+                return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            }
+
+            return NextResponse.redirect(redirectUrl);
+        }
+    }
+
     return NextResponse.next();
 }
 
 export const config = {
     matcher: [
-        "/((?!api(?!/admin)|_next/static|_next/image|favicon.ico).*)",
+        "/((?!api(?!/admin|/painel)|_next/static|_next/image|favicon.ico).*)",
     ],
 };
