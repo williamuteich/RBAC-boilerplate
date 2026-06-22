@@ -55,7 +55,7 @@ export function HeroMockupStack() {
       </div>
 
       <div className="absolute left-[3%] sm:left-[8%] w-[180px] h-[320px] bg-black rounded-[30px] border-[5px] border-neutral-900 shadow-[0_15px_30px_rgba(0,0,0,0.4)] p-1 overflow-hidden z-10 -rotate-6 transition-all hover:rotate-0 hover:scale-[1.02] hover:z-25 duration-500">
-        <div className="w-full h-full rounded-[24px] bg-[#121212] text-white p-2 flex flex-col justify-between text-left relative overflow-hidden select-none pt-7 pb-4 px-2.5 scrollbar-hidden overflow-y-auto">
+        <div className="w-full h-full rounded-[24px] bg-[#121212] text-white p-2 flex flex-col justify-between text-left relative select-none pt-7 pb-4 px-2.5 scrollbar-hidden overflow-y-auto touch-pan-y">
           <div className="absolute top-2 left-2 right-2 flex gap-0.5 z-30">
             {CAROUSEL_PHOTOS.map((_, index) => {
               const isCompleted = index < activePhotoIdx;
@@ -136,7 +136,7 @@ export function HeroMockupStack() {
       </div>
 
       <div className="absolute right-[3%] sm:right-[8%] w-[190px] h-[340px] bg-black rounded-[32px] border-[6px] border-neutral-900 shadow-[0_20px_50px_rgba(0,0,0,0.3)] p-1 overflow-hidden z-20 rotate-6 transition-all hover:rotate-0 hover:scale-[1.02] duration-500">
-        <div className="w-full h-full rounded-[24px] bg-[#FAF9FF] p-2.5 flex flex-col gap-3 text-left relative scrollbar-hidden overflow-y-auto text-[#2D2A4A] pb-4">
+        <div className="w-full h-full rounded-[24px] bg-[#FAF9FF] p-2.5 flex flex-col gap-3 text-left relative scrollbar-hidden overflow-y-auto text-[#2D2A4A] pb-4 touch-pan-y">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(244,63,94,0.03),transparent_50%)] pointer-events-none"></div>
 
           <div className="w-full flex flex-col min-h-[275px] justify-between shrink-0">

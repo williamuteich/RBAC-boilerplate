@@ -146,7 +146,7 @@ export function LoveSim() {
           <div className="absolute top-2 left-1/2 -translate-x-1/2 h-4 w-24 bg-black rounded-full z-30"></div>
 
           {activeTheme === "spotify" ? (
-            <div className="w-full h-full rounded-[32px] overflow-y-auto px-4 pt-10 pb-8 flex flex-col items-center gap-4 relative transition-all duration-700 bg-[#FAF9FF] text-[#2D2A4A] scrollbar-hidden select-none">
+            <div className="w-full h-full rounded-[32px] overflow-y-auto touch-pan-y px-4 pt-10 pb-8 flex flex-col items-center gap-4 relative transition-all duration-700 bg-[#FAF9FF] text-[#2D2A4A] scrollbar-hidden select-none">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(244,63,94,0.04),transparent_50%)] pointer-events-none"></div>
 
               <div className="w-full flex items-center justify-between text-[9px] font-medium opacity-85 z-20 px-2 absolute top-2.5 left-0 right-0 max-w-[260px] mx-auto">
@@ -230,7 +230,7 @@ export function LoveSim() {
               </div>
             </div>
           ) : (
-            <div className="w-full h-full rounded-[32px] bg-[#121212] text-white p-3 flex flex-col justify-between text-left relative overflow-hidden select-none pt-10 pb-6 px-4 scrollbar-hidden overflow-y-auto">
+            <div className="w-full h-full rounded-[32px] bg-[#121212] text-white p-3 flex flex-col justify-between text-left relative select-none pt-10 pb-6 px-4 scrollbar-hidden overflow-y-auto touch-pan-y">
               <div className="absolute top-10 left-4 right-4 flex gap-0.5 z-30">
                 {CAROUSEL_PHOTOS.map((_, index) => {
                   const isCompleted = index < activePhotoIdx;
