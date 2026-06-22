@@ -9,3 +9,9 @@ export interface LoveLetterWidgetProps {
   size?: "sm" | "md";
   dark?: boolean;
 }
+
+export interface PhotoItem {
+  id: string;
+  url: string;
+  label: string;
+}
