@@ -24,7 +24,7 @@ async function main() {
 
   const adminRole = await prisma.adminRole.upsert({
     where: { name: 'Admin' },
-    update: { 
+    update: {
       description: 'Cargo mestre do sistema. Único e protegido.',
       permissions: permissionsList
     },
@@ -51,83 +51,6 @@ async function main() {
   })
 
   console.log('👤 Configurando clientes SaaS...');
-  
-  const now = new Date();
-  const nextMonth = new Date();
-  nextMonth.setMonth(now.getMonth() + 1);
-
-  const nextYear = new Date();
-  nextYear.setFullYear(now.getFullYear() + 1);
-
-  const pastDate = new Date();
-  pastDate.setDate(now.getDate() - 5);
-
-  const clientsData = [
-    {
-      email: "mateus.leticia@example.com",
-      name: "Mateus & Leticia",
-      tributeId: "mateus-leticia-id",
-      status: "ACTIVE",
-      plan: "7_DAYS",
-      lastPaymentValue: 12.00,
-      lastPaymentDate: now,
-      expirationDate: nextMonth,
-      pageViews: 125,
-      photosCount: 4,
-    },
-    {
-      email: "gabriel.amanda@example.com",
-      name: "Gabriel & Amanda",
-      tributeId: "gabriel-amanda-id",
-      status: "ACTIVE",
-      plan: "14_DAYS",
-      lastPaymentValue: 24.00,
-      lastPaymentDate: now,
-      expirationDate: nextYear,
-      pageViews: 1540,
-      photosCount: 8,
-    },
-    {
-      email: "felipe.juliana@example.com",
-      name: "Felipe & Juliana",
-      tributeId: "felipe-juliana-id",
-      status: "PENDING",
-      plan: "7_DAYS",
-      lastPaymentValue: 12.00,
-      lastPaymentDate: pastDate,
-      expirationDate: pastDate,
-      pageViews: 80,
-      photosCount: 3,
-    },
-    {
-      email: "lucas.gabriela@example.com",
-      name: "Lucas & Gabriela",
-      tributeId: "lucas-gabriela-id",
-      status: "ACTIVE",
-      plan: "30_DAYS",
-      lastPaymentValue: 32.00,
-      lastPaymentDate: now,
-      expirationDate: null,
-      pageViews: 3200,
-      photosCount: 10,
-    }
-  ];
-
-  for (const client of clientsData) {
-    await prisma.saaSClient.upsert({
-      where: { email: client.email },
-      update: {
-        status: client.status,
-        plan: client.plan,
-        lastPaymentValue: client.lastPaymentValue,
-        lastPaymentDate: client.lastPaymentDate,
-        expirationDate: client.expirationDate,
-        pageViews: client.pageViews,
-        photosCount: client.photosCount,
-      },
-      create: client
-    });
-  }
 
   console.log('✅ Setup "Admin" concluído!')
 }
