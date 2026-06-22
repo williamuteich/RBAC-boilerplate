@@ -2,8 +2,8 @@ import { getServerSession } from "next-auth";
 import { auth } from "@/src/lib/auth-config";
 import { redirect } from "next/navigation";
 import { ReactNode, Suspense } from "react";
-import { Sidebar } from "./components/Sidebar";
-import { Header } from "./components/Header";
+import { Sidebar } from "./components/sidebar/Sidebar";
+import { Header } from "./components/header/Header";
 
 async function AuthGuard() {
   const session = await getServerSession(auth);

@@ -81,11 +81,9 @@ export function DashboardEditor() {
 
   return (
     <div className="w-full flex flex-col gap-8 pb-12 font-sans selection:bg-[#9A75F0] selection:text-white">
-      
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         
         <div className="xl:col-span-2 flex flex-col gap-6">
-          
           <div className="bg-white border border-[#E8E6F5] p-6 md:p-8 rounded-[32px] shadow-[0_10px_40px_rgba(45,42,74,0.02)]">
             <h3 className="text-base font-bold text-[#2D2A4A] flex items-center gap-2 mb-6">
               <Heart className="w-5 h-5 text-rose-500 fill-rose-500" />
@@ -302,7 +300,6 @@ export function DashboardEditor() {
         </div>
 
         <div className="xl:col-span-1 flex flex-col gap-6">
-          
           <div className="bg-white border border-[#E8E6F5] p-6 md:p-8 rounded-[32px] shadow-[0_10px_40px_rgba(45,42,74,0.02)] flex flex-col items-center text-center">
             <h3 className="text-base font-bold text-[#2D2A4A] flex items-center gap-2 mb-4 self-start">
               <QrCode className="w-5 h-5 text-indigo-500" />
@@ -359,7 +356,6 @@ export function DashboardEditor() {
         </div>
 
       </div>
-
     </div>
   );
 }

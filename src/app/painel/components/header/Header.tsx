@@ -4,7 +4,7 @@ import { Menu, Heart } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "../sidebar/Sidebar";
 import { useState } from "react";
 
 export function Header() {
@@ -19,8 +19,7 @@ export function Header() {
     : "US";
 
   return (
-    <header className="h-20 bg-white border-b border-[#E8E6F5] px-4 md:px-6 flex items-center justify-between shrink-0">
-      
+    <header className="h-20 bg-white border-b border-[#E8E6F5] px-4 md:px-6 flex items-center justify-between shrink-0 font-sans">
       <div className="flex items-center gap-3">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
@@ -57,7 +56,6 @@ export function Header() {
           <AvatarFallback className="bg-rose-50 text-rose-600 font-bold">{initials}</AvatarFallback>
         </Avatar>
       </div>
-
     </header>
   );
 }

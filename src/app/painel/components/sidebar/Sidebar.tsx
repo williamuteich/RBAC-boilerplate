@@ -37,8 +37,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-[#E8E6F5]">
-      
+    <div className="flex flex-col h-full bg-white border-r border-[#E8E6F5] font-sans">
       <div className="h-20 flex items-center px-6 border-b border-[#E8E6F5] shrink-0">
         <Link href="/" className="flex items-center gap-2 group">
           <div className="w-8 h-8 rounded-full bg-linear-to-tr from-[#9A75F0] to-[#8B5CF6] flex items-center justify-center shadow-md shadow-[#9A75F0]/20 group-hover:scale-105 transition-transform">
@@ -108,7 +107,6 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
           <span>Sair do sistema</span>
         </button>
       </div>
-
     </div>
   );
 }

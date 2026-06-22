@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { DashboardEditor } from "./components/DashboardEditor";
+import { DashboardEditor } from "./components/editor/DashboardEditor";
 
 export default function PainelPage() {
   return (
