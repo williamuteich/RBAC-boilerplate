@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, ChangeEvent } from "react";
 import { PhotoItem, EditorContextProps } from "@/src/types/love-widgets";
+import { getPainelData, updatePainelData } from "@/src/services/painel";
 
 const EditorContext = createContext<EditorContextProps | undefined>(undefined);
 
@@ -25,20 +26,17 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await fetch("/api/painel");
-        if (res.ok) {
-          const data = await res.json();
-          setPartnerA(data.partnerA || "Lucas");
-          setPartnerB(data.partnerB || "Gabriela");
-          setAnniversary(data.anniversary || "12/06/2023");
-          setTheme(data.theme === "story" ? "story" : "spotify");
-          setSongTitle(data.songTitle || "Perfect");
-          setSongArtist(data.songArtist || "Ed Sheeran");
-          setSongUrl(data.songUrl || "https://www.youtube.com/watch?v=yKNxeF4Kxyc");
-          setLetterTitle(data.letterTitle || "Para Minha Vida,");
-          setLetterBody(data.letterBody || "Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma.");
-          setPhotos(Array.isArray(data.photos) ? data.photos : []);
-        }
+        const data = await getPainelData();
+        setPartnerA(data.partnerA || "Lucas");
+        setPartnerB(data.partnerB || "Gabriela");
+        setAnniversary(data.anniversary || "12/06/2023");
+        setTheme(data.theme === "story" ? "story" : "spotify");
+        setSongTitle(data.songTitle || "Perfect");
+        setSongArtist(data.songArtist || "Ed Sheeran");
+        setSongUrl(data.songUrl || "https://www.youtube.com/watch?v=yKNxeF4Kxyc");
+        setLetterTitle(data.letterTitle || "Para Minha Vida,");
+        setLetterBody(data.letterBody || "Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma.");
+        setPhotos(Array.isArray(data.photos) ? data.photos : []);
       } catch (err) {
         console.error("Erro ao carregar dados do painel:", err);
       }
@@ -78,26 +76,20 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch("/api/painel", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          partnerA,
-          partnerB,
-          anniversary,
-          theme,
-          songTitle,
-          songArtist,
-          songUrl,
-          letterTitle,
-          letterBody,
-          photos
-        })
+      const res = await updatePainelData({
+        partnerA,
+        partnerB,
+        anniversary,
+        theme,
+        songTitle,
+        songArtist,
+        songUrl,
+        letterTitle,
+        letterBody,
+        photos
       });
 
-      if (res.ok) {
+      if (res.success) {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       }

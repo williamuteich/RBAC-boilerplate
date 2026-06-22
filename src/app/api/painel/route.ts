@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { auth } from "@/src/lib/auth-config";
 import { prisma } from "@/src/lib/prisma";
 import { cookies } from "next/headers";
+import { painelUpdateSchema } from "@/src/schemas/painel";
 
 async function getClientEmailFromSession(session: any) {
   if (session.user.tipo === "ADMINISTRATOR") {
@@ -56,32 +57,43 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Cliente não especificado ou não autorizado" }, { status: 401 });
   }
 
-  const body = await req.json();
-
-  const client = await prisma.saaSClient.findUnique({
-    where: { email: clientEmail }
-  });
-
-  if (!client) {
-    return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
-  }
-
-  await prisma.saaSClient.update({
-    where: { id: client.id },
-    data: {
-      partnerA: body.partnerA ?? client.partnerA,
-      partnerB: body.partnerB ?? client.partnerB,
-      anniversary: body.anniversary ?? client.anniversary,
-      theme: body.theme ?? client.theme,
-      songTitle: body.songTitle ?? client.songTitle,
-      songArtist: body.songArtist ?? client.songArtist,
-      songUrl: body.songUrl ?? client.songUrl,
-      letterTitle: body.letterTitle ?? client.letterTitle,
-      letterBody: body.letterBody ?? client.letterBody,
-      photos: body.photos ?? client.photos,
-      photosCount: body.photos ? body.photos.length : client.photosCount
+  try {
+    const body = await req.json();
+    const validated = painelUpdateSchema.safeParse(body);
+    if (!validated.success) {
+      return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
     }
-  });
 
-  return NextResponse.json({ success: true });
+    const client = await prisma.saaSClient.findUnique({
+      where: { email: clientEmail }
+    });
+
+    if (!client) {
+      return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
+    }
+
+    const data = validated.data;
+
+    await prisma.saaSClient.update({
+      where: { id: client.id },
+      data: {
+        partnerA: data.partnerA,
+        partnerB: data.partnerB,
+        anniversary: data.anniversary,
+        theme: data.theme,
+        songTitle: data.songTitle,
+        songArtist: data.songArtist,
+        songUrl: data.songUrl,
+        letterTitle: data.letterTitle,
+        letterBody: data.letterBody,
+        photos: data.photos,
+        photosCount: data.photos.length
+      }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Erro ao salvar dados do painel:", error);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+  }
 }
