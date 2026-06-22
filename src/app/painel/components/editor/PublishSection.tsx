@@ -1,6 +1,6 @@
 "use client";
 
-import { QrCode, Globe, Sparkles, Check, Save, Copy, ExternalLink, Share2, X } from "lucide-react";
+import { QrCode, Globe, Sparkles, Check, Save, Copy, ExternalLink, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEditor } from "./EditorContext";
 import { useState } from "react";
@@ -28,10 +28,6 @@ export function PublishSection() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-    `Criei uma surpresa muito especial para nós! Espere que você goste... Dá uma olhada nesse link: ${absoluteUrl}`
-  )}`;
 
   return (
     <div className="bg-white border border-[#E8E6F5] p-6 md:p-8 rounded-[32px] shadow-[0_10px_40px_rgba(45,42,74,0.02)] flex flex-col items-center text-center">
@@ -103,26 +99,6 @@ export function PublishSection() {
                       className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-indigo-600 hover:text-indigo-700 mt-1.5 transition-colors"
                     >
                       Visualizar Homenagem <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-                </div>
-
-                <hr className="border-slate-100" />
-
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 shrink-0">
-                    2
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-[#2D2A4A]">Compartilhe pelo WhatsApp</h5>
-                    <p className="text-[10px] text-slate-400">Envie uma linda mensagem surpresa direto no chat do seu amor.</p>
-                    <a 
-                      href={whatsappShareUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-emerald-600 hover:text-emerald-700 mt-1.5 transition-colors"
-                    >
-                      Enviar Surpresa <Share2 className="w-3.5 h-3.5" />
                     </a>
                   </div>
                 </div>
