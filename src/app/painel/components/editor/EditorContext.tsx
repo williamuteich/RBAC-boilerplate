@@ -22,6 +22,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     async function loadData() {
@@ -44,22 +45,40 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     loadData();
   }, []);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    const newItems: PhotoItem[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const url = URL.createObjectURL(file);
-      newItems.push({
-        id: `${Date.now()}-${i}`,
-        url: url,
-        label: file.name.split(".")[0] || `Foto ${photos.length + i + 1}`,
-      });
-    }
+      const formData = new FormData();
+      formData.append("file", file);
 
-    setPhotos((prev) => [...prev, ...newItems]);
+      try {
+        const res = await fetch("/api/painel/upload", {
+          method: "POST",
+          body: formData
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const newItem: PhotoItem = {
+            id: `${Date.now()}-${i}`,
+            url: data.url,
+            label: file.name.split(".")[0] || `Foto ${photos.length + i + 1}`,
+          };
+          setPhotos((prev) => [...prev, newItem]);
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          setErrorMessage(errData.error || "Erro no upload do arquivo.");
+          setTimeout(() => setErrorMessage(""), 5000);
+        }
+      } catch (err) {
+        console.error("Erro ao fazer upload da imagem:", err);
+        setErrorMessage("Erro de rede ao carregar a imagem.");
+        setTimeout(() => setErrorMessage(""), 5000);
+      }
+    }
     e.target.value = "";
   };
 
@@ -75,6 +94,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const handleSave = async () => {
     setIsSaving(true);
+    setErrorMessage("");
     try {
       const res = await updatePainelData({
         partnerA,
@@ -92,9 +112,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       if (res.success) {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
+      } else {
+        setErrorMessage(res.error || "Erro ao salvar alterações.");
       }
     } catch (err) {
       console.error("Erro ao salvar dados do painel:", err);
+      setErrorMessage("Erro de conexão ao salvar.");
     } finally {
       setIsSaving(false);
     }
@@ -140,6 +163,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         updatePhotoLabel,
         isSaving,
         saveSuccess,
+        errorMessage,
+        setErrorMessage,
         handleSave,
         pageUrl,
       }}

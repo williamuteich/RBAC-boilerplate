@@ -7,7 +7,7 @@ export const painelUpdateSchema = z.object({
   theme: z.enum(["spotify", "story"]),
   songTitle: z.string().optional().default(""),
   songArtist: z.string().optional().default(""),
-  songUrl: z.string().optional().default(""),
+  songUrl: z.string().url("O link do YouTube deve ser uma URL válida").or(z.string().length(0)).optional().default(""),
   letterTitle: z.string().optional().default(""),
   letterBody: z.string().optional().default(""),
   photos: z.array(

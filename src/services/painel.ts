@@ -30,7 +30,7 @@ export async function updatePainelData(data: {
   letterTitle: string;
   letterBody: string;
   photos: any[];
-}) {
+}): Promise<{ success: boolean; error?: string }> {
   const cookie = (await headers()).get("cookie") || "";
   const res = await fetch(`${API_URL}/api/painel`, {
     method: "PUT",
@@ -42,7 +42,8 @@ export async function updatePainelData(data: {
   });
 
   if (!res.ok) {
-    throw new Error("Falha ao salvar dados do painel");
+    const errBody = await res.json().catch(() => ({}));
+    return { success: false, error: errBody.error || "Falha ao salvar dados do painel" };
   }
 
   revalidatePath("/painel");

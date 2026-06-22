@@ -43,6 +43,8 @@ export interface EditorContextProps {
   updatePhotoLabel: (id: string, newLabel: string) => void;
   isSaving: boolean;
   saveSuccess: boolean;
+  errorMessage: string;
+  setErrorMessage: (val: string) => void;
   handleSave: () => void;
   pageUrl: string;
 }

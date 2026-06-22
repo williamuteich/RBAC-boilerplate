@@ -3,6 +3,7 @@
 import { Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useEditor } from "./EditorContext";
+import { maskDate } from "@/src/lib/masks";
 
 export function BasicInfoSection() {
   const {
@@ -58,7 +59,7 @@ export function BasicInfoSection() {
             <Input
               type="text"
               value={anniversary}
-              onChange={(e) => setAnniversary(e.target.value)}
+              onChange={(e) => setAnniversary(maskDate(e.target.value))}
               placeholder="DD/MM/AAAA"
               className="pl-10 rounded-xl border-[#E8E6F5] bg-white text-[#2D2A4A] focus-visible:ring-[#9A75F0] text-xs py-5"
             />
