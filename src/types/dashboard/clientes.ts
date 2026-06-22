@@ -1,3 +1,5 @@
+import { FormEvent } from "react";
+
 export interface SaaSClient {
   id: number;
   email: string;
@@ -76,6 +78,6 @@ export interface EditClientModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   client: SaaSClient | null;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (e: FormEvent<HTMLFormElement>) => void;
   isPending: boolean;
 }

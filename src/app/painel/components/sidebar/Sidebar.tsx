@@ -31,7 +31,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     },
     {
       title: "Suporte",
-      href: "#suporte",
+      href: "/painel/suporte",
       icon: MessageSquare,
     },
   ];

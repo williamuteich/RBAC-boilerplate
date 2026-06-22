@@ -1,5 +1,5 @@
-import {
-  Eye, Heart, ExternalLink, Edit2, Play
+import { 
+  Eye, Heart, ExternalLink, Edit2
 } from "lucide-react";
 import {
   Table,
@@ -52,10 +52,6 @@ export function ClientsTable({
       default:
         return p;
     }
-  };
-
-  const getPageUrl = (pageNumber: number) => {
-    return `#`;
   };
 
   return (

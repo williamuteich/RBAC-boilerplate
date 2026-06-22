@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import { useState, useTransition, FormEvent } from "react";
 import { useQueryState } from "nuqs";
 import { ClientesResponse, SaaSClient } from "@/src/types/dashboard/clientes";
 import { updateCliente } from "@/src/services/clientes";
@@ -36,7 +36,7 @@ export function ClientesDashboard({
     }, 1500);
   };
 
-  const handleSaveEdit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveEdit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editingClient) return;
 

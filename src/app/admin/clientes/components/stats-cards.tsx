@@ -1,4 +1,3 @@
-import React from "react";
 import { Users, DollarSign, Heart, Eye } from "lucide-react";
 import { StatsCardsProps } from "@/src/types/dashboard/clientes";
 
