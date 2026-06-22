@@ -51,6 +51,13 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     const files = e.target.files;
     if (!files) return;
 
+    if (photos.length + files.length > 6) {
+      setErrorMessage("Limite máximo de 6 fotos atingido.");
+      setTimeout(() => setErrorMessage(""), 5000);
+      e.target.value = "";
+      return;
+    }
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const formData = new FormData();

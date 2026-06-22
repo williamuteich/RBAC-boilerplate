@@ -22,17 +22,20 @@ export function PhotoGallerySection() {
         Selecione fotos do seu dispositivo para ilustrar a história de vocês.
       </p>
 
-      <div className="border-2 border-dashed border-[#E8E6F5] hover:border-[#9A75F0] rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors relative group mb-6">
+      <div className={`border-2 border-dashed border-[#E8E6F5] hover:border-[#9A75F0] rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors relative group mb-6 ${photos.length >= 6 ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`}>
         <input
           type="file"
           accept="image/*"
           multiple
+          disabled={photos.length >= 6}
           onChange={handleFileChange}
-          className="absolute inset-0 opacity-0 cursor-pointer"
+          className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
         />
         <ImageIcon className="w-10 h-10 text-slate-300 group-hover:text-[#9A75F0] mb-3 transition-colors" />
-        <p className="text-xs font-bold text-slate-700">Clique para selecionar do dispositivo</p>
-        <p className="text-[10px] text-slate-400 mt-1">PNG, JPG, JPEG ou WEBP (múltiplas fotos permitidas)</p>
+        <p className="text-xs font-bold text-slate-700">
+          {photos.length >= 6 ? "Limite de 6 fotos atingido" : "Clique para selecionar do dispositivo"}
+        </p>
+        <p className="text-[10px] text-slate-400 mt-1">PNG, JPG, JPEG ou WEBP (Máximo de 6 fotos)</p>
       </div>
 
       {photos.length === 0 ? (

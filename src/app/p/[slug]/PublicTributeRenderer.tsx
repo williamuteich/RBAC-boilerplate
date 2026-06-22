@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Heart, ChevronDown, SkipBack, SkipForward, Shuffle, Repeat, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { CalendarWidget } from "@/src/app/components/CalendarWidget";
 import { LoveLetterWidget } from "@/src/app/components/LoveLetterWidget";
@@ -28,6 +28,7 @@ export function PublicTributeRenderer({
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [progress, setProgress] = useState(65);
   const [hearts, setHearts] = useState<{ id: number; left: number; size: number; delay: number }[]>([]);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const getYouTubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -56,6 +57,34 @@ export function PublicTributeRenderer({
     }
     return () => clearInterval(timer);
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (!iframeRef.current || !iframeRef.current.contentWindow) return;
+    try {
+      const message = JSON.stringify({
+        event: "command",
+        func: isPlaying ? "playVideo" : "pauseVideo",
+        args: []
+      });
+      iframeRef.current.contentWindow.postMessage(message, "*");
+    } catch (err) {
+      console.error(err);
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (!iframeRef.current || !iframeRef.current.contentWindow) return;
+    try {
+      const message = JSON.stringify({
+        event: "command",
+        func: isMuted ? "mute" : "unMute",
+        args: []
+      });
+      iframeRef.current.contentWindow.postMessage(message, "*");
+    } catch (err) {
+      console.error(err);
+    }
+  }, [isMuted]);
 
   useEffect(() => {
     const list: { id: number; left: number; size: number; delay: number }[] = [];
@@ -101,10 +130,11 @@ export function PublicTributeRenderer({
         </div>
       </div>
 
-      {isPlaying && videoId && (
+      {videoId && (
         <iframe
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&enablejsapi=1&mute=${isMuted ? 1 : 0}`}
-          className="hidden"
+          ref={iframeRef}
+          src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&modestbranding=1&playsinline=1&playlist=${videoId}&loop=1`}
+          className="w-0 h-0 opacity-0 pointer-events-none absolute"
           allow="autoplay"
         />
       )}
