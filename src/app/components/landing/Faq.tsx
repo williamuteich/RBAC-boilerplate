@@ -37,7 +37,7 @@ export function Faq() {
         <Card className="bg-white border-[#E8E6F5] p-5 flex flex-col gap-2 rounded-2xl shadow-[0_4px_20px_rgba(45,42,74,0.02)]">
           <h4 className="text-sm font-extrabold text-[#2D2A4A]">Posso alterar o conteúdo depois de publicado?</h4>
           <p className="text-xs text-[#696684] leading-relaxed">
-            Sim! Pelo painel administrativo do Eterno.love, você pode alterar as fotos, o texto, a música e o tempo do casal quantas vezes quiser. Todas as atualizações aparecem instantaneamente na página publicada.
+            Sim! Pelo painel administrativo do Eterno.love, você pode alterar as fotos, o texto, a música e a data especial quantas vezes quiser. Todas as atualizações aparecem instantaneamente na página publicada.
           </p>
         </Card>
       </div>

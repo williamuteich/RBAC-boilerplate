@@ -8,7 +8,7 @@ import { Footer } from "./components/landing/Footer";
 
 export const metadata = {
   title: "Eterno.love - Homenageie quem você ama",
-  description: "Crie um espaço online eterno para o seu amor com fotos, retrospectiva e contador de tempo.",
+  description: "Crie uma homenagem digital eterna para o seu amor com fotos, música do casal, calendário personalizado e link com QR Code. Perfeito para o Dia dos Namorados, aniversários ou dias comuns.",
 };
 
 export default function LandingPage() {

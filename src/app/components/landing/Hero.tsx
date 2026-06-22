@@ -16,7 +16,7 @@ export function Hero() {
         </h1>
 
         <p className="text-[#696684] text-sm sm:text-base leading-relaxed">
-          Crie um presente digital com fotos, retrospectiva e contador de tempo juntos em tempo real. Pronto em 5 minutos.
+          Crie uma homenagem digital eterna para o seu amor com fotos, música, calendário personalizado e link com QR Code exclusivo. Esta homenagem é ideal para o Dia dos Namorados, o dia em que o casal se conheceu ou até mesmo em dias comuns para lembrar o quanto você ama essa pessoa. Pronto em 5 minutos.
         </p>
 
         <Card className="w-full bg-[#11101E] border border-slate-800 p-6 md:p-8 rounded-3xl flex flex-col items-center gap-6 shadow-xl relative overflow-hidden text-center">
@@ -42,19 +42,19 @@ export function Hero() {
           <div className="flex flex-col gap-3 w-full text-left max-w-xs mx-auto border-t border-slate-800/80 pt-5">
             <div className="flex items-center gap-2.5 text-xs text-slate-300">
               <Check className="w-4 h-4 text-green-400 shrink-0" />
-              <span>Temas Netflix, Spotify e mais</span>
+              <span>Temas Spotify e Instagram Story</span>
             </div>
             <div className="flex items-center gap-2.5 text-xs text-slate-300">
               <Check className="w-4 h-4 text-green-400 shrink-0" />
-              <span>Galeria de Fotos 4K</span>
+              <span>Galeria de Fotos do Casal</span>
             </div>
             <div className="flex items-center gap-2.5 text-xs text-slate-300">
               <Check className="w-4 h-4 text-green-400 shrink-0" />
-              <span>Contador de Tempo de Namoro</span>
+              <span>Calendário &amp; Música do Casal</span>
             </div>
             <div className="flex items-center gap-2.5 text-xs text-slate-300">
               <Check className="w-4 h-4 text-green-400 shrink-0" />
-              <span>Link + QR Code para Presentear</span>
+              <span>Link + QR Code Exclusivo</span>
             </div>
           </div>
 

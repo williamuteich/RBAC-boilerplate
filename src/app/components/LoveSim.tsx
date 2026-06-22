@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Heart, Calendar, Wifi, Battery, User, HeartHandshake, ChevronDown, SkipBack, SkipForward, Shuffle, Repeat, Pause } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,10 @@ export function LoveSim() {
   const [anniversary, setAnniversary] = useState("12/06/2023");
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [activeTheme, setActiveTheme] = useState<"spotify" | "story">("spotify");
+  const [showScrollTip, setShowScrollTip] = useState(true);
+
+  const spotifyScrollRef = useRef<HTMLDivElement>(null);
+  const storyScrollRef = useRef<HTMLDivElement>(null);
 
   const nameA = partnerA.trim() ? partnerA.trim() : "Lucas";
   const nameB = partnerB.trim() ? partnerB.trim() : "Gabriela";
@@ -37,6 +41,19 @@ export function LoveSim() {
     }, 3000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    setShowScrollTip(true);
+    const container = activeTheme === "spotify" ? spotifyScrollRef.current : storyScrollRef.current;
+    if (container) {
+      container.scrollTop = 0;
+    }
+  }, [activeTheme]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const top = e.currentTarget.scrollTop;
+    setShowScrollTip(top < 20);
+  };
 
   const slugify = (strA: string, strB: string) => {
     const clean = (s: string) =>
@@ -51,7 +68,7 @@ export function LoveSim() {
   const username = `${slugify(nameA, "").replace("-e-", "")}.${slugify(nameB, "").replace("-e-", "")}`;
 
   return (
-    <div className="w-full flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:justify-center">
+    <div className="w-full flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:justify-center font-sans">
       <div className="w-full lg:w-96 flex flex-col gap-5">
         <div>
           <h3 className="text-xl font-bold text-[#2D2A4A] flex items-center gap-2">
@@ -146,7 +163,11 @@ export function LoveSim() {
           <div className="absolute top-2 left-1/2 -translate-x-1/2 h-4 w-24 bg-black rounded-full z-30"></div>
 
           {activeTheme === "spotify" ? (
-            <div className="w-full h-full rounded-[32px] overflow-y-auto touch-pan-y px-4 pt-10 pb-8 flex flex-col items-center gap-4 relative transition-all duration-700 bg-[#FAF9FF] text-[#2D2A4A] scrollbar-hidden select-none">
+            <div 
+              ref={spotifyScrollRef} 
+              onScroll={handleScroll}
+              className="w-full h-full rounded-[32px] overflow-y-auto touch-pan-y px-4 pt-10 pb-8 flex flex-col items-center gap-4 relative transition-all duration-700 bg-[#FAF9FF] text-[#2D2A4A] scrollbar-hidden select-none"
+            >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(244,63,94,0.04),transparent_50%)] pointer-events-none"></div>
 
               <div className="w-full flex items-center justify-between text-[9px] font-medium opacity-85 z-20 px-2 absolute top-2.5 left-0 right-0 max-w-[260px] mx-auto">
@@ -230,7 +251,11 @@ export function LoveSim() {
               </div>
             </div>
           ) : (
-            <div className="w-full h-full rounded-[32px] bg-[#121212] text-white p-3 flex flex-col justify-between text-left relative select-none pt-10 pb-6 px-4 scrollbar-hidden overflow-y-auto touch-pan-y">
+            <div 
+              ref={storyScrollRef} 
+              onScroll={handleScroll}
+              className="w-full h-full rounded-[32px] bg-[#121212] text-white p-3 flex flex-col justify-between text-left relative select-none pt-10 pb-6 px-4 scrollbar-hidden overflow-y-auto touch-pan-y"
+            >
               <div className="absolute top-10 left-4 right-4 flex gap-0.5 z-30">
                 {CAROUSEL_PHOTOS.map((_, index) => {
                   const isCompleted = index < activePhotoIdx;
@@ -267,10 +292,6 @@ export function LoveSim() {
                   className="w-full h-full object-cover transition-all duration-700 ease-in-out"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
-
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white text-black font-bold text-[9px] px-4 py-1.5 rounded-full shadow-lg">
-                  Próxima Seção
-                </div>
               </div>
 
               <div className="bg-white/10 backdrop-blur-md border border-white/15 p-2.5 rounded-2xl flex items-center justify-between gap-2.5 z-10 shadow-lg text-white mb-3 shrink-0">
@@ -309,6 +330,12 @@ export function LoveSim() {
                   eterno.love — Privado
                 </div>
               </div>
+            </div>
+          )}
+
+          {showScrollTip && (
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-40 bg-rose-500 text-white p-1.5 rounded-full shadow-lg pointer-events-none animate-bounce flex items-center justify-center">
+              <ChevronDown className="w-3.5 h-3.5" />
             </div>
           )}
         </div>
