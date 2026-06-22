@@ -41,7 +41,7 @@ export function PublicTributeRenderer({
   useEffect(() => {
     const interval = setInterval(() => {
       setActivePhotoIdx((prev) => (prev + 1) % data.photos.length);
-    }, 4500);
+    }, 6000);
     return () => clearInterval(interval);
   }, [data.photos.length]);
 
@@ -193,7 +193,7 @@ export function PublicTributeRenderer({
               </button>
             </div>
 
-            <div className="w-full h-[230px] md:h-[260px] relative overflow-hidden bg-slate-900 rounded-lg border border-rose-100/10 shadow-xs z-10">
+            <div className="w-full aspect-square max-h-[360px] relative overflow-hidden bg-neutral-950 rounded-2xl border border-rose-100/10 shadow-md z-10 flex items-center justify-center">
               {data.photos.map((photo, index) => {
                 const isActive = index === activePhotoIdx;
                 return (
@@ -201,12 +201,12 @@ export function PublicTributeRenderer({
                     key={photo.id}
                     src={photo.url}
                     alt={photo.label}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${isActive ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-95"
+                    className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-1000 ease-in-out ${isActive ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-95"
                       }`}
                   />
                 );
               })}
-              <div className="absolute bottom-3 left-4 z-20 bg-black/40 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-white/5">
+              <div className="absolute bottom-3 left-4 z-20 bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-lg border border-white/5">
                 <span className="text-[8px] font-bold text-white uppercase tracking-wider">
                   {data.photos[activePhotoIdx]?.label || "Nossos Momentos"}
                 </span>
@@ -302,13 +302,13 @@ export function PublicTributeRenderer({
               </button>
             </div>
 
-            <div className="w-full h-[230px] md:h-[260px] relative overflow-hidden bg-slate-900 rounded-lg border border-white/5 my-1 z-10">
+            <div className="w-full aspect-4/5 max-h-[400px] relative overflow-hidden bg-neutral-950 rounded-2xl border border-white/5 my-1 z-10 flex items-center justify-center">
               <img
                 src={data.photos[activePhotoIdx]?.url}
                 alt="Story content"
-                className="w-full h-full object-cover transition-all duration-700 ease-in-out"
+                className="w-full h-full object-contain transition-all duration-700 ease-in-out"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
             </div>
 
             <div className="bg-white/10 border border-white/15 p-2.5 rounded-2xl flex items-center justify-between gap-2.5 z-10 shadow-lg text-white">
