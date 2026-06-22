@@ -259,14 +259,17 @@ export function PublicTributeRenderer({
               <LoveLetterWidget notes={data.letterLines} size="md" dark={false} />
               <CalendarWidget dateStr={data.anniversary} size="md" dark={false} />
             </div>
-
-            <div className="w-full text-center mt-auto pt-6 opacity-40 text-[7px] text-[#696684] font-bold tracking-wider z-10">
-              Criado com amor via eterno.love
-            </div>
+            <a
+              href="https://glamourlindoia.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full text-center mt-auto pt-6 opacity-60 hover:opacity-100 text-[10px] text-[#696684] hover:text-rose-500 font-bold tracking-wider z-10 transition-all hover:underline"
+            >
+              Criado com amor via glamourlindoia.com.br
+            </a>
           </div>
         ) : (
           <div className="w-full min-h-screen bg-[#121212] text-white flex flex-col px-4 pt-4 pb-12 gap-4 relative animate-in fade-in duration-500">
-
             <div className="w-full flex gap-1 z-30 px-1">
               {data.photos.map((_, index) => {
                 const isCompleted = index < activePhotoIdx;
@@ -341,9 +344,14 @@ export function PublicTributeRenderer({
                 <span className="text-[7.5px] font-black tracking-widest uppercase">DESDE {data.anniversary}</span>
               </div>
 
-              <div className="bg-black/40 backdrop-blur-xs px-3 py-0.5 rounded-full border border-white/5 text-[6px] text-white/40 font-mono">
-                eterno.love — Homenagem Especial
-              </div>
+              <a
+                href="https://glamourlindoia.com.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-black/40 hover:bg-black/60 backdrop-blur-xs px-3 py-1 rounded-full border border-white/5 text-[9px] text-white/60 hover:text-rose-400 font-mono transition-all hover:underline"
+              >
+                glamourlindoia.com.br — Homenagem Especial
+              </a>
             </div>
           </div>
         )}

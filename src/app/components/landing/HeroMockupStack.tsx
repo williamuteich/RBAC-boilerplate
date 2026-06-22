@@ -131,7 +131,7 @@ export function HeroMockupStack() {
 
             <div className="w-full flex justify-center mt-0.5 z-10 shrink-0">
               <div className="bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-full border border-white/5 text-[4.5px] text-white/40 font-mono leading-none">
-                eterno.love — Privado
+                glamourlindoia.com.br — Privado
               </div>
             </div>
           </div>
@@ -226,7 +226,7 @@ export function HeroMockupStack() {
             <CalendarWidget dateStr="12/06/2023" size="sm" dark={false} />
 
             <div className="w-full text-center mt-auto pt-1 opacity-30 text-[5px]">
-              eterno.love
+              glamourlindoia.com.br
             </div>
           </div>
 

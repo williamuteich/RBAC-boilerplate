@@ -44,7 +44,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
             <Heart className="w-4 h-4 text-white fill-white animate-pulse" />
           </div>
           <span className="font-bold text-lg tracking-tight bg-linear-to-r from-[#9A75F0] to-[#8B5CF6] bg-clip-text text-transparent">
-            eterno.love
+            Glamour Lindóia
           </span>
         </Link>
       </div>

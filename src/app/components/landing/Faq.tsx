@@ -8,13 +8,13 @@ export function Faq() {
           Perguntas Frequentes
         </h2>
         <p className="text-xs text-[#696684] mt-2">
-          Tudo o que você precisa saber sobre o Eterno.love
+          Tudo o que você precisa saber sobre o Glamour Lindóia
         </p>
       </div>
 
       <div className="flex flex-col gap-4">
         <Card className="bg-white border-[#E8E6F5] p-5 flex flex-col gap-2 rounded-2xl shadow-[0_4px_20px_rgba(45,42,74,0.02)]">
-          <h4 className="text-sm font-extrabold text-[#2D2A4A]">Como funciona o Eterno.love?</h4>
+          <h4 className="text-sm font-extrabold text-[#2D2A4A]">Como funciona o Glamour Lindóia?</h4>
           <p className="text-xs text-[#696684] leading-relaxed">
             Você preenche os dados do casal, adiciona suas fotos mais marcantes, escolhe a música tema e escreve uma carta de amor. Geramos uma página premium personalizada com um link exclusivo para você presentear seu parceiro(a).
           </p>
@@ -37,7 +37,7 @@ export function Faq() {
         <Card className="bg-white border-[#E8E6F5] p-5 flex flex-col gap-2 rounded-2xl shadow-[0_4px_20px_rgba(45,42,74,0.02)]">
           <h4 className="text-sm font-extrabold text-[#2D2A4A]">Posso alterar o conteúdo depois de publicado?</h4>
           <p className="text-xs text-[#696684] leading-relaxed">
-            Sim! Pelo painel administrativo do Eterno.love, você pode alterar as fotos, o texto, a música e a data especial quantas vezes quiser. Todas as atualizações aparecem instantaneamente na página publicada.
+            Sim! Pelo painel administrativo do Glamour Lindóia, você pode alterar as fotos, o texto, a música e a data especial quantas vezes quiser. Todas as atualizações aparecem instantaneamente na página publicada.
           </p>
         </Card>
       </div>

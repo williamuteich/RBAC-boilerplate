@@ -41,7 +41,7 @@ export function Header() {
         
         <div className="flex items-center gap-1.5 sm:hidden font-bold text-base text-slate-800">
           <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
-          <span>eterno.love</span>
+          <span>Glamour Lindóia</span>
         </div>
       </div>
 

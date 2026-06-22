@@ -246,10 +246,15 @@ export function LoveSim() {
                 <CalendarWidget dateStr={anniversary} size="md" dark={false} />
               </div>
 
-              <div className="w-full text-center mt-auto pt-2 opacity-50 text-[7px] z-10 text-[#696684]">
-                Criado com amor via Eterno.love
-              </div>
-            </div>
+            <a
+              href="https://glamourlindoia.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full text-center mt-auto pt-2 opacity-60 hover:opacity-100 text-[9px] z-10 text-[#696684] hover:text-rose-500 font-bold transition-all hover:underline"
+            >
+              Criado com amor via glamourlindoia.com.br
+            </a>
+          </div>
           ) : (
             <div 
               ref={storyScrollRef} 
@@ -326,9 +331,14 @@ export function LoveSim() {
               </div>
 
               <div className="w-full flex justify-center mt-2 z-10 shrink-0">
-                <div className="bg-black/40 backdrop-blur-xs px-3 py-0.5 rounded-full border border-white/5 text-[6px] text-white/40 font-mono">
-                  eterno.love — Privado
-                </div>
+                <a
+                  href="https://glamourlindoia.com.br"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-black/40 hover:bg-black/60 backdrop-blur-xs px-3 py-1 rounded-full border border-white/5 text-[8px] text-white/60 hover:text-rose-400 font-mono transition-all hover:underline"
+                >
+                  glamourlindoia.com.br — Homenagem Especial
+                </a>
               </div>
             </div>
           )}

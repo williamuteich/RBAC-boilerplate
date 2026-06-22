@@ -15,7 +15,7 @@ export function PromoSection() {
               Parceria Glamour Lindóia
             </h2>
             <p className="text-xs text-slate-400 leading-relaxed max-w-md">
-              Ao adquirir suas alianças de prata na Glamour Lindóia, você ganha acesso a uma página personalizada do Eterno.love inclusa no seu pacote para presentear quem você ama.
+              Ao adquirir suas alianças de prata na Glamour Lindóia, você ganha acesso a uma página personalizada inclusa no seu pacote para presentear quem você ama.
             </p>
           </div>
 

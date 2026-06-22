@@ -104,7 +104,6 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     try {
       const updatedPhotos = [...photos];
 
-      // 1. Fazer upload de todas as fotos novas que estão como blob:
       for (let i = 0; i < updatedPhotos.length; i++) {
         const photo = updatedPhotos[i];
         if (photo.url.startsWith("blob:")) {
@@ -124,17 +123,16 @@ export function EditorProvider({ children }: { children: ReactNode }) {
             }
 
             const data = await res.json();
-            URL.revokeObjectURL(photo.url); // libera o blob da memória
-            
+            URL.revokeObjectURL(photo.url);
+
             updatedPhotos[i] = {
               ...photo,
-              url: data.url, // URL final do servidor (ex: /uploads/nome.png)
+              url: data.url,
             };
           }
         }
       }
 
-      // 2. Salvar os dados finais no banco
       const res = await updatePainelData({
         partnerA,
         partnerB,
@@ -163,7 +161,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const pageUrl = `eterno.love/p/${tributeId}`;
+  const pageUrl = `glamourlindoia.com.br/p/${tributeId}`;
 
   return (
     <EditorContext.Provider

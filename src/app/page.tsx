@@ -7,7 +7,7 @@ import { Faq } from "./components/landing/Faq";
 import { Footer } from "./components/landing/Footer";
 
 export const metadata = {
-  title: "Eterno.love - Homenageie quem você ama",
+  title: "Glamour Lindóia - Homenageie quem você ama",
   description: "Crie uma homenagem digital eterna para o seu amor com fotos, música do casal, calendário personalizado e link com QR Code. Perfeito para o Dia dos Namorados, aniversários ou dias comuns.",
 };
 

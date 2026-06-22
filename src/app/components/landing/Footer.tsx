@@ -9,12 +9,12 @@ export function Footer() {
             <Heart className="w-3 h-3 text-white fill-white" />
           </div>
           <span className="font-bold text-sm tracking-tight text-[#2D2A4A]">
-            eterno.love
+            Glamour Lindóia
           </span>
         </div>
 
         <p className="text-[#696684] text-xs text-center md:text-right">
-          &copy; 2026 Eterno.love. Feito para aproximar corações. Todos os direitos reservados.
+          &copy; 2026 Glamour Lindóia. Feito para aproximar corações. Todos os direitos reservados.
         </p>
       </div>
     </footer>

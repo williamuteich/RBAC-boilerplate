@@ -16,7 +16,7 @@ export function UserLoginForm() {
           <div className="w-8 h-8 rounded-full bg-linear-to-tr from-[#9A75F0] to-[#8B5CF6] flex items-center justify-center shadow-md shadow-[#9A75F0]/20">
             <Heart className="w-4 h-4 text-white fill-white animate-pulse" />
           </div>
-          <span className="text-xl font-bold text-white tracking-tight">eterno.love</span>
+          <span className="text-xl font-bold text-white tracking-tight">Glamour Lindóia</span>
         </div>
 
         <div className="relative z-10 max-w-lg mt-12 mb-auto pt-10">
@@ -81,7 +81,7 @@ export function UserLoginForm() {
 
         <div className="relative z-10">
           <p className="text-xs text-slate-600">
-            © {new Date().getFullYear()} eterno.love — Feito com amor para casais apaixonados
+            © {new Date().getFullYear()} Glamour Lindóia — Feito com amor para casais apaixonados
           </p>
         </div>
       </div>
@@ -98,7 +98,7 @@ export function UserLoginForm() {
               <Heart className="w-6 h-6 fill-rose-500 text-rose-500 shrink-0 relative z-10" />
             </div>
 
-            <h2 className="text-3xl font-black text-[#2D2A4A] tracking-tight mb-2">eterno.love</h2>
+            <h2 className="text-3xl font-black text-[#2D2A4A] tracking-tight mb-2">Glamour Lindóia</h2>
             <p className="text-[#696684] text-sm max-w-xs mt-1.5">
               Entre para criar sua página personalizada ou editar seu presente digital.
             </p>

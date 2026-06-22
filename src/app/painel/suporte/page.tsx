@@ -9,7 +9,7 @@ export default function SuportePage() {
             <MessageSquare className="w-6 h-6 text-[#9A75F0]" />
           </div>
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-[#2D2A4A]">Suporte Eterno.love</h1>
+            <h1 className="text-xl font-bold text-[#2D2A4A]">Suporte Glamour Lindóia</h1>
             <p className="text-xs text-[#696684]">Estamos aqui para ajudar você no que for preciso.</p>
           </div>
         </div>
@@ -23,14 +23,14 @@ export default function SuportePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
             <a 
-              href="mailto:contato@eterno.love"
+              href="mailto:contato@glamourlindoia.com.br"
               className="p-4 rounded-2xl border border-[#E8E6F5] bg-[#FAF9FF] flex flex-col gap-2 hover:border-[#9A75F0] transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2 text-slate-800 font-bold">
                 <Mail className="w-4 h-4 text-[#9A75F0]" />
                 <span>E-mail</span>
               </div>
-              <span className="font-semibold text-[#9A75F0] group-hover:underline">contato@eterno.love</span>
+              <span className="font-semibold text-[#9A75F0] group-hover:underline">contato@glamourlindoia.com.br</span>
             </a>
 
             <a 

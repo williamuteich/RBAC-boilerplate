@@ -21,7 +21,7 @@ export function PublishSection() {
 
   const absoluteUrl = typeof window !== "undefined" 
     ? `${window.location.origin}/p/${tributeId}` 
-    : `https://eterno.love/p/${tributeId}`;
+    : `https://glamourlindoia.com.br/p/${tributeId}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(absoluteUrl);

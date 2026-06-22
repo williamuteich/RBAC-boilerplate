@@ -92,7 +92,7 @@ export function ClientsTable({
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
                   >
-                    eterno.love/{client.id}
+                    glamourlindoia.com.br/{client.id}
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </TableCell>
