@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    const uploadDir = path.join(process.cwd(), "public", "uploads", "clients", String(client.id));
     await mkdir(uploadDir, { recursive: true });
 
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
 
     await writeFile(filePath, buffer);
 
-    const fileUrl = `/uploads/${filename}`;
+    const fileUrl = `/uploads/clients/${client.id}/${filename}`;
 
     return NextResponse.json({ url: fileUrl });
   } catch (error) {

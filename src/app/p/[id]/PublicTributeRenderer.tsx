@@ -27,7 +27,7 @@ export function PublicTributeRenderer({
   const [isMuted, setIsMuted] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [progress, setProgress] = useState(0);
-  
+
   const playerRef = useRef<any>(null);
 
   const getYouTubeId = (url: string) => {
@@ -41,7 +41,7 @@ export function PublicTributeRenderer({
   useEffect(() => {
     const interval = setInterval(() => {
       setActivePhotoIdx((prev) => (prev + 1) % data.photos.length);
-    }, 2500);
+    }, 4500);
     return () => clearInterval(interval);
   }, [data.photos.length]);
 
@@ -142,7 +142,7 @@ export function PublicTributeRenderer({
 
   return (
     <div className="min-h-screen w-full flex justify-center items-start font-sans relative overflow-x-hidden select-none bg-[#FAF9FF]">
-      
+
       <div className={`fixed inset-0 bg-[#0F0D19]/95 backdrop-blur-md flex flex-col items-center justify-center z-50 p-6 text-center transition-all duration-1000 ease-in-out ${unlocked ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
         <div className="max-w-xs flex flex-col items-center gap-6">
           <div className="relative">
@@ -266,7 +266,7 @@ export function PublicTributeRenderer({
           </div>
         ) : (
           <div className="w-full min-h-screen bg-[#121212] text-white flex flex-col px-4 pt-4 pb-12 gap-4 relative animate-in fade-in duration-500">
-            
+
             <div className="w-full flex gap-1 z-30 px-1">
               {data.photos.map((_, index) => {
                 const isCompleted = index < activePhotoIdx;
@@ -340,7 +340,7 @@ export function PublicTributeRenderer({
                 <Heart className="w-2.5 h-2.5 fill-current text-white animate-ping shrink-0" />
                 <span className="text-[7.5px] font-black tracking-widest uppercase">DESDE {data.anniversary}</span>
               </div>
-              
+
               <div className="bg-black/40 backdrop-blur-xs px-3 py-0.5 rounded-full border border-white/5 text-[6px] text-white/40 font-mono">
                 eterno.love — Homenagem Especial
               </div>
