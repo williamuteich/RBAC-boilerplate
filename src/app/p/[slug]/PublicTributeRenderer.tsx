@@ -27,17 +27,16 @@ export function PublicTributeRenderer({
   const [isMuted, setIsMuted] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [hearts, setHearts] = useState<{ id: number; left: number; size: number; delay: number }[]>([]);
   
   const playerRef = useRef<any>(null);
 
-  const getYouTubeId = (data.songUrl) ? (() => {
+  const getYouTubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = data.songUrl.match(regExp);
+    const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
-  })() : null;
+  };
 
-  const videoId = getYouTubeId;
+  const videoId = getYouTubeId(data.songUrl);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -136,19 +135,6 @@ export function PublicTributeRenderer({
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  useEffect(() => {
-    const list: { id: number; left: number; size: number; delay: number }[] = [];
-    for (let i = 0; i < 20; i++) {
-      list.push({
-        id: i,
-        left: Math.random() * 100,
-        size: Math.random() * 14 + 8,
-        delay: Math.random() * 10,
-      });
-    }
-    setHearts(list);
-  }, []);
-
   const handleUnlock = () => {
     setUnlocked(true);
     setIsPlaying(true);
@@ -188,24 +174,6 @@ export function PublicTributeRenderer({
           allow="autoplay; encrypted-media"
         />
       )}
-
-      <div className="absolute inset-0 pointer-events-none z-0">
-        {hearts.map((h) => (
-          <div
-            key={h.id}
-            className="absolute bottom-[-20px] text-rose-400/20 animate-float fill-current"
-            style={{
-              left: `${h.left}%`,
-              width: `${h.size}px`,
-              height: `${h.size}px`,
-              animationDelay: `${h.delay}s`,
-              animationDuration: `${10 + Math.random() * 10}s`,
-            }}
-          >
-            <Heart className="w-full h-full fill-current" />
-          </div>
-        ))}
-      </div>
 
       <div className="w-full max-w-md min-h-screen z-10 flex flex-col">
         {data.theme === "spotify" ? (
