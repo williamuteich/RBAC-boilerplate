@@ -58,7 +58,6 @@ export const auth: NextAuthOptions = {
                 data: {
                     email: user.email,
                     name: user.name || "Novo Cliente",
-                    slug: user.email,
                     status: "PENDING",
                     plan: "7_DAYS",
                 },

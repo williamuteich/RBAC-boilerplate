@@ -66,7 +66,7 @@ async function main() {
     {
       email: "mateus.leticia@example.com",
       name: "Mateus & Leticia",
-      slug: "mateus-e-leticia",
+      tributeId: "mateus-leticia-id",
       status: "ACTIVE",
       plan: "7_DAYS",
       lastPaymentValue: 12.00,
@@ -78,7 +78,7 @@ async function main() {
     {
       email: "gabriel.amanda@example.com",
       name: "Gabriel & Amanda",
-      slug: "gabriel-e-amanda",
+      tributeId: "gabriel-amanda-id",
       status: "ACTIVE",
       plan: "14_DAYS",
       lastPaymentValue: 24.00,
@@ -90,7 +90,7 @@ async function main() {
     {
       email: "felipe.juliana@example.com",
       name: "Felipe & Juliana",
-      slug: "felipe-e-juliana",
+      tributeId: "felipe-juliana-id",
       status: "PENDING",
       plan: "7_DAYS",
       lastPaymentValue: 12.00,
@@ -102,7 +102,7 @@ async function main() {
     {
       email: "lucas.gabriela@example.com",
       name: "Lucas & Gabriela",
-      slug: "lucas-e-gabriela",
+      tributeId: "lucas-gabriela-id",
       status: "ACTIVE",
       plan: "30_DAYS",
       lastPaymentValue: 32.00,

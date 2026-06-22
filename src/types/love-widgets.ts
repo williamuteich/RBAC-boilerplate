@@ -19,7 +19,7 @@ export interface PhotoItem {
 }
 
 export interface EditorContextProps {
-  slug: string;
+  tributeId: string;
   partnerA: string;
   setPartnerA: (val: string) => void;
   partnerB: string;

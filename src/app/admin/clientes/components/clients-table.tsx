@@ -87,12 +87,12 @@ export function ClientsTable({
                 </TableCell>
                 <TableCell>
                   <a
-                    href={`/p/${client.slug}`}
+                    href={`/p/${client.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
                   >
-                    eterno.love/{client.slug}
+                    eterno.love/{client.id}
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </TableCell>

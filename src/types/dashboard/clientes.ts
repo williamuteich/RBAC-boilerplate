@@ -5,7 +5,7 @@ export interface SaaSClient {
   email: string;
   name: string;
   image: string | null;
-  slug: string;
+  tributeId: string;
   status: string;
   plan: string;
   lastPaymentValue: number | null;

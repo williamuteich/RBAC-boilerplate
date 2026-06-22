@@ -28,7 +28,7 @@ export async function GET(request: Request) {
           OR: [
             { name: { contains: search, mode: "insensitive" as const } },
             { email: { contains: search, mode: "insensitive" as const } },
-            { slug: { contains: search, mode: "insensitive" as const } }
+            { tributeId: { contains: search, mode: "insensitive" as const } }
           ]
         } : {},
         status ? { status } : {},

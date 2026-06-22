@@ -7,7 +7,7 @@ import { getPainelData, updatePainelData } from "@/src/services/painel";
 const EditorContext = createContext<EditorContextProps | undefined>(undefined);
 
 export function EditorProvider({ children }: { children: ReactNode }) {
-  const [slug, setSlug] = useState("");
+  const [tributeId, setTributeId] = useState("");
   const [partnerA, setPartnerA] = useState("");
   const [partnerB, setPartnerB] = useState("");
   const [anniversary, setAnniversary] = useState("");
@@ -29,7 +29,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     async function loadData() {
       try {
         const data = await getPainelData();
-        setSlug(data.slug || "");
+        setTributeId(data.tributeId || "");
         setPartnerA(data.partnerA || "Lucas");
         setPartnerB(data.partnerB || "Gabriela");
         setAnniversary(data.anniversary || "12/06/2023");
@@ -131,12 +131,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const pageUrl = `eterno.love/p/${slug}`;
+  const pageUrl = `eterno.love/p/${tributeId}`;
 
   return (
     <EditorContext.Provider
       value={{
-        slug,
+        tributeId,
         partnerA,
         setPartnerA,
         partnerB,

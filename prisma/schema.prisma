@@ -61,7 +61,7 @@ model SaaSClient {
   email            String    @unique
   name             String
   image            String?
-  slug             String    @unique
+  tributeId        String    @unique @default(uuid())
   status           String    @default("ACTIVE")
   plan             String    @default("MONTHLY")
   lastPaymentValue Float?

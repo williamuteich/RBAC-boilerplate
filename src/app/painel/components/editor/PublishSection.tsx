@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export function PublishSection() {
   const {
-    slug,
+    tributeId,
     pageUrl,
     isSaving,
     saveSuccess,
@@ -20,8 +20,8 @@ export function PublishSection() {
   const [copied, setCopied] = useState(false);
 
   const absoluteUrl = typeof window !== "undefined" 
-    ? `${window.location.origin}/p/${slug}` 
-    : `https://eterno.love/p/${slug}`;
+    ? `${window.location.origin}/p/${tributeId}` 
+    : `https://eterno.love/p/${tributeId}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(absoluteUrl);
@@ -93,7 +93,7 @@ export function PublishSection() {
                     <h5 className="text-xs font-bold text-[#2D2A4A]">Veja como ficou</h5>
                     <p className="text-[10px] text-slate-400">Abra a página em tempo real para visualizar o design final.</p>
                     <a 
-                      href={`/p/${slug}`} 
+                      href={`/p/${tributeId}`} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-indigo-600 hover:text-indigo-700 mt-1.5 transition-colors"

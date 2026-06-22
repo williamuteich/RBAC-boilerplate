@@ -6,7 +6,7 @@ import { PublicTributeRenderer } from "./PublicTributeRenderer";
 export default async function PublicTributePage({
   params
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
   return (
     <Suspense
@@ -24,12 +24,12 @@ export default async function PublicTributePage({
 async function TributeContent({
   params
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { slug } = await params;
+  const { id } = await params;
 
   const client = await prisma.saaSClient.findUnique({
-    where: { slug }
+    where: { tributeId: id }
   });
 
   if (!client || client.status === "CANCELLED") {
