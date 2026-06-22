@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Heart, Calendar, Wifi, Battery, User, HeartHandshake, ChevronDown, SkipBack, SkipForward, Shuffle, Repeat, Mail, Pause } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Heart, Calendar, Wifi, Battery, User, HeartHandshake, ChevronDown, SkipBack, SkipForward, Shuffle, Repeat, Pause } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { CalendarWidget } from "./CalendarWidget";
+import { LoveLetterWidget } from "./LoveLetterWidget";
 
 const CAROUSEL_PHOTOS = [
   { url: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=300&auto=format&fit=crop", label: "Nosso Dia" },
@@ -47,7 +48,7 @@ export function LoveSim() {
     return `${clean(strA)}-e-${clean(strB)}`;
   };
 
-  const slug = slugify(nameA, nameB);
+  const username = `${slugify(nameA, "").replace("-e-", "")}.${slugify(nameB, "").replace("-e-", "")}`;
 
   return (
     <div className="w-full flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:justify-center">
@@ -166,35 +167,18 @@ export function LoveSim() {
                     <div className="w-4"></div>
                   </div>
 
-                  <div className="relative w-full h-56 flex items-center justify-center my-1.5">
+                  <div className="-mx-4 w-[calc(100%+2rem)] h-[270px] relative overflow-hidden shrink-0 border-b border-rose-100/10 mb-1 bg-slate-900 rounded-b-2xl">
                     {CAROUSEL_PHOTOS.map((photo, index) => {
-                      const isCurrent = index === activePhotoIdx;
-                      const isNext = index === (activePhotoIdx + 1) % CAROUSEL_PHOTOS.length;
-                      const isPrev = index === (activePhotoIdx - 1 + CAROUSEL_PHOTOS.length) % CAROUSEL_PHOTOS.length;
-
-                      let classes = "absolute scale-75 opacity-0 pointer-events-none z-0";
-                      if (isCurrent) {
-                        classes = "absolute scale-100 opacity-100 z-35 rotate-6 translate-x-1 shadow-xl";
-                      } else if (isNext) {
-                        classes = "absolute scale-95 opacity-90 z-25 -rotate-6 -translate-x-1 shadow-lg";
-                      } else if (isPrev) {
-                        classes = "absolute scale-90 opacity-40 z-10 rotate-12 translate-x-3.5 shadow-xs";
-                      }
-
+                      const isActive = index === activePhotoIdx;
                       return (
-                        <div
+                        <img
                           key={index}
-                          className={`bg-white p-2.5 rounded-xl border border-rose-100 flex flex-col gap-1.5 w-50 transition-all duration-700 ease-in-out ${classes}`}
-                        >
-                          <img
-                            src={photo.url}
-                            alt={photo.label}
-                            className="aspect-square w-full object-cover rounded-lg"
-                          />
-                          <span className="text-[8.5px] font-black text-rose-600 text-center pt-0.5 leading-none">
-                            {photo.label}
-                          </span>
-                        </div>
+                          src={photo.url}
+                          alt="Couple Moment"
+                          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+                            isActive ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-95"
+                          }`}
+                        />
                       );
                     })}
                   </div>
@@ -236,21 +220,9 @@ export function LoveSim() {
                   </div>
                 </div>
 
-                <Card className="w-full p-4 border border-rose-100 rounded-2xl bg-linear-to-br from-rose-5/70 to-pink-5/70 text-rose-955 shadow-none relative overflow-hidden flex flex-col gap-1.5 mt-2 shrink-0">
-                  <span className="text-[8px] font-extrabold tracking-wider uppercase text-rose-500 flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5" /> Carta de Amor
-                  </span>
-                  <div className="space-y-1.5 mt-1">
-                    {LOVE_NOTES.map((line, idx) => (
-                      <p
-                        key={idx}
-                        className="text-[9px] font-bold text-rose-900 leading-tight"
-                      >
-                        {line}
-                      </p>
-                    ))}
-                  </div>
-                </Card>
+                <LoveLetterWidget notes={LOVE_NOTES} size="md" dark={false} />
+
+                <CalendarWidget dateStr={anniversary} size="md" dark={false} />
               </div>
 
               <div className="w-full text-center mt-auto pt-2 opacity-50 text-[7px] z-10 text-[#696684]">
@@ -258,7 +230,7 @@ export function LoveSim() {
               </div>
             </div>
           ) : (
-            <div className="w-full h-full rounded-[32px] bg-[#121212] text-white p-3 flex flex-col justify-between text-left relative overflow-hidden select-none pt-10 pb-6 px-4">
+            <div className="w-full h-full rounded-[32px] bg-[#121212] text-white p-3 flex flex-col justify-between text-left relative overflow-hidden select-none pt-10 pb-6 px-4 scrollbar-hidden overflow-y-auto">
               <div className="absolute top-10 left-4 right-4 flex gap-0.5 z-30">
                 {CAROUSEL_PHOTOS.map((_, index) => {
                   const isCompleted = index < activePhotoIdx;
@@ -275,11 +247,11 @@ export function LoveSim() {
                 })}
               </div>
 
-              <div className="absolute top-13 right-4 z-30 opacity-70">
-                <span className="text-[10px]">🔊</span>
+              <div className="absolute top-13 right-4 z-30 opacity-70 font-semibold text-[8px]">
+                🔊
               </div>
 
-              <div className="mt-4 text-center px-2 flex flex-col gap-1.5 z-10">
+              <div className="mt-4 text-center px-2 flex flex-col gap-1.5 z-10 shrink-0">
                 <h3 className="text-sm font-black tracking-tight text-white">
                   Meu Porto Seguro
                 </h3>
@@ -288,7 +260,7 @@ export function LoveSim() {
                 </p>
               </div>
 
-              <div className="relative w-[210px] h-[260px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/5 my-2 flex items-center justify-center bg-slate-900 shrink-0">
+              <div className="-mx-4 w-[calc(100%+2rem)] h-[270px] relative overflow-hidden shrink-0 border-b border-white/5 my-3 bg-slate-900">
                 <img
                   src={CAROUSEL_PHOTOS[activePhotoIdx].url}
                   alt="Story content"
@@ -301,14 +273,7 @@ export function LoveSim() {
                 </div>
               </div>
 
-              <div className="w-full flex justify-center z-10 py-1">
-                <div className="bg-linear-to-r from-rose-500 to-pink-600 px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-white shadow-md">
-                  <Heart className="w-2.5 h-2.5 fill-current text-white animate-ping shrink-0" />
-                  <span className="text-[7.5px] font-black tracking-widest uppercase">DESDE {anniversary}</span>
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 p-2.5 rounded-2xl flex items-center justify-between gap-2.5 z-10 shadow-lg text-white mt-1">
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 p-2.5 rounded-2xl flex items-center justify-between gap-2.5 z-10 shadow-lg text-white mb-3 shrink-0">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white/10">
                     <img
@@ -322,12 +287,24 @@ export function LoveSim() {
                     <span className="text-[6px] text-white/70 truncate mt-0.5">Aerosmith • Tema do Casal</span>
                   </div>
                 </div>
-                <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0 hover:scale-105 transition-transform cursor-pointer">
+                <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0">
                   <Pause className="w-3.5 h-3.5 text-white fill-current" />
                 </div>
               </div>
 
-              <div className="w-full flex justify-center mt-2 z-10">
+              <div className="flex flex-col gap-3 shrink-0 mb-3">
+                <LoveLetterWidget notes={LOVE_NOTES} size="md" dark={true} />
+                <CalendarWidget dateStr={anniversary} size="md" dark={true} />
+              </div>
+
+              <div className="w-full flex justify-center z-10 py-1.5 shrink-0 mb-2">
+                <div className="bg-linear-to-r from-rose-500 to-pink-600 px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-white shadow-md">
+                  <Heart className="w-2.5 h-2.5 fill-current text-white animate-ping shrink-0" />
+                  <span className="text-[7.5px] font-black tracking-widest uppercase">DESDE {anniversary}</span>
+                </div>
+              </div>
+
+              <div className="w-full flex justify-center mt-2 z-10 shrink-0">
                 <div className="bg-black/40 backdrop-blur-xs px-3 py-0.5 rounded-full border border-white/5 text-[6px] text-white/40 font-mono">
                   eterno.love — Privado
                 </div>

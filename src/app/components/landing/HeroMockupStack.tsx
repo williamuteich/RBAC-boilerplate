@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heart, Wifi, Battery, ChevronDown, Shuffle, SkipBack, SkipForward, Repeat, Mail, Pause } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Heart, Wifi, Battery, ChevronDown, Shuffle, SkipBack, SkipForward, Repeat, Pause } from "lucide-react";
+import { CalendarWidget } from "../CalendarWidget";
+import { LoveLetterWidget } from "../LoveLetterWidget";
 
 const CAROUSEL_PHOTOS = [
   { url: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=150&auto=format&fit=crop", label: "Nosso Dia" },
@@ -54,7 +55,7 @@ export function HeroMockupStack() {
       </div>
 
       <div className="absolute left-[3%] sm:left-[8%] w-[180px] h-[320px] bg-black rounded-[30px] border-[5px] border-neutral-900 shadow-[0_15px_30px_rgba(0,0,0,0.4)] p-1 overflow-hidden z-10 -rotate-6 transition-all hover:rotate-0 hover:scale-[1.02] hover:z-25 duration-500">
-        <div className="w-full h-full rounded-[24px] bg-[#121212] text-white p-2 flex flex-col justify-between text-left relative overflow-hidden select-none pt-7 pb-4 px-2.5">
+        <div className="w-full h-full rounded-[24px] bg-[#121212] text-white p-2 flex flex-col justify-between text-left relative overflow-hidden select-none pt-7 pb-4 px-2.5 scrollbar-hidden overflow-y-auto">
           <div className="absolute top-2 left-2 right-2 flex gap-0.5 z-30">
             {CAROUSEL_PHOTOS.map((_, index) => {
               const isCompleted = index < activePhotoIdx;
@@ -62,19 +63,18 @@ export function HeroMockupStack() {
               return (
                 <div key={index} className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden">
                   <div
-                    className={`h-full bg-white transition-all ${isCompleted ? "w-full" : isActive ? "w-full" : "w-0"
-                      }`}
+                    className={`h-full bg-white transition-all ${isCompleted ? "w-full" : isActive ? "w-full" : "w-0"}`}
                   />
                 </div>
               );
             })}
           </div>
 
-          <div className="absolute top-3.5 right-2 z-30 opacity-75">
+          <div className="absolute top-3.5 right-2 z-30 opacity-75 leading-none">
             <span className="text-[7px]">🔊</span>
           </div>
 
-          <div className="mt-2 text-center px-1.5 flex flex-col gap-0.5 z-10">
+          <div className="mt-2 text-center px-1.5 flex flex-col gap-0.5 z-10 shrink-0">
             <h3 className="text-[9px] font-black tracking-tight text-white leading-none">
               Meu Porto Seguro
             </h3>
@@ -83,7 +83,7 @@ export function HeroMockupStack() {
             </p>
           </div>
 
-          <div className="relative w-[130px] h-[155px] mx-auto rounded-xl overflow-hidden shadow-xl border border-white/5 my-1 flex items-center justify-center bg-slate-900 shrink-0">
+          <div className="-mx-2.5 w-[calc(100%+1.25rem)] h-[170px] relative overflow-hidden shrink-0 border-b border-white/5 my-2 bg-slate-900">
             <img
               src={CAROUSEL_PHOTOS[activePhotoIdx].url}
               alt="Story content"
@@ -96,14 +96,7 @@ export function HeroMockupStack() {
             </div>
           </div>
 
-          <div className="w-full flex justify-center z-10">
-            <div className="bg-linear-to-r from-rose-500 to-pink-600 px-2 py-0.5 rounded-full flex items-center gap-1 text-white shadow-sm whitespace-nowrap">
-              <Heart className="w-1.5 h-1.5 fill-current text-white animate-ping shrink-0" />
-              <span className="text-[5px] font-black tracking-widest uppercase">DESDE 12/06/2023</span>
-            </div>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-md border border-white/15 p-1.5 rounded-xl flex items-center justify-between gap-1.5 z-10 shadow-lg text-white mt-0.5">
+          <div className="bg-white/10 backdrop-blur-md border border-white/15 p-1.5 rounded-xl flex items-center justify-between gap-1.5 z-10 shadow-lg text-white mb-2 shrink-0">
             <div className="flex items-center gap-1 min-w-0">
               <div className="w-5 h-5 rounded-md overflow-hidden shrink-0 border border-white/10">
                 <img
@@ -122,7 +115,19 @@ export function HeroMockupStack() {
             </div>
           </div>
 
-          <div className="w-full flex justify-center mt-0.5 z-10">
+          <div className="flex flex-col gap-2 shrink-0 mb-2">
+            <LoveLetterWidget notes={LOVE_NOTES} size="sm" dark={true} />
+            <CalendarWidget dateStr="12/06/2023" size="sm" dark={true} />
+          </div>
+
+          <div className="w-full flex justify-center z-10 shrink-0 mb-1">
+            <div className="bg-linear-to-r from-rose-500 to-pink-600 px-2 py-0.5 rounded-full flex items-center gap-1 text-white shadow-sm whitespace-nowrap">
+              <Heart className="w-1.5 h-1.5 fill-current text-white animate-ping shrink-0" />
+              <span className="text-[5px] font-black tracking-widest uppercase">DESDE 12/06/2023</span>
+            </div>
+          </div>
+
+          <div className="w-full flex justify-center mt-0.5 z-10 shrink-0">
             <div className="bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-full border border-white/5 text-[4.5px] text-white/40 font-mono leading-none">
               eterno.love — Privado
             </div>
@@ -151,35 +156,18 @@ export function HeroMockupStack() {
               <div className="w-3"></div>
             </div>
 
-            <div className="relative w-full h-28 flex items-center justify-center my-1.5">
+            <div className="-mx-2.5 w-[calc(100%+1.25rem)] h-[170px] relative overflow-hidden shrink-0 border-b border-rose-100/10 mb-1 bg-slate-900 rounded-b-xl">
               {CAROUSEL_PHOTOS.map((photo, index) => {
-                const isCurrent = index === activePhotoIdx;
-                const isNext = index === (activePhotoIdx + 1) % CAROUSEL_PHOTOS.length;
-                const isPrev = index === (activePhotoIdx - 1 + CAROUSEL_PHOTOS.length) % CAROUSEL_PHOTOS.length;
-
-                let classes = "absolute scale-75 opacity-0 pointer-events-none z-0";
-                if (isCurrent) {
-                  classes = "absolute scale-100 opacity-100 z-35 rotate-6 translate-x-1 shadow-md";
-                } else if (isNext) {
-                  classes = "absolute scale-95 opacity-90 z-25 -rotate-6 -translate-x-1 shadow-sm";
-                } else if (isPrev) {
-                  classes = "absolute scale-90 opacity-40 z-10 rotate-12 translate-x-3.5 shadow-xs";
-                }
-
+                const isActive = index === activePhotoIdx;
                 return (
-                  <div
+                  <img
                     key={index}
-                    className={`bg-white p-1 rounded-md border border-rose-100 flex flex-col gap-0.5 w-26 transition-all duration-700 ease-in-out ${classes}`}
-                  >
-                    <img
-                      src={photo.url}
-                      alt={photo.label}
-                      className="aspect-square w-full object-cover rounded-xs"
-                    />
-                    <span className="text-[5px] font-extrabold text-rose-600 text-center pt-0.5 leading-none">
-                      {photo.label}
-                    </span>
-                  </div>
+                    src={photo.url}
+                    alt="Couple Moment"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+                      isActive ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-95"
+                    }`}
+                  />
                 );
               })}
             </div>
@@ -221,21 +209,9 @@ export function HeroMockupStack() {
             </div>
           </div>
 
-          <Card className="w-full p-2 border border-rose-100 rounded-xl bg-linear-to-br from-rose-55/70 to-pink-55/70 text-rose-955 shadow-md relative overflow-hidden flex flex-col gap-1 mt-2 shrink-0">
-            <span className="text-[6px] font-extrabold tracking-wider uppercase text-rose-500 flex items-center gap-0.5">
-              <Mail className="w-2 h-2" /> Carta de Amor
-            </span>
-            <div className="space-y-0.5 mt-0.5">
-              {LOVE_NOTES.map((line, idx) => (
-                <p
-                  key={idx}
-                  className="text-[6px] font-bold text-rose-900 leading-tight"
-                >
-                  {line}
-                </p>
-              ))}
-            </div>
-          </Card>
+          <LoveLetterWidget notes={LOVE_NOTES} size="sm" dark={false} />
+
+          <CalendarWidget dateStr="12/06/2023" size="sm" dark={false} />
 
           <div className="w-full text-center mt-auto pt-1 opacity-30 text-[5px]">
             eterno.love
