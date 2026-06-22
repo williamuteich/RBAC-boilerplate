@@ -26,9 +26,10 @@ export function PublicTributeRenderer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
-  const [progress, setProgress] = useState(65);
+  const [progress, setProgress] = useState(0);
   const [hearts, setHearts] = useState<{ id: number; left: number; size: number; delay: number }[]>([]);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  
+  const playerRef = useRef<any>(null);
 
   const getYouTubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -46,45 +47,94 @@ export function PublicTributeRenderer({
   }, [data.photos.length]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isPlaying) {
-      timer = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) return 0;
-          return prev + 1;
-        });
-      }, 1000);
+    const win = window as any;
+    if (!win.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
     }
-    return () => clearInterval(timer);
-  }, [isPlaying]);
+
+    win.onYouTubeIframeAPIReady = () => {
+      initPlayer();
+    };
+
+    if (win.YT && win.YT.Player) {
+      initPlayer();
+    }
+
+    function initPlayer() {
+      if (playerRef.current) return;
+      try {
+        playerRef.current = new win.YT.Player("youtube-player", {
+          events: {
+            onStateChange: (event: any) => {
+              if (event.data === 1) {
+                setIsPlaying(true);
+              } else if (event.data === 2 || event.data === 0) {
+                setIsPlaying(false);
+              }
+            },
+            onReady: (event: any) => {
+              if (isMuted) {
+                event.target.mute();
+              } else {
+                event.target.unMute();
+              }
+              if (isPlaying) {
+                event.target.playVideo();
+              }
+            }
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }, [videoId]);
 
   useEffect(() => {
-    if (!iframeRef.current || !iframeRef.current.contentWindow) return;
+    const player = playerRef.current;
+    if (!player || typeof player.playVideo !== "function") return;
     try {
-      const message = JSON.stringify({
-        event: "command",
-        func: isPlaying ? "playVideo" : "pauseVideo",
-        args: []
-      });
-      iframeRef.current.contentWindow.postMessage(message, "*");
+      if (isPlaying) {
+        player.playVideo();
+      } else {
+        player.pauseVideo();
+      }
     } catch (err) {
       console.error(err);
     }
   }, [isPlaying]);
 
   useEffect(() => {
-    if (!iframeRef.current || !iframeRef.current.contentWindow) return;
+    const player = playerRef.current;
+    if (!player || typeof player.mute !== "function") return;
     try {
-      const message = JSON.stringify({
-        event: "command",
-        func: isMuted ? "mute" : "unMute",
-        args: []
-      });
-      iframeRef.current.contentWindow.postMessage(message, "*");
+      if (isMuted) {
+        player.mute();
+      } else {
+        player.unMute();
+      }
     } catch (err) {
       console.error(err);
     }
   }, [isMuted]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        const player = playerRef.current;
+        if (player && typeof player.getCurrentTime === "function") {
+          const current = player.getCurrentTime();
+          const dur = player.getDuration() || 240;
+          setProgress((current / dur) * 100);
+        }
+      }, 500);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying]);
 
   useEffect(() => {
     const list: { id: number; left: number; size: number; delay: number }[] = [];
@@ -132,10 +182,10 @@ export function PublicTributeRenderer({
 
       {videoId && (
         <iframe
-          ref={iframeRef}
+          id="youtube-player"
           src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&modestbranding=1&playsinline=1&playlist=${videoId}&loop=1`}
           className="w-0 h-0 opacity-0 pointer-events-none absolute"
-          allow="autoplay"
+          allow="autoplay; encrypted-media"
         />
       )}
 
