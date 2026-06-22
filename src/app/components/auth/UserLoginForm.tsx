@@ -107,7 +107,7 @@ export function UserLoginForm() {
           <div className="bg-white p-8 md:p-10 rounded-[32px] shadow-[0_15px_40px_rgba(45,42,74,0.03)] border border-[#E8E6F5]">
             <button
               type="button"
-              onClick={() => signIn("google", { callbackUrl: "/" })}
+              onClick={() => signIn("google", { callbackUrl: "/painel" })}
               className="cursor-pointer w-full flex items-center justify-center gap-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3.5 px-6 rounded-2xl transition-all hover:shadow-md active:scale-[0.98] focus:outline-none text-xs"
             >
               <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
