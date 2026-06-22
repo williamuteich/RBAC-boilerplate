@@ -33,6 +33,7 @@ export async function GET() {
   }
 
   return NextResponse.json({
+    slug: client.slug,
     partnerA: client.partnerA,
     partnerB: client.partnerB,
     anniversary: client.anniversary,

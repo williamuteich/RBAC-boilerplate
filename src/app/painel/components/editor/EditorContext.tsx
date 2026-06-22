@@ -7,6 +7,7 @@ import { getPainelData, updatePainelData } from "@/src/services/painel";
 const EditorContext = createContext<EditorContextProps | undefined>(undefined);
 
 export function EditorProvider({ children }: { children: ReactNode }) {
+  const [slug, setSlug] = useState("");
   const [partnerA, setPartnerA] = useState("");
   const [partnerB, setPartnerB] = useState("");
   const [anniversary, setAnniversary] = useState("");
@@ -28,6 +29,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     async function loadData() {
       try {
         const data = await getPainelData();
+        setSlug(data.slug || "");
         setPartnerA(data.partnerA || "Lucas");
         setPartnerB(data.partnerB || "Gabriela");
         setAnniversary(data.anniversary || "12/06/2023");
@@ -111,7 +113,6 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
       if (res.success) {
         setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 3000);
       } else {
         setErrorMessage(res.error || "Erro ao salvar alterações.");
       }
@@ -123,22 +124,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const slugify = (strA: string, strB: string) => {
-    const clean = (s: string) =>
-      s
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]/g, "");
-    return `${clean(strA)}-e-${clean(strB)}`;
-  };
-
-  const pageSlug = slugify(partnerA || "lucas", partnerB || "gabriela");
-  const pageUrl = `eterno.love/${pageSlug}`;
+  const pageUrl = `eterno.love/${slug}`;
 
   return (
     <EditorContext.Provider
       value={{
+        slug,
         partnerA,
         setPartnerA,
         partnerB,
@@ -163,6 +154,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         updatePhotoLabel,
         isSaving,
         saveSuccess,
+        setSaveSuccess,
         errorMessage,
         setErrorMessage,
         handleSave,

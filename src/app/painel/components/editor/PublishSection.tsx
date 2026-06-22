@@ -1,18 +1,37 @@
 "use client";
 
-import { QrCode, Globe, Sparkles, Check, Save } from "lucide-react";
+import { QrCode, Globe, Sparkles, Check, Save, Copy, ExternalLink, Share2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEditor } from "./EditorContext";
+import { useState } from "react";
 
 export function PublishSection() {
   const {
+    slug,
     pageUrl,
     isSaving,
     saveSuccess,
+    setSaveSuccess,
     errorMessage,
     setErrorMessage,
     handleSave,
   } = useEditor();
+
+  const [copied, setCopied] = useState(false);
+
+  const absoluteUrl = typeof window !== "undefined" 
+    ? `${window.location.origin}/p/${slug}` 
+    : `https://eterno.love/${slug}`;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(absoluteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+    `Criei uma surpresa muito especial para nós! Espere que você goste... Dá uma olhada nesse link: ${absoluteUrl}`
+  )}`;
 
   return (
     <div className="bg-white border border-[#E8E6F5] p-6 md:p-8 rounded-[32px] shadow-[0_10px_40px_rgba(45,42,74,0.02)] flex flex-col items-center text-center">
@@ -32,15 +51,90 @@ export function PublishSection() {
       )}
 
       {saveSuccess && (
-        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex flex-col items-center justify-center z-50 animate-in fade-in duration-200">
-          <div className="flex flex-col items-center gap-4 p-8 bg-white rounded-3xl shadow-2xl max-w-xs text-center border border-slate-100 scale-95 animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
-              <Check className="w-8 h-8 text-emerald-600" />
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 px-4">
+          <div className="flex flex-col items-center p-8 bg-white rounded-[32px] shadow-2xl w-full max-w-md text-center border border-slate-100 scale-95 animate-in zoom-in-95 duration-200 relative">
+            <button 
+              onClick={() => setSaveSuccess(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-50 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100 mb-4">
+              <Check className="w-8 h-8 text-emerald-600 animate-bounce" />
             </div>
-            <div>
-              <h4 className="font-extrabold text-[#2D2A4A] text-sm">Salvo com Sucesso!</h4>
-              <p className="text-[10px] text-slate-400 mt-1">Sua página eterna foi atualizada e já está online.</p>
+
+            <h4 className="font-extrabold text-[#2D2A4A] text-lg">Salvo com Sucesso!</h4>
+            <p className="text-xs text-slate-400 mt-1.5 mb-6">
+              Sua homenagem eterna foi salva. Veja abaixo como você pode utilizá-la agora:
+            </p>
+
+            <div className="w-full space-y-4 text-left mb-6">
+              <div className="p-4 bg-[#FAF9FF] border border-[#E8E6F5] rounded-2xl flex flex-col gap-2">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                  <Globe className="w-3 h-3 text-indigo-500" /> Link de Acesso Permanente
+                </span>
+                <div className="flex items-center justify-between gap-2 bg-white border border-slate-100 px-3 py-2 rounded-xl">
+                  <span className="text-xs font-bold text-[#2D2A4A] truncate select-all flex-1">
+                    {absoluteUrl}
+                  </span>
+                  <button 
+                    onClick={handleCopyLink}
+                    className="p-1.5 hover:bg-slate-50 rounded-lg text-slate-500 hover:text-indigo-600 transition-colors cursor-pointer shrink-0"
+                    title="Copiar Link"
+                  >
+                    {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 shrink-0">
+                    1
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-[#2D2A4A]">Veja como ficou</h5>
+                    <p className="text-[10px] text-slate-400">Abra a página em tempo real para visualizar o design final.</p>
+                    <a 
+                      href={`/p/${slug}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-indigo-600 hover:text-indigo-700 mt-1.5 transition-colors"
+                    >
+                      Visualizar Homenagem <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+
+                <hr className="border-slate-100" />
+
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 shrink-0">
+                    2
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-[#2D2A4A]">Compartilhe pelo WhatsApp</h5>
+                    <p className="text-[10px] text-slate-400">Envie uma linda mensagem surpresa direto no chat do seu amor.</p>
+                    <a 
+                      href={whatsappShareUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-emerald-600 hover:text-emerald-700 mt-1.5 transition-colors"
+                    >
+                      Enviar Surpresa <Share2 className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <Button 
+              onClick={() => setSaveSuccess(false)}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-11 text-xs rounded-xl cursor-pointer"
+            >
+              Voltar ao Editor
+            </Button>
           </div>
         </div>
       )}

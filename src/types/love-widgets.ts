@@ -19,6 +19,7 @@ export interface PhotoItem {
 }
 
 export interface EditorContextProps {
+  slug: string;
   partnerA: string;
   setPartnerA: (val: string) => void;
   partnerB: string;
@@ -43,6 +44,7 @@ export interface EditorContextProps {
   updatePhotoLabel: (id: string, newLabel: string) => void;
   isSaving: boolean;
   saveSuccess: boolean;
+  setSaveSuccess: (val: boolean) => void;
   errorMessage: string;
   setErrorMessage: (val: string) => void;
   handleSave: () => void;
