@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Heart, Wifi, Battery, Play, ChevronDown, Shuffle, SkipBack, SkipForward, Repeat, MessageCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Heart, Wifi, Battery, ChevronDown, Shuffle, SkipBack, SkipForward, Repeat, Mail, Pause } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const CAROUSEL_PHOTOS = [
@@ -11,21 +11,19 @@ const CAROUSEL_PHOTOS = [
   { url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop", label: "Viagem" }
 ];
 
-const LYRICS = [
+const LOVE_NOTES = [
   "E pensar que tudo começou do nada...",
   "Olha só pra gente agora:",
   "Escrevendo nossa história,",
-  "E colecionando memórias..."
+  "E eternizando nosso amor..."
 ];
 
 export function HeroMockupStack() {
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
-  const [activeLyricIdx, setActiveLyricIdx] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setActivePhotoIdx((prev) => (prev + 1) % CAROUSEL_PHOTOS.length);
-      setActiveLyricIdx((prev) => (prev + 1) % LYRICS.length);
     }, 3000);
     return () => clearInterval(timer);
   }, []);
@@ -55,176 +53,191 @@ export function HeroMockupStack() {
         <Heart className="w-full h-full fill-current" />
       </div>
 
-      <div className="absolute left-[5%] sm:left-[10%] w-[180px] h-[320px] bg-[#0A0F0D] rounded-[30px] border-[5px] border-[#1C1F1D] shadow-[0_15px_30px_rgba(0,0,0,0.4)] p-1 overflow-hidden z-10 -rotate-12 transition-all hover:-rotate-6 hover:z-25 duration-500">
-        <div className="w-full h-full rounded-[24px] bg-[#070B19] p-3 flex flex-col justify-between text-left relative">
-          <div className="absolute inset-0 bg-radial-to-b from-emerald-500/10 to-transparent pointer-events-none"></div>
-          
-          <div className="w-full flex items-center justify-between text-[7px] font-medium opacity-60 text-white">
-            <span>18:33</span>
-            <div className="flex items-center gap-1">
-              <Wifi className="w-2 h-2" />
-              <Battery className="w-2.5 h-2.5" />
-            </div>
-          </div>
-
-          <div className="my-auto flex flex-col gap-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <Heart className="w-5 h-5 fill-current" />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold text-white leading-tight">Alguém especial te enviou um presente</h5>
-              <p className="text-[8px] text-slate-400 mt-1">Um momento único criado para celebrar o amor de vocês.</p>
-            </div>
-            <button className="w-full bg-[#10B981] text-white text-[9px] font-bold py-2 rounded-lg transition-transform hover:scale-[1.02]">
-              Ver Homenagem
-            </button>
-          </div>
-
-          <div className="w-full border-t border-slate-900 pt-2 flex justify-around opacity-40">
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute right-[5%] sm:right-[10%] w-[180px] h-[320px] bg-[#0F172A] rounded-[30px] border-[5px] border-[#1E293B] shadow-[0_15px_30px_rgba(0,0,0,0.4)] p-1 overflow-hidden z-10 rotate-12 transition-all hover:rotate-6 hover:z-25 duration-500">
-        <div className="w-full h-full rounded-[24px] bg-[#020617] p-3 flex flex-col justify-between text-left relative">
-          <div className="absolute inset-0 bg-radial-to-b from-indigo-500/10 to-transparent pointer-events-none"></div>
-
-          <div className="w-full flex items-center justify-between text-[7px] font-medium opacity-60 text-white">
-            <span>18:33</span>
-            <div className="flex items-center gap-1">
-              <Wifi className="w-2 h-2" />
-              <Battery className="w-2.5 h-2.5" />
-            </div>
-          </div>
-
-          <div className="my-auto flex flex-col gap-2.5">
-            <span className="text-[6px] tracking-wider font-bold text-indigo-400 uppercase">Trilha Sonora</span>
-            <div className="text-[9px] font-extrabold text-white leading-tight">I Don't Want to Miss a Thing</div>
-            <div className="text-[7px] text-slate-400">Aerosmith</div>
-
-            <div className="mt-1 space-y-1 opacity-80">
-              <p className="text-[8px] text-slate-100 font-medium">você poderia ser</p>
-              <p className="text-[8px] text-indigo-300 font-bold underline">meu maior orgulho</p>
-              <p className="text-[8px] text-slate-300">do meu amor, e</p>
-            </div>
-          </div>
-
-          <div className="w-full border-t border-slate-900 pt-2 flex justify-around opacity-40">
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute w-[190px] h-[340px] bg-black rounded-[32px] border-[6px] border-neutral-900 shadow-[0_20px_40px_rgba(0,0,0,0.6)] p-1 overflow-hidden z-20 transition-all hover:scale-[1.03] duration-500">
-        <div className="w-full h-full rounded-[24px] bg-[#FAF9FF] p-2.5 flex flex-col justify-between text-left relative scrollbar-hidden overflow-y-auto text-[#2D2A4A]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(139,92,246,0.03),transparent_50%)] pointer-events-none"></div>
-
-          <div className="w-full flex items-center justify-between text-[6px] font-semibold text-[#2D2A4A]/80 z-20 pb-2">
-            <span>18:33</span>
-            <div className="flex items-center gap-1">
-              <Wifi className="w-1.5 h-1.5 text-[#2D2A4A]" />
-              <Battery className="w-2.5 h-2.5 text-[#2D2A4A]" />
-            </div>
-          </div>
-
-          <div className="w-full flex items-center justify-between text-[#2D2A4A] mt-1 pr-1">
-            <ChevronDown className="w-3 h-3 text-[#2D2A4A] shrink-0" />
-            <span className="font-extrabold text-[8px] text-center tracking-tight text-[#2D2A4A] truncate max-w-[110px] uppercase">
-              Lucas &amp; Gabriela
-            </span>
-            <div className="w-3"></div>
-          </div>
-
-          <div className="relative w-full h-32 flex items-center justify-center my-1">
-            {CAROUSEL_PHOTOS.map((photo, index) => {
-              const isCurrent = index === activePhotoIdx;
-              const isNext = index === (activePhotoIdx + 1) % CAROUSEL_PHOTOS.length;
-              const isPrev = index === (activePhotoIdx - 1 + CAROUSEL_PHOTOS.length) % CAROUSEL_PHOTOS.length;
-
-              let classes = "absolute scale-75 opacity-0 pointer-events-none z-0";
-              if (isCurrent) {
-                classes = "absolute scale-100 opacity-100 z-35 rotate-6 translate-x-1.5 shadow-md";
-              } else if (isNext) {
-                classes = "absolute scale-95 opacity-90 z-25 -rotate-6 -translate-x-1.5 shadow-sm";
-              } else if (isPrev) {
-                classes = "absolute scale-90 opacity-40 z-10 rotate-12 translate-x-3.5 shadow-xs";
-              }
-
+      <div className="absolute left-[3%] sm:left-[8%] w-[180px] h-[320px] bg-black rounded-[30px] border-[5px] border-neutral-900 shadow-[0_15px_30px_rgba(0,0,0,0.4)] p-1 overflow-hidden z-10 -rotate-6 transition-all hover:rotate-0 hover:scale-[1.02] hover:z-25 duration-500">
+        <div className="w-full h-full rounded-[24px] bg-[#121212] text-white p-2 flex flex-col justify-between text-left relative overflow-hidden select-none pt-7 pb-4 px-2.5">
+          <div className="absolute top-2 left-2 right-2 flex gap-0.5 z-30">
+            {CAROUSEL_PHOTOS.map((_, index) => {
+              const isCompleted = index < activePhotoIdx;
+              const isActive = index === activePhotoIdx;
               return (
-                <div
-                  key={index}
-                  className={`bg-white p-1 rounded-md border border-slate-150 flex flex-col gap-0.5 w-26 transition-all duration-700 ease-in-out ${classes}`}
-                >
-                  <img
-                    src={photo.url}
-                    alt={photo.label}
-                    className="aspect-square w-full object-cover rounded-xs"
+                <div key={index} className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full bg-white transition-all ${isCompleted ? "w-full" : isActive ? "w-full" : "w-0"
+                      }`}
                   />
-                  <span className="text-[5px] font-extrabold text-[#2D2A4A] text-center pt-0.5 leading-none">
-                    {photo.label}
-                  </span>
                 </div>
               );
             })}
           </div>
 
-          <div className="w-full flex items-center justify-between mt-1">
-            <div>
-              <h4 className="text-[10px] font-black tracking-tight text-[#2D2A4A]">
-                Nossa História
-              </h4>
-              <p className="text-[6px] text-[#696684] mt-0.5">juntos desde 12/06/2023</p>
-            </div>
-            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
+          <div className="absolute top-3.5 right-2 z-30 opacity-75">
+            <span className="text-[7px]">🔊</span>
           </div>
 
-          <div className="w-full flex flex-col gap-0.5">
-            <div className="w-full h-0.5 bg-slate-200 rounded-full overflow-hidden">
-              <div className="w-[65%] h-full bg-[#9A75F0] rounded-full"></div>
-            </div>
-            <div className="w-full flex justify-between text-[5px] text-[#696684] font-semibold">
-              <span>2:14</span>
-              <span>-1:16</span>
+          <div className="mt-2 text-center px-1.5 flex flex-col gap-0.5 z-10">
+            <h3 className="text-[9px] font-black tracking-tight text-white leading-none">
+              Meu Porto Seguro
+            </h3>
+            <p className="text-[6.5px] text-white/80 leading-normal max-w-[130px] mx-auto font-medium">
+              No seu abraço é onde encontro toda a paz e a segurança que preciso.
+            </p>
+          </div>
+
+          <div className="relative w-[130px] h-[155px] mx-auto rounded-xl overflow-hidden shadow-xl border border-white/5 my-1 flex items-center justify-center bg-slate-900 shrink-0">
+            <img
+              src={CAROUSEL_PHOTOS[activePhotoIdx].url}
+              alt="Story content"
+              className="w-full h-full object-cover transition-all duration-700 ease-in-out"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white text-black font-bold text-[6px] px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap">
+              Próxima Seção
             </div>
           </div>
 
-          <div className="w-full flex items-center justify-between px-2.5 mt-0.5">
-            <Shuffle className="w-2.5 h-2.5 text-[#696684]" />
-            <SkipBack className="w-2.5 h-2.5 text-[#2D2A4A] fill-current" />
-            <div className="w-6 h-6 rounded-full bg-[#9A75F0] flex items-center justify-center text-white shadow-xs">
-              <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
+          <div className="w-full flex justify-center z-10">
+            <div className="bg-linear-to-r from-rose-500 to-pink-600 px-2 py-0.5 rounded-full flex items-center gap-1 text-white shadow-sm whitespace-nowrap">
+              <Heart className="w-1.5 h-1.5 fill-current text-white animate-ping shrink-0" />
+              <span className="text-[5px] font-black tracking-widest uppercase">DESDE 12/06/2023</span>
             </div>
-            <SkipForward className="w-2.5 h-2.5 text-[#2D2A4A] fill-current" />
-            <Repeat className="w-2.5 h-2.5 text-[#696684]" />
           </div>
 
-          <Card className="w-full p-2 border-none rounded-xl bg-[#9A75F0] text-white shadow-md relative overflow-hidden flex flex-col gap-1 mt-2">
-            <span className="text-[6px] font-extrabold tracking-wider uppercase text-white/70 flex items-center gap-0.5">
-              <MessageCircle className="w-2 h-2" /> Letra da Nossa História
-            </span>
-            <div className="space-y-0.5 mt-0.5">
-              {LYRICS.map((line, idx) => {
-                const isActive = idx === activeLyricIdx;
+          <div className="bg-white/10 backdrop-blur-md border border-white/15 p-1.5 rounded-xl flex items-center justify-between gap-1.5 z-10 shadow-lg text-white mt-0.5">
+            <div className="flex items-center gap-1 min-w-0">
+              <div className="w-5 h-5 rounded-md overflow-hidden shrink-0 border border-white/10">
+                <img
+                  src={CAROUSEL_PHOTOS[activePhotoIdx].url}
+                  alt="Mini Album"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[5.5px] font-extrabold truncate leading-tight">I Don't Want to Miss a Thing</span>
+                <span className="text-[4.5px] text-white/70 truncate mt-0.5">Aerosmith • Tema do Casal</span>
+              </div>
+            </div>
+            <div className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shrink-0">
+              <Pause className="w-2 h-2 text-white fill-current" />
+            </div>
+          </div>
+
+          <div className="w-full flex justify-center mt-0.5 z-10">
+            <div className="bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-full border border-white/5 text-[4.5px] text-white/40 font-mono leading-none">
+              eterno.love — Privado
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute right-[3%] sm:right-[8%] w-[190px] h-[340px] bg-black rounded-[32px] border-[6px] border-neutral-900 shadow-[0_20px_50px_rgba(0,0,0,0.3)] p-1 overflow-hidden z-20 rotate-6 transition-all hover:rotate-0 hover:scale-[1.02] duration-500">
+        <div className="w-full h-full rounded-[24px] bg-[#FAF9FF] p-2.5 flex flex-col gap-3 text-left relative scrollbar-hidden overflow-y-auto text-[#2D2A4A] pb-4">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(244,63,94,0.03),transparent_50%)] pointer-events-none"></div>
+
+          <div className="w-full flex flex-col min-h-[275px] justify-between shrink-0">
+            <div className="w-full flex items-center justify-between text-[6px] font-semibold text-[#2D2A4A]/80 z-20 pb-1">
+              <span>18:33</span>
+              <div className="flex items-center gap-1">
+                <Wifi className="w-1.5 h-1.5 text-[#2D2A4A]" />
+                <Battery className="w-2.5 h-2.5 text-[#2D2A4A]" />
+              </div>
+            </div>
+
+            <div className="w-full flex items-center justify-between text-[#2D2A4A] mt-1 pr-1">
+              <ChevronDown className="w-3 h-3 text-[#2D2A4A] shrink-0" />
+              <span className="font-extrabold text-[8px] text-center tracking-tight text-rose-600 truncate max-w-[110px] uppercase">
+                Lucas &amp; Gabriela
+              </span>
+              <div className="w-3"></div>
+            </div>
+
+            <div className="relative w-full h-28 flex items-center justify-center my-1.5">
+              {CAROUSEL_PHOTOS.map((photo, index) => {
+                const isCurrent = index === activePhotoIdx;
+                const isNext = index === (activePhotoIdx + 1) % CAROUSEL_PHOTOS.length;
+                const isPrev = index === (activePhotoIdx - 1 + CAROUSEL_PHOTOS.length) % CAROUSEL_PHOTOS.length;
+
+                let classes = "absolute scale-75 opacity-0 pointer-events-none z-0";
+                if (isCurrent) {
+                  classes = "absolute scale-100 opacity-100 z-35 rotate-6 translate-x-1 shadow-md";
+                } else if (isNext) {
+                  classes = "absolute scale-95 opacity-90 z-25 -rotate-6 -translate-x-1 shadow-sm";
+                } else if (isPrev) {
+                  classes = "absolute scale-90 opacity-40 z-10 rotate-12 translate-x-3.5 shadow-xs";
+                }
+
                 return (
-                  <p
-                    key={idx}
-                    className={`leading-tight transition-all duration-500 origin-left ${
-                      isActive
-                        ? "text-[8px] font-black text-white scale-102"
-                        : "text-[6px] font-bold text-white/40"
-                    }`}
+                  <div
+                    key={index}
+                    className={`bg-white p-1 rounded-md border border-rose-100 flex flex-col gap-0.5 w-26 transition-all duration-700 ease-in-out ${classes}`}
                   >
-                    {line}
-                  </p>
+                    <img
+                      src={photo.url}
+                      alt={photo.label}
+                      className="aspect-square w-full object-cover rounded-xs"
+                    />
+                    <span className="text-[5px] font-extrabold text-rose-600 text-center pt-0.5 leading-none">
+                      {photo.label}
+                    </span>
+                  </div>
                 );
               })}
             </div>
+
+            <div className="w-full flex items-center justify-between mt-1">
+              <div>
+                <h4 className="text-[9px] font-black tracking-tight text-[#2D2A4A] truncate max-w-[130px]">
+                  I Don't Want to Miss a Thing
+                </h4>
+                <p className="text-[6.5px] font-bold text-rose-600 mt-0.5">
+                  Aerosmith • Tema do Casal
+                </p>
+              </div>
+              <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
+            </div>
+
+            <div className="w-full flex flex-col gap-0.5 py-0.5">
+              <div className="w-full h-0.5 bg-slate-200 rounded-full overflow-visible relative">
+                <div className="w-[65%] h-full bg-rose-500 rounded-full relative">
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 w-2 h-2 bg-white border border-rose-500 rounded-full flex items-center justify-center shadow-xs">
+                    <Heart className="w-1 text-rose-500 fill-rose-500" />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex justify-between text-[4.5px] text-[#696684] font-semibold mt-0.5">
+                <span>Nosso Começo</span>
+                <span>Para Sempre</span>
+              </div>
+            </div>
+
+            <div className="w-full flex items-center justify-between px-2.5 mt-0.5">
+              <Shuffle className="w-2.5 h-2.5 text-[#696684]" />
+              <SkipBack className="w-2.5 h-2.5 text-[#2D2A4A] fill-current" />
+              <div className="w-6 h-6 rounded-full bg-rose-500 flex items-center justify-center text-white shadow-xs">
+                <Heart className="w-3 h-3 fill-current text-white" />
+              </div>
+              <SkipForward className="w-2.5 h-2.5 text-[#2D2A4A] fill-current" />
+              <Repeat className="w-2.5 h-2.5 text-[#696684]" />
+            </div>
+          </div>
+
+          <Card className="w-full p-2 border border-rose-100 rounded-xl bg-linear-to-br from-rose-55/70 to-pink-55/70 text-rose-955 shadow-md relative overflow-hidden flex flex-col gap-1 mt-2 shrink-0">
+            <span className="text-[6px] font-extrabold tracking-wider uppercase text-rose-500 flex items-center gap-0.5">
+              <Mail className="w-2 h-2" /> Carta de Amor
+            </span>
+            <div className="space-y-0.5 mt-0.5">
+              {LOVE_NOTES.map((line, idx) => (
+                <p
+                  key={idx}
+                  className="text-[6px] font-bold text-rose-900 leading-tight"
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
           </Card>
 
-          <div className="w-full text-center mt-3 pt-1 opacity-30 text-[5px]">
+          <div className="w-full text-center mt-auto pt-1 opacity-30 text-[5px]">
             eterno.love
           </div>
         </div>

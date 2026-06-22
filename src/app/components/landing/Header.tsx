@@ -21,11 +21,6 @@ export function Header() {
               Entrar
             </Button>
           </Link>
-          <Link href="#simulador">
-            <Button className="bg-linear-to-r from-[#9A75F0] to-[#8B5CF6] hover:from-[#855AE8] hover:to-[#7C3AED] text-white shadow-md shadow-[#9A75F0]/20 border-none font-bold text-xs px-5 py-2.5 rounded-full transition-all hover:scale-[1.02] active:scale-[0.98]">
-              Criar Homenagem
-            </Button>
-          </Link>
         </div>
       </div>
     </header>

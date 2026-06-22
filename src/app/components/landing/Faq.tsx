@@ -14,30 +14,30 @@ export function Faq() {
 
       <div className="flex flex-col gap-4">
         <Card className="bg-white border-[#E8E6F5] p-5 flex flex-col gap-2 rounded-2xl shadow-[0_4px_20px_rgba(45,42,74,0.02)]">
-          <h4 className="text-sm font-extrabold text-[#2D2A4A]">Como funciona a parceria Glamour Lindóia?</h4>
+          <h4 className="text-sm font-extrabold text-[#2D2A4A]">Como funciona o Eterno.love?</h4>
           <p className="text-xs text-[#696684] leading-relaxed">
-            Ao adquirir suas alianças de prata na Glamour Lindóia, você ganha acesso exclusivo à nossa plataforma para criar sua página personalizada. O acesso é liberado diretamente após a compra e você pode criar a página imediatamente.
+            Você preenche os dados do casal, adiciona suas fotos mais marcantes, escolhe a música tema e escreve uma carta de amor. Geramos uma página premium personalizada com um link exclusivo para você presentear seu parceiro(a).
           </p>
         </Card>
 
         <Card className="bg-white border-[#E8E6F5] p-5 flex flex-col gap-2 rounded-2xl shadow-[0_4px_20px_rgba(45,42,74,0.02)]">
-          <h4 className="text-sm font-extrabold text-[#2D2A4A]">O que acontece após o período incluso acabar?</h4>
+          <h4 className="text-sm font-extrabold text-[#2D2A4A]">Por quanto tempo a página fica ativa?</h4>
           <p className="text-xs text-[#696684] leading-relaxed">
-            Após o término do período incluso no seu pacote de alianças, a página ficará pausada para visitas. Você poderá reativá-la assinando um plano de manutenção acessível ou realizando um pagamento anual para manter no ar.
+            A página fica ativa pelo período do plano escolhido (7, 30 ou 60 dias). Após esse período, você pode renovar para continuar mantendo seu link de amor ativo e acessível.
           </p>
         </Card>
 
         <Card className="bg-white border-[#E8E6F5] p-5 flex flex-col gap-2 rounded-2xl shadow-[0_4px_20px_rgba(45,42,74,0.02)]">
           <h4 className="text-sm font-extrabold text-[#2D2A4A]">Meu parceiro(a) precisa pagar para acessar o site?</h4>
           <p className="text-xs text-[#696684] leading-relaxed">
-            Não! A visualização do site é totalmente gratuita para qualquer pessoa que receber o link. Apenas quem gerencia as fotos e mensagens pelo painel precisa ter a licença ativa.
+            Não! A visualização do site é totalmente gratuita para qualquer pessoa que receber o link. Apenas quem gerencia as fotos e mensagens pelo painel precisa ter o plano ativo.
           </p>
         </Card>
 
         <Card className="bg-white border-[#E8E6F5] p-5 flex flex-col gap-2 rounded-2xl shadow-[0_4px_20px_rgba(45,42,74,0.02)]">
           <h4 className="text-sm font-extrabold text-[#2D2A4A]">Posso alterar o conteúdo depois de publicado?</h4>
           <p className="text-xs text-[#696684] leading-relaxed">
-            Sim! Pelo painel administrativo do Eterno.love, você pode alterar as fotos, o texto, os contadores e os temas visuais quantas vezes quiser. Todas as atualizações aparecem instantaneamente na página publicada.
+            Sim! Pelo painel administrativo do Eterno.love, você pode alterar as fotos, o texto, a música e o tempo do casal quantas vezes quiser. Todas as atualizações aparecem instantaneamente na página publicada.
           </p>
         </Card>
       </div>
