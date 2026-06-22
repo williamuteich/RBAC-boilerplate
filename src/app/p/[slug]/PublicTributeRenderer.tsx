@@ -31,13 +31,13 @@ export function PublicTributeRenderer({
   
   const playerRef = useRef<any>(null);
 
-  const getYouTubeId = (url: string) => {
+  const getYouTubeId = (data.songUrl) ? (() => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
+    const match = data.songUrl.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
-  };
+  })() : null;
 
-  const videoId = getYouTubeId(data.songUrl);
+  const videoId = getYouTubeId;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -316,12 +316,12 @@ export function PublicTributeRenderer({
 
             <div className="w-full flex justify-between items-center mt-1 z-30 px-1">
               <div className="flex flex-col">
-                <h3 className="text-sm font-black tracking-tight text-white uppercase">
-                  {data.letterTitle || "Meu Porto Seguro"}
+                <h3 className="text-base font-black tracking-tight text-white uppercase">
+                  {data.partnerA} &amp; {data.partnerB}
                 </h3>
-                <p className="text-[9px] text-white/80 leading-relaxed max-w-[240px] font-medium mt-1">
-                  {data.letterLines.slice(0, 2).join(" ")}
-                </p>
+                <span className="text-[9px] text-white/50 font-bold uppercase tracking-wider mt-0.5">
+                  Nossa História
+                </span>
               </div>
               <button
                 onClick={() => setIsMuted(!isMuted)}
