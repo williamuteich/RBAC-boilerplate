@@ -9,11 +9,9 @@ export async function GET(
   try {
     const resolvedParams = await params;
     const fileParts = resolvedParams.path;
-    
-    // Caminho absoluto para a pasta de uploads
+
     const filePath = path.join(process.cwd(), "public", "uploads", ...fileParts);
 
-    // Evitar Directory Traversal (segurança)
     const relativePath = path.relative(path.join(process.cwd(), "public", "uploads"), filePath);
     if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
       return new NextResponse("Acesso não autorizado", { status: 403 });
@@ -24,8 +22,7 @@ export async function GET(
     }
 
     const fileBuffer = fs.readFileSync(filePath);
-    
-    // Definir Content-Type correto
+
     const ext = path.extname(filePath).toLowerCase();
     let contentType = "application/octet-stream";
     if (ext === ".png") contentType = "image/png";
