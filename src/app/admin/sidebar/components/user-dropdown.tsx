@@ -46,7 +46,7 @@ export function UserDropdown() {
                 <DropdownMenuSeparator className="bg-slate-100" />
                 <div className="py-1">
                     <DropdownMenuItem
-                        onClick={() => signOut({ callbackUrl: "/" })}
+                        onClick={() => signOut({ callbackUrl: "/login-admin" })}
                         className="gap-3 py-2 cursor-pointer text-slate-600 focus:bg-red-50 focus:text-red-600 rounded-md"
                     >
                         <LogOut className="w-4 h-4" />

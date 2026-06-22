@@ -16,7 +16,7 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-4">
-          <Link href="/login">
+          <Link href="/login-admin">
             <Button variant="ghost" className="text-[#696684] hover:text-[#2D2A4A] hover:bg-[#EFEAFA]/50 text-xs font-semibold rounded-xl">
               Entrar
             </Button>
