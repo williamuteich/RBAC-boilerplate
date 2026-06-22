@@ -1,30 +1,55 @@
-import { getServerSession } from "next-auth";
-import { auth } from "@/src/lib/auth-config";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { LoginSidebar } from "./components/auth/LoginSidebar";
-import { LoginForm } from "./components/auth/LoginForm";
-import { LoginSkeleton } from "./components/auth/LoginSkeleton";
+import { Header } from "./components/landing/Header";
+import { Hero } from "./components/landing/Hero";
+import { LoveSim } from "./components/LoveSim";
+import { Features } from "./components/landing/Features";
+import { Faq } from "./components/landing/Faq";
+import { Footer } from "./components/landing/Footer";
 
+export const metadata = {
+  title: "Eterno.love - Homenageie quem você ama",
+  description: "Crie um espaço online eterno para o seu amor com fotos, retrospectiva e contador de tempo.",
+};
 
-async function LoginContent() {
-  const session = await getServerSession(auth);
-
-  if (session) {
-    redirect("/admin");
-  }
+export default function LandingPage() {
   return (
-    <main className="flex min-h-screen w-full">
-      <LoginSidebar />
-      <LoginForm />
-    </main>
-  );
-}
+    <div className="min-h-screen bg-[#FAF9FF] text-[#2D2A4A] flex flex-col font-sans selection:bg-[#9A75F0] selection:text-white overflow-x-hidden">
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#9A75F0]/5 blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] rounded-full bg-[#9D62F2]/5 blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[10%] left-[10%] w-[45%] h-[45%] rounded-full bg-pink-500/3 blur-[120px] pointer-events-none"></div>
 
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<LoginSkeleton />}>
-      <LoginContent />
-    </Suspense>
+      <Header />
+
+      <main className="flex-1">
+        <Hero />
+
+        <section id="simulador" className="py-12 bg-white/50 border-y border-[#E8E6F5] scroll-mt-20">
+          <div className="max-w-5xl mx-auto px-4">
+            <div className="text-center max-w-xl mx-auto mb-10">
+              <h2 className="text-2xl font-bold tracking-tight text-[#2D2A4A]">
+                Monte sua página agora
+              </h2>
+              <p className="text-xs text-[#696684] mt-2">
+                Experimente alterar os nomes e veja o visual do celular atualizar na hora!
+              </p>
+            </div>
+
+            <Suspense fallback={
+              <div className="w-full h-[500px] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border-2 border-[#9A75F0] border-t-transparent animate-spin"></div>
+              </div>
+            }>
+              <LoveSim />
+            </Suspense>
+          </div>
+        </section>
+
+        <Features />
+
+        <Faq />
+      </main>
+
+      <Footer />
+    </div>
   );
 }
