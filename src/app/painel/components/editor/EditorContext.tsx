@@ -1,30 +1,52 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, ChangeEvent } from "react";
 import { PhotoItem, EditorContextProps } from "@/src/types/love-widgets";
 
 const EditorContext = createContext<EditorContextProps | undefined>(undefined);
 
 export function EditorProvider({ children }: { children: ReactNode }) {
-  const [partnerA, setPartnerA] = useState("Lucas");
-  const [partnerB, setPartnerB] = useState("Gabriela");
-  const [anniversary, setAnniversary] = useState("12/06/2023");
+  const [partnerA, setPartnerA] = useState("");
+  const [partnerB, setPartnerB] = useState("");
+  const [anniversary, setAnniversary] = useState("");
   const [theme, setTheme] = useState<"spotify" | "story">("spotify");
 
-  const [songTitle, setSongTitle] = useState("Perfect");
-  const [songArtist, setSongArtist] = useState("Ed Sheeran");
-  const [songUrl, setSongUrl] = useState("https://open.spotify.com/track/1P52140Bq0b4d4554b732e");
+  const [songTitle, setSongTitle] = useState("");
+  const [songArtist, setSongArtist] = useState("");
+  const [songUrl, setSongUrl] = useState("");
 
-  const [letterTitle, setLetterTitle] = useState("Para Minha Vida,");
-  const [letterBody, setLetterBody] = useState(
-    "Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma. Cada detalhe, cada conversa e cada sorriso ao seu lado me fazem ter a certeza de que quero passar o resto dos meus dias com você."
-  );
+  const [letterTitle, setLetterTitle] = useState("");
+  const [letterBody, setLetterBody] = useState("");
 
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch("/api/painel");
+        if (res.ok) {
+          const data = await res.json();
+          setPartnerA(data.partnerA || "Lucas");
+          setPartnerB(data.partnerB || "Gabriela");
+          setAnniversary(data.anniversary || "12/06/2023");
+          setTheme(data.theme === "story" ? "story" : "spotify");
+          setSongTitle(data.songTitle || "Perfect");
+          setSongArtist(data.songArtist || "Ed Sheeran");
+          setSongUrl(data.songUrl || "https://www.youtube.com/watch?v=yKNxeF4Kxyc");
+          setLetterTitle(data.letterTitle || "Para Minha Vida,");
+          setLetterBody(data.letterBody || "Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma.");
+          setPhotos(Array.isArray(data.photos) ? data.photos : []);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar dados do painel:", err);
+      }
+    }
+    loadData();
+  }, []);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
@@ -53,13 +75,37 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/painel", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          partnerA,
+          partnerB,
+          anniversary,
+          theme,
+          songTitle,
+          songArtist,
+          songUrl,
+          letterTitle,
+          letterBody,
+          photos
+        })
+      });
+
+      if (res.ok) {
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      }
+    } catch (err) {
+      console.error("Erro ao salvar dados do painel:", err);
+    } finally {
       setIsSaving(false);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    }, 1200);
+    }
   };
 
   const slugify = (strA: string, strB: string) => {
@@ -72,7 +118,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     return `${clean(strA)}-e-${clean(strB)}`;
   };
 
-  const pageSlug = slugify(partnerA, partnerB);
+  const pageSlug = slugify(partnerA || "lucas", partnerB || "gabriela");
   const pageUrl = `eterno.love/${pageSlug}`;
 
   return (

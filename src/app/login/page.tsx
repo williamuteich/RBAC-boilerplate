@@ -11,7 +11,7 @@ async function LoginContent() {
     if (session.user.tipo === "ADMINISTRATOR") {
       redirect("/admin");
     } else {
-      redirect("/");
+      redirect("/painel");
     }
   }
 

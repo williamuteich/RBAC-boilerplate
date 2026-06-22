@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 export interface CalendarWidgetProps {
   dateStr: string;
   size?: "sm" | "md";
@@ -36,7 +38,7 @@ export interface EditorContextProps {
   letterBody: string;
   setLetterBody: (val: string) => void;
   photos: PhotoItem[];
-  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
   removePhoto: (id: string) => void;
   updatePhotoLabel: (id: string, newLabel: string) => void;
   isSaving: boolean;

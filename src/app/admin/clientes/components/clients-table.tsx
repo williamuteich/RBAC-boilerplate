@@ -138,7 +138,7 @@ export function ClientsTable({
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onSimulate(client.name)}
+                      onClick={() => onSimulate(client.name, client.email)}
                       className="text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded px-2 cursor-pointer"
                     >
                       Simular

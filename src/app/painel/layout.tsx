@@ -4,33 +4,53 @@ import { redirect } from "next/navigation";
 import { ReactNode, Suspense } from "react";
 import { Sidebar } from "./components/sidebar/Sidebar";
 import { Header } from "./components/header/Header";
+import { cookies } from "next/headers";
+import { ImpersonationBanner } from "./components/ImpersonationBanner";
 
 async function AuthGuard() {
   const session = await getServerSession(auth);
   if (!session) {
     redirect("/login");
   }
+
+  if (session.user.tipo === "ADMINISTRATOR") {
+    const cookieStore = await cookies();
+    const impersonated = cookieStore.get("impersonated_client_email")?.value;
+    if (!impersonated) {
+      redirect("/admin");
+    }
+  }
+
   return null;
 }
 
-export default function PainelLayout({ children }: { children: ReactNode }) {
+export default async function PainelLayout({ children }: { children: ReactNode }) {
+  const session = await getServerSession(auth);
+  const cookieStore = await cookies();
+  const impersonatedEmail = session?.user.tipo === "ADMINISTRATOR" 
+    ? cookieStore.get("impersonated_client_email")?.value || null 
+    : null;
+
   return (
     <>
       <Suspense fallback={null}>
         <AuthGuard />
       </Suspense>
 
-      <div className="flex h-screen bg-[#FAF9FF] overflow-hidden text-slate-900 font-sans">
-        <aside className="w-64 bg-white hidden lg:flex flex-col h-full shrink-0 relative">
-          <Sidebar />
-        </aside>
-        <div className="flex flex-col flex-1 overflow-hidden w-full max-w-full">
-          <Header />
-          <main className="flex-1 overflow-y-auto p-4 md:p-6">
-            <div className="mx-auto w-full">
-              {children}
-            </div>
-          </main>
+      <div className="flex flex-col h-screen bg-[#FAF9FF] overflow-hidden text-slate-900 font-sans">
+        {impersonatedEmail && <ImpersonationBanner email={impersonatedEmail} />}
+        <div className="flex flex-1 overflow-hidden w-full max-w-full">
+          <aside className="w-64 bg-white hidden lg:flex flex-col h-full shrink-0 relative">
+            <Sidebar />
+          </aside>
+          <div className="flex flex-col flex-1 overflow-hidden w-full max-w-full">
+            <Header />
+            <main className="flex-1 overflow-y-auto p-4 md:p-6">
+              <div className="mx-auto w-full">
+                {children}
+              </div>
+            </main>
+          </div>
         </div>
       </div>
     </>

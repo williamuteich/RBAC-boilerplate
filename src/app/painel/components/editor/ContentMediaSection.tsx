@@ -49,7 +49,7 @@ export function ContentMediaSection() {
             </div>
           </div>
           <div className="flex flex-col gap-1.5 mt-4">
-            <label className="text-[10px] text-slate-500">Link da Playlist/Música no Spotify</label>
+            <label className="text-[10px] text-slate-500">Link do Vídeo no YouTube</label>
             <Input
               type="text"
               value={songUrl}

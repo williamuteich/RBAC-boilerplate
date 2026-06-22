@@ -28,12 +28,26 @@ export function ClientesDashboard({
   const [editOpen, setEditOpen] = useState(false);
   const [isSimulating, setIsSimulating] = useState<string | null>(null);
 
-  const handleSimulate = (clientName: string) => {
+  const handleSimulate = (clientName: string, clientEmail: string) => {
     setIsSimulating(clientName);
-    setTimeout(() => {
-      setIsSimulating(null);
-      router.push("/painel");
-    }, 1500);
+    startTransition(async () => {
+      try {
+        const res = await fetch("/api/admin/clientes/simulate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email: clientEmail })
+        });
+        if (res.ok) {
+          router.push("/painel");
+        }
+      } catch (err) {
+        console.error("Erro ao simular cliente:", err);
+      } finally {
+        setIsSimulating(null);
+      }
+    });
   };
 
   const handleSaveEdit = (e: FormEvent<HTMLFormElement>) => {
