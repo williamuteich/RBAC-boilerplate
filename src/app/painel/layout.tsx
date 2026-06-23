@@ -19,7 +19,7 @@ async function ImpersonationBannerContainer() {
   return null;
 }
 
-export default async function PainelLayout({ children }: { children: ReactNode }) {
+async function PainelAuthGuard() {
   const session = await getServerSession(auth);
   if (!session) {
     redirect("/login");
@@ -32,25 +32,35 @@ export default async function PainelLayout({ children }: { children: ReactNode }
       redirect("/admin");
     }
   }
+  return null;
+}
 
+export default function PainelLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-col h-screen bg-[#FAF9FF] overflow-hidden text-slate-900 font-sans">
-      <Suspense fallback={null}>
-        <ImpersonationBannerContainer />
-      </Suspense>
-      <div className="flex flex-1 overflow-hidden w-full max-w-full">
-        <aside className="w-64 bg-white hidden lg:flex flex-col h-full shrink-0 relative">
-          <Sidebar />
-        </aside>
-        <div className="flex flex-col flex-1 overflow-hidden w-full max-w-full">
-          <Header />
-          <main className="flex-1 overflow-y-auto p-4 md:p-6">
-            <div className="mx-auto w-full">
-              {children}
-            </div>
-          </main>
+    <Suspense fallback={
+      <div className="min-h-screen w-full flex items-center justify-center bg-[#FAF9FF]">
+        <div className="w-8 h-8 rounded-full border-2 border-[#9A75F0] border-t-transparent animate-spin"></div>
+      </div>
+    }>
+      <PainelAuthGuard />
+      <div className="flex flex-col h-screen bg-[#FAF9FF] overflow-hidden text-slate-900 font-sans">
+        <Suspense fallback={null}>
+          <ImpersonationBannerContainer />
+        </Suspense>
+        <div className="flex flex-1 overflow-hidden w-full max-w-full">
+          <aside className="w-64 bg-white hidden lg:flex flex-col h-full shrink-0 relative">
+            <Sidebar />
+          </aside>
+          <div className="flex flex-col flex-1 overflow-hidden w-full max-w-full">
+            <Header />
+            <main className="flex-1 overflow-y-auto p-4 md:p-6">
+              <div className="mx-auto w-full">
+                {children}
+              </div>
+            </main>
+          </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   );
 }
