@@ -1,6 +1,6 @@
 "use client";
 
-import { QrCode, Globe, Sparkles, Check, Save, Copy, ExternalLink, X } from "lucide-react";
+import { QrCode, Globe, Check, Save, Copy, ExternalLink, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEditor } from "./EditorContext";
 import { useState } from "react";
@@ -19,8 +19,8 @@ export function PublishSection() {
 
   const [copied, setCopied] = useState(false);
 
-  const absoluteUrl = typeof window !== "undefined" 
-    ? `${window.location.origin}/p/${tributeId}` 
+  const absoluteUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/p/${tributeId}`
     : `https://glamourlindoia.com.br/p/${tributeId}`;
 
   const handleCopyLink = () => {
@@ -31,7 +31,7 @@ export function PublishSection() {
 
   return (
     <div className="bg-white border border-[#E8E6F5] p-6 md:p-8 rounded-[32px] shadow-[0_10px_40px_rgba(45,42,74,0.02)] flex flex-col items-center text-center">
-      
+
       {isSaving && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex flex-col items-center justify-center z-50 animate-in fade-in duration-200">
           <div className="flex flex-col items-center gap-4 p-8 bg-white rounded-3xl shadow-2xl max-w-xs text-center border border-slate-100">
@@ -49,7 +49,7 @@ export function PublishSection() {
       {saveSuccess && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex flex-col items-center justify-center z-50 animate-in fade-in duration-200 px-4">
           <div className="flex flex-col items-center p-8 bg-white rounded-[32px] shadow-2xl w-full max-w-md text-center border border-slate-100 scale-95 animate-in zoom-in-95 duration-200 relative">
-            <button 
+            <button
               onClick={() => setSaveSuccess(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-50 cursor-pointer"
             >
@@ -74,7 +74,7 @@ export function PublishSection() {
                   <span className="text-xs font-bold text-[#2D2A4A] truncate select-all flex-1">
                     {absoluteUrl}
                   </span>
-                  <button 
+                  <button
                     onClick={handleCopyLink}
                     className="p-1.5 hover:bg-slate-50 rounded-lg text-slate-500 hover:text-indigo-600 transition-colors cursor-pointer shrink-0"
                     title="Copiar Link"
@@ -92,9 +92,9 @@ export function PublishSection() {
                   <div>
                     <h5 className="text-xs font-bold text-[#2D2A4A]">Veja como ficou</h5>
                     <p className="text-[10px] text-slate-400">Abra a página em tempo real para visualizar o design final.</p>
-                    <a 
-                      href={`/p/${tributeId}`} 
-                      target="_blank" 
+                    <a
+                      href={`/p/${tributeId}`}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-indigo-600 hover:text-indigo-700 mt-1.5 transition-colors"
                     >
@@ -105,7 +105,7 @@ export function PublishSection() {
               </div>
             </div>
 
-            <Button 
+            <Button
               onClick={() => setSaveSuccess(false)}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-11 text-xs rounded-xl cursor-pointer"
             >
@@ -125,7 +125,7 @@ export function PublishSection() {
               <h4 className="font-extrabold text-[#2D2A4A] text-sm">Falha ao Salvar</h4>
               <p className="text-[10px] text-rose-500 mt-1">{errorMessage}</p>
             </div>
-            <Button 
+            <Button
               onClick={() => setErrorMessage("")}
               className="mt-2 w-full bg-slate-800 hover:bg-slate-900 text-white text-xs h-9 rounded-xl cursor-pointer font-bold"
             >
@@ -169,7 +169,6 @@ export function PublishSection() {
       </Button>
 
       <div className="mt-4 text-[10px] text-slate-400 flex items-center justify-center gap-1.5">
-        <Sparkles className="w-3.5 h-3.5 text-rose-400" />
         <span>O link é ativado e atualizado imediatamente</span>
       </div>
     </div>
