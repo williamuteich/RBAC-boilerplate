@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RentalPro - Gestão de Locadoras de Equipamentos",
-  description: "Sistema completo para gestão de estoque, locações e clientes da sua locadora.",
+  title: "Surpresa de Amor - Homenagem Especial",
+  description: "Uma homenagem personalizada cheia de fotos, música e carinho para quem é especial.",
 };
 
 import { Providers } from "./components/providers";

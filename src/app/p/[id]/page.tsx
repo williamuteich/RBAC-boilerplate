@@ -3,6 +3,34 @@ import { prisma } from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
 import { PublicTributeRenderer } from "./PublicTributeRenderer";
 
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  try {
+    const client = await prisma.saaSClient.findUnique({
+      where: { tributeId: id }
+    });
+
+    if (!client) {
+      return {
+        title: "Surpresa de Amor - Homenagem Especial",
+      };
+    }
+
+    return {
+      title: `Uma Surpresa Especial para ${client.partnerB} ❤️`,
+      description: `Homenagem de amor especial criada por ${client.partnerA} com fotos e música.`,
+    };
+  } catch (e) {
+    return {
+      title: "Surpresa de Amor - Homenagem Especial",
+    };
+  }
+}
+
 export default async function PublicTributePage({
   params
 }: {
