@@ -31,8 +31,8 @@ export function Hero() {
               Página Personalizada Completa
             </h3>
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-2xl font-black text-white">R$ 27</span>
-              <span className="text-sm font-bold text-white">,97</span>
+              <span className="text-2xl font-black text-white">R$ 29</span>
+              <span className="text-sm font-bold text-white">,90</span>
             </div>
             <span className="text-[11px] text-slate-400">
               Pagamento único &bull; Acesso por 1 ano

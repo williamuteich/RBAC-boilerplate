@@ -44,6 +44,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Nenhum arquivo enviado" }, { status: 400 });
     }
 
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "Arquivo muito grande. O limite máximo permitido é 5MB." },
+        { status: 400 }
+      );
+    }
+
     const fileExtension = path.extname(file.name).toLowerCase();
     const mimeType = file.type.toLowerCase();
 

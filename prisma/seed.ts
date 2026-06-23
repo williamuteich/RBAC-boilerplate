@@ -8,6 +8,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const RESOURCE_ACTIONS: Record<string, string[]> = {
+    clientes: ["visualizar", "criar", "editar", "deletar"],
     usuarios: ["visualizar", "criar", "editar", "deletar"],
     cargos: ["visualizar", "criar", "editar", "deletar"],
     relatorios: ["visualizar", "criar", "editar", "deletar"],

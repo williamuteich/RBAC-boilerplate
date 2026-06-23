@@ -10,6 +10,10 @@ export async function GET() {
         return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    if (!hasPermission(session, "cargos", "visualizar")) {
+        return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
+
     try {
         const roles = await prisma.adminRole.findMany({
             orderBy: { name: "asc" }

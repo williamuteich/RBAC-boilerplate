@@ -89,6 +89,16 @@ async function _POST(request: Request) {
 
         const { email, name, roleId } = validated.data;
 
+        if (roleId) {
+            const targetRole = await prisma.adminRole.findUnique({
+                where: { id: Number(roleId) }
+            });
+            const isMasterAdmin = session.user.permissions?.includes("all:all");
+            if (targetRole?.name === "Admin" && !isMasterAdmin) {
+                return NextResponse.json({ error: "Apenas administradores masters podem atribuir o cargo de Admin." }, { status: 403 });
+            }
+        }
+
         const exists = await prisma.administrator.findUnique({
             where: { email },
         });

@@ -36,8 +36,8 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                     resourceName = options.getResourceName ? options.getResourceName(data) : ((data as Record<string, unknown>)?.name as string || (data as Record<string, unknown>)?.email as string);
                 } catch (e) { }
 
-                prisma.logAdmin
-                    .create({
+                try {
+                    await prisma.logAdmin.create({
                         data: {
                             administratorId: adminId,
                             action,
@@ -46,10 +46,10 @@ export function withAudit<Ctx extends AnyContext = AnyContext>(
                             resourceName: resourceName ?? null,
                             url: `/${options.resource}`,
                         },
-                    })
-                    .catch((err) =>
-                        console.error("[Audit] Erro ao salvar log de auditoria:", err)
-                    );
+                    });
+                } catch (err) {
+                    console.error("[Audit] Erro ao salvar log de auditoria:", err);
+                }
             }
         }
 

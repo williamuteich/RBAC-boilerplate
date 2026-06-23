@@ -1,13 +1,16 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { auth } from "@/src/lib/auth-config";
+import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 import { cookies } from "next/headers";
 import { simulateClientSchema } from "@/src/schemas/clientes";
 
 export async function POST(req: Request) {
-  const session = await getServerSession(auth);
-  if (!session || session.user.tipo !== "ADMINISTRATOR") {
+  const session = await checkAdminApi();
+  if (!session) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
+  if (!hasPermission(session, "clientes", "editar")) {
+    return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
   }
 
   try {
@@ -34,9 +37,13 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE() {
-  const session = await getServerSession(auth);
-  if (!session || session.user.tipo !== "ADMINISTRATOR") {
+  const session = await checkAdminApi();
+  if (!session) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
+  if (!hasPermission(session, "clientes", "editar")) {
+    return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
   }
 
   const cookieStore = await cookies();
@@ -44,3 +51,4 @@ export async function DELETE() {
 
   return NextResponse.json({ success: true });
 }
+

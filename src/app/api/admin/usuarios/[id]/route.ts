@@ -82,6 +82,27 @@ async function _PUT(
 
         const { email, name, roleId, active } = validated.data;
 
+        const currentAdminId = Number(session.user.id);
+        const isMasterAdmin = session.user.permissions?.includes("all:all");
+
+        if (id === currentAdminId) {
+            if (roleId && Number(roleId) !== adminToUpdate?.roleId) {
+                return NextResponse.json({ error: "Você não pode alterar seu próprio cargo." }, { status: 400 });
+            }
+            if (active !== undefined && active !== adminToUpdate?.active) {
+                return NextResponse.json({ error: "Você não pode alterar seu próprio status de atividade." }, { status: 400 });
+            }
+        }
+
+        if (roleId && Number(roleId) !== adminToUpdate?.roleId) {
+            const targetRole = await prisma.adminRole.findUnique({
+                where: { id: Number(roleId) }
+            });
+            if (targetRole?.name === "Admin" && !isMasterAdmin) {
+                return NextResponse.json({ error: "Apenas administradores masters podem atribuir o cargo de Admin." }, { status: 403 });
+            }
+        }
+
         const admin = await prisma.administrator.update({
             where: { id },
             data: {

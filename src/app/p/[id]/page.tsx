@@ -56,11 +56,17 @@ async function TributeContent({
 }) {
   const { id } = await params;
 
-  const client = await prisma.saaSClient.findUnique({
-    where: { tributeId: id }
-  });
+  let client;
+  try {
+    client = await prisma.saaSClient.update({
+      where: { tributeId: id },
+      data: { pageViews: { increment: 1 } }
+    });
+  } catch (e) {
+    notFound();
+  }
 
-  if (!client || client.status === "CANCELLED") {
+  if (client.status === "CANCELLED") {
     notFound();
   }
 
