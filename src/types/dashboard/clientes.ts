@@ -11,7 +11,6 @@ export interface SaaSClient {
   lastPaymentValue: number | null;
   lastPaymentDate: Date | string | null;
   expirationDate: Date | string | null;
-  pageViews: number;
   photosCount: number;
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -21,7 +20,6 @@ export interface ClientesStats {
   totalClientes: number;
   mrr: number;
   activePercentage: number;
-  totalPageViews: number;
 }
 
 export interface ClientesResponse {

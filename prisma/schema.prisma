@@ -67,7 +67,6 @@ model SaaSClient {
   lastPaymentValue Float?
   lastPaymentDate  DateTime?
   expirationDate   DateTime?
-  pageViews        Int       @default(0)
   photosCount      Int       @default(0)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt

@@ -1,5 +1,5 @@
 import { 
-  Eye, Heart, ExternalLink, Edit2
+  Heart, ExternalLink, Edit2
 } from "lucide-react";
 import {
   Table,
@@ -87,12 +87,12 @@ export function ClientsTable({
                 </TableCell>
                 <TableCell>
                   <a
-                    href={`/p/${client.id}`}
+                    href={`/p/${client.tributeId}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
                   >
-                    glamourlindoia.com.br/{client.id}
+                    glamourlindoia.com.br/{client.tributeId}
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 </TableCell>
@@ -117,9 +117,6 @@ export function ClientsTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2.5 text-[11px] text-slate-500">
-                    <span className="flex items-center gap-1" title="Visualizações">
-                      <Eye className="w-3.5 h-3.5" /> {client.pageViews}
-                    </span>
                     <span className="flex items-center gap-1" title="Fotos">
                       <Heart className="w-3.5 h-3.5" /> {client.photosCount}
                     </span>

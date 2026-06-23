@@ -36,7 +36,7 @@ export async function GET(request: Request) {
       ]
     };
 
-    const [clients, total, totalCount, activeCount, viewsAgg, activeClientsPayments] = await Promise.all([
+    const [clients, total, totalCount, activeCount, activeClientsPayments] = await Promise.all([
       prisma.saaSClient.findMany({
         where,
         skip: (page - 1) * limit,
@@ -46,15 +46,12 @@ export async function GET(request: Request) {
       prisma.saaSClient.count({ where }),
       prisma.saaSClient.count(),
       prisma.saaSClient.count({ where: { status: "ACTIVE" } }),
-      prisma.saaSClient.aggregate({ _sum: { pageViews: true } }),
       prisma.saaSClient.findMany({
         where: { status: "ACTIVE" },
         select: { plan: true, lastPaymentValue: true }
       })
     ]);
 
-    const totalPageViews = viewsAgg._sum.pageViews || 0;
-    
     let mrr = 0;
     for (const client of activeClientsPayments) {
       const val = client.lastPaymentValue || 0;
@@ -78,8 +75,7 @@ export async function GET(request: Request) {
       stats: {
         totalClientes: totalCount,
         mrr,
-        activePercentage,
-        totalPageViews
+        activePercentage
       }
     });
   } catch (error) {
