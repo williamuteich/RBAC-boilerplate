@@ -59,16 +59,35 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    const romanceMessages = [
+      "Você é o meu mundo",
+      "O melhor lugar é o seu abraço",
+      "Cada momento com você é especial",
+      "Para sempre ao seu lado",
+      "Você me faz sorrir todos os dias",
+      "Meu amor, minha maior felicidade",
+      "Te amo mais a cada dia",
+      "A vida é linda com você",
+      "Você é o meu sonho realizado",
+      "Minha pessoa favorita no mundo",
+      "Com você, tudo fica perfeito",
+      "Amo a nossa história de amor"
+    ];
+
     const newPhotos: PhotoItem[] = [];
     const newPendingFiles = { ...pendingFiles };
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const localUrl = URL.createObjectURL(file);
+      
+      const messageIndex = (photos.length + i) % romanceMessages.length;
+      const defaultLabel = romanceMessages[messageIndex];
+
       const newItem: PhotoItem = {
         id: `temp-${Date.now()}-${i}-${Math.random()}`,
         url: localUrl,
-        label: file.name.split(".")[0] || `Foto ${photos.length + i + 1}`,
+        label: defaultLabel,
       };
       newPhotos.push(newItem);
       newPendingFiles[localUrl] = file;
