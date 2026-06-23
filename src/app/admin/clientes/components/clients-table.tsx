@@ -1,5 +1,5 @@
 import { 
-  Heart, ExternalLink, Edit2
+  ExternalLink, Edit2
 } from "lucide-react";
 import {
   Table,
@@ -65,14 +65,13 @@ export function ClientsTable({
             <TableHead>Status</TableHead>
             <TableHead>Último Pagamento</TableHead>
             <TableHead>Vencimento</TableHead>
-            <TableHead>Métricas</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {clients.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="h-32 text-center text-muted-foreground">
+              <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
                 Nenhum cliente encontrado.
               </TableCell>
             </TableRow>
@@ -114,13 +113,6 @@ export function ClientsTable({
                   }>
                     {formatDate(client.expirationDate)}
                   </span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2.5 text-[11px] text-slate-500">
-                    <span className="flex items-center gap-1" title="Fotos">
-                      <Heart className="w-3.5 h-3.5" /> {client.photosCount}
-                    </span>
-                  </div>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
