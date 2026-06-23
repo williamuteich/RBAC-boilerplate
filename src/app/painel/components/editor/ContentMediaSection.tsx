@@ -22,7 +22,7 @@ export function ContentMediaSection() {
     <div className="bg-white border border-[#E8E6F5] p-6 md:p-8 rounded-[32px] shadow-[0_10px_40px_rgba(45,42,74,0.02)]">
       <h3 className="text-base font-bold text-[#2D2A4A] flex items-center gap-2 mb-6">
         <Music className="w-5 h-5 text-indigo-500" />
-        3. Conteúdo &amp; Mídias
+        Conteúdo &amp; Mídias
       </h3>
 
       <div className="flex flex-col gap-6">

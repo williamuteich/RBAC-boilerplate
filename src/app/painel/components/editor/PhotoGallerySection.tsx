@@ -16,7 +16,7 @@ export function PhotoGallerySection() {
     <div className="bg-white border border-[#E8E6F5] p-6 md:p-8 rounded-[32px] shadow-[0_10px_40px_rgba(45,42,74,0.02)]">
       <h3 className="text-base font-bold text-[#2D2A4A] flex items-center gap-2 mb-1.5">
         <ImageIcon className="w-5 h-5 text-indigo-500" />
-        2. Galeria de Fotos
+        Galeria de Fotos
       </h3>
       <p className="text-xs text-[#696684] mb-6">
         Selecione fotos do seu dispositivo para ilustrar a história de vocês.
