@@ -26,9 +26,22 @@ export function PublicTributeRenderer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
-  const [progress, setProgress] = useState(0);
+
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const [storyProgress, setStoryProgress] = useState(0);
+  const [isStoryPaused, setIsStoryPaused] = useState(false);
 
   const playerRef = useRef<any>(null);
+  const userInteractedRef = useRef(false);
+
+  const formatTime = (seconds: number) => {
+    if (isNaN(seconds) || seconds === null) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
 
   const getYouTubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -39,33 +52,42 @@ export function PublicTributeRenderer({
   const videoId = getYouTubeId(data.songUrl);
 
   useEffect(() => {
+    if (data.theme !== "spotify") return;
     const interval = setInterval(() => {
       setActivePhotoIdx((prev) => (prev + 1) % data.photos.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, [data.photos.length]);
+  }, [data.theme, data.photos.length]);
 
   useEffect(() => {
+    if (!unlocked || data.theme !== "story" || isStoryPaused) return;
+
+    const interval = setInterval(() => {
+      setStoryProgress((prev) => {
+        if (prev >= 100) {
+          setActivePhotoIdx((idx) => (idx + 1) % data.photos.length);
+          return 0;
+        }
+        return prev + 1;
+      });
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, [unlocked, isStoryPaused, data.theme, data.photos.length]);
+
+  useEffect(() => {
+    if (!videoId) return;
+
     const win = window as any;
-    if (!win.YT) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    }
+    let checkInterval: NodeJS.Timeout;
 
-    win.onYouTubeIframeAPIReady = () => {
-      initPlayer();
-    };
+    function createPlayer() {
+      const iframeEl = document.getElementById("youtube-player");
+      if (!iframeEl) return false;
+      if (!win.YT || !win.YT.Player) return false;
 
-    if (win.YT && win.YT.Player) {
-      initPlayer();
-    }
-
-    function initPlayer() {
-      if (playerRef.current) return;
       try {
-        playerRef.current = new win.YT.Player("youtube-player", {
+        new win.YT.Player("youtube-player", {
           events: {
             onStateChange: (event: any) => {
               if (event.data === 1) {
@@ -75,70 +97,216 @@ export function PublicTributeRenderer({
               }
             },
             onReady: (event: any) => {
+              playerRef.current = event.target;
+
               if (isMuted) {
                 event.target.mute();
               } else {
                 event.target.unMute();
               }
-              if (isPlaying) {
+
+              if (userInteractedRef.current) {
                 event.target.playVideo();
               }
             }
           }
         });
+        return true;
       } catch (err) {
-        console.error(err);
+        console.error("Erro ao inicializar o player do YT:", err);
+        return false;
       }
     }
+
+    const tryInit = () => {
+      if (playerRef.current) return;
+      if (createPlayer()) {
+        clearInterval(checkInterval);
+      }
+    };
+
+    const previousAPIReady = win.onYouTubeIframeAPIReady;
+    win.onYouTubeIframeAPIReady = () => {
+      if (previousAPIReady) previousAPIReady();
+      tryInit();
+    };
+
+    if (!win.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+
+    checkInterval = setInterval(tryInit, 100);
+
+    return () => {
+      clearInterval(checkInterval);
+    };
   }, [videoId]);
-
-  useEffect(() => {
-    const player = playerRef.current;
-    if (!player || typeof player.playVideo !== "function") return;
-    try {
-      if (isPlaying) {
-        player.playVideo();
-      } else {
-        player.pauseVideo();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    const player = playerRef.current;
-    if (!player || typeof player.mute !== "function") return;
-    try {
-      if (isMuted) {
-        player.mute();
-      } else {
-        player.unMute();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isMuted]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying) {
       interval = setInterval(() => {
         const player = playerRef.current;
-        if (player && typeof player.getCurrentTime === "function") {
-          const current = player.getCurrentTime();
-          const dur = player.getDuration() || 240;
-          setProgress((current / dur) * 100);
+        if (player) {
+          try {
+            if (typeof player.getCurrentTime === "function") {
+              setCurrentTime(player.getCurrentTime());
+            }
+            if (typeof player.getDuration === "function") {
+              setDuration(player.getDuration());
+            }
+          } catch (e) {
+            console.error("Erro ao ler tempo/duração do player do YT:", e);
+          }
         }
       }, 500);
     }
     return () => clearInterval(interval);
   }, [isPlaying]);
 
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    try {
+      if (isPlaying) {
+        if (typeof player.playVideo === "function") player.playVideo();
+      } else {
+        if (typeof player.pauseVideo === "function") player.pauseVideo();
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar estado de reprodução (play/pause) no player:", err);
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    try {
+      if (isMuted) {
+        if (typeof player.mute === "function") player.mute();
+      } else {
+        if (typeof player.unMute === "function") player.unMute();
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar estado de mute no player:", err);
+    }
+  }, [isMuted]);
+
   const handleUnlock = () => {
     setUnlocked(true);
     setIsPlaying(true);
+    userInteractedRef.current = true;
+
+    // Tenta dar play na hora em resposta direta ao clique (gesto síncrono do usuário)
+    const player = playerRef.current;
+    if (player && typeof player.playVideo === "function") {
+      try {
+        if (isMuted) {
+          player.mute();
+        } else {
+          player.unMute();
+        }
+        player.playVideo();
+      } catch (err) {
+        console.error("Erro no play imediato ao desbloquear:", err);
+      }
+    }
   };
+
+  const togglePlay = () => {
+    const player = playerRef.current;
+    if (!player) {
+      setIsPlaying(!isPlaying);
+      return;
+    }
+    try {
+      if (isPlaying) {
+        if (typeof player.pauseVideo === "function") player.pauseVideo();
+        setIsPlaying(false);
+      } else {
+        if (typeof player.playVideo === "function") player.playVideo();
+        setIsPlaying(true);
+      }
+    } catch (err) {
+      console.error("Erro ao alternar reprodução:", err);
+    }
+  };
+
+  const toggleMute = () => {
+    const player = playerRef.current;
+    if (!player) {
+      setIsMuted(!isMuted);
+      return;
+    }
+    try {
+      if (isMuted) {
+        if (typeof player.unMute === "function") player.unMute();
+        setIsMuted(false);
+      } else {
+        if (typeof player.mute === "function") player.mute();
+        setIsMuted(true);
+      }
+    } catch (err) {
+      console.error("Erro ao alternar mute:", err);
+    }
+  };
+
+  const triggerPlayFallback = () => {
+    const player = playerRef.current;
+    if (player && typeof player.playVideo === "function") {
+      const state = typeof player.getPlayerState === "function" ? player.getPlayerState() : -1;
+      if (state !== 1) { // se não estiver tocando (1 = PLAYING)
+        try {
+          if (isMuted) {
+            player.mute();
+          } else {
+            player.unMute();
+          }
+          player.playVideo();
+          setIsPlaying(true);
+        } catch (err) {
+          console.error("Erro no play fallback:", err);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!unlocked || !videoId) return;
+
+    const handleFallbackPlay = () => {
+      triggerPlayFallback();
+    };
+
+    window.addEventListener("click", handleFallbackPlay, { passive: true });
+    window.addEventListener("touchstart", handleFallbackPlay, { passive: true });
+
+    return () => {
+      window.removeEventListener("click", handleFallbackPlay);
+      window.removeEventListener("touchstart", handleFallbackPlay);
+    };
+  }, [unlocked, videoId, isMuted]);
+
+  const handlePrevStory = () => {
+    triggerPlayFallback();
+    setStoryProgress(0);
+    setActivePhotoIdx((prev) => (prev > 0 ? prev - 1 : data.photos.length - 1));
+  };
+
+  const handleNextStory = () => {
+    triggerPlayFallback();
+    setStoryProgress(0);
+    setActivePhotoIdx((prev) => (prev + 1) % data.photos.length);
+  };
+
+  const handleStoryTouchStart = () => setIsStoryPaused(true);
+  const handleStoryTouchEnd = () => setIsStoryPaused(false);
+  const handleStoryMouseDown = () => setIsStoryPaused(true);
+  const handleStoryMouseUp = () => setIsStoryPaused(false);
+  const handleStoryMouseLeave = () => setIsStoryPaused(false);
 
   return (
     <div className="min-h-screen w-full flex justify-center items-start font-sans relative overflow-x-hidden select-none bg-[#FAF9FF]">
@@ -186,7 +354,7 @@ export function PublicTributeRenderer({
                 {data.partnerA} &amp; {data.partnerB}
               </span>
               <button
-                onClick={() => setIsMuted(!isMuted)}
+                onClick={toggleMute}
                 className="p-1 hover:bg-slate-100 rounded-lg text-[#2D2A4A] shrink-0 transition-colors"
               >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -228,17 +396,17 @@ export function PublicTributeRenderer({
             <div className="w-full flex flex-col gap-1 relative py-1 z-10">
               <div className="w-full h-1 bg-slate-200 rounded-full overflow-visible relative">
                 <div
-                  className="h-full bg-rose-500 rounded-full relative transition-all duration-1000"
-                  style={{ width: `${progress}%` }}
+                  className="h-full bg-rose-500 rounded-full relative transition-all duration-500 linear"
+                  style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
                 >
                   <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1.5 w-3 h-3 bg-white border-2 border-rose-500 rounded-full flex items-center justify-center shadow-md">
                     <Heart className="w-1.5 h-1.5 text-rose-500 fill-rose-500" />
                   </div>
                 </div>
               </div>
-              <div className="w-full flex justify-between text-[7px] text-[#696684] font-semibold mt-1">
-                <span>Nosso Começo</span>
-                <span>Para Sempre</span>
+              <div className="w-full flex justify-between text-[9px] text-[#696684] font-semibold mt-1">
+                <span>{formatTime(currentTime)}</span>
+                <span>{formatTime(duration || 180)}</span>
               </div>
             </div>
 
@@ -246,10 +414,10 @@ export function PublicTributeRenderer({
               <Shuffle className="w-3.5 h-3.5 text-[#696684]" />
               <SkipBack className="w-4 h-4 text-[#2D2A4A] fill-current" />
               <button
-                onClick={() => setIsPlaying(!isPlaying)}
+                onClick={togglePlay}
                 className={`cursor-pointer w-10 h-10 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center text-white shadow-md shadow-rose-500/20 active:scale-95 transition-all ${isPlaying ? "animate-pulse" : ""}`}
               >
-                <Heart className="w-4.5 h-4.5 fill-current text-white" />
+                {isPlaying ? <Pause className="w-4.5 h-4.5 text-white fill-current" /> : <Heart className="w-4.5 h-4.5 fill-current text-white" />}
               </button>
               <SkipForward className="w-4 h-4 text-[#2D2A4A] fill-current" />
               <Repeat className="w-3.5 h-3.5 text-[#696684]" />
@@ -277,8 +445,10 @@ export function PublicTributeRenderer({
                 return (
                   <div key={index} className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-white transition-all ${isCompleted ? "w-full" : isActive ? "w-full" : "w-0"
-                        }`}
+                      className="h-full bg-white transition-all duration-75"
+                      style={{
+                        width: isCompleted ? "100%" : isActive ? `${storyProgress}%` : "0%"
+                      }}
                     />
                   </div>
                 );
@@ -295,7 +465,7 @@ export function PublicTributeRenderer({
                 </span>
               </div>
               <button
-                onClick={() => setIsMuted(!isMuted)}
+                onClick={toggleMute}
                 className="p-1 hover:bg-white/10 rounded-full text-white transition-colors"
               >
                 {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -303,12 +473,43 @@ export function PublicTributeRenderer({
             </div>
 
             <div className="w-full aspect-4/5 max-h-[400px] relative overflow-hidden bg-neutral-950 rounded-2xl border border-white/5 my-1 z-10 flex items-center justify-center">
-              <img
-                src={data.photos[activePhotoIdx]?.url}
-                alt="Story content"
-                className="w-full h-full object-contain transition-all duration-700 ease-in-out"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
+              {data.photos.map((photo, index) => {
+                const isActive = index === activePhotoIdx;
+                return (
+                  <img
+                    key={photo.id}
+                    src={photo.url}
+                    alt={photo.label || "Story content"}
+                    className={`absolute inset-0 w-full h-full object-contain transition-all duration-700 ease-in-out ${isActive ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-95"
+                      }`}
+                  />
+                );
+              })}
+              <div className="absolute inset-0 bg-linear-to-t from-black/25 via-transparent to-transparent pointer-events-none z-15"></div>
+
+              <div
+                className="absolute inset-0 z-20 flex"
+                onTouchStart={handleStoryTouchStart}
+                onTouchEnd={handleStoryTouchEnd}
+                onMouseDown={handleStoryMouseDown}
+                onMouseUp={handleStoryMouseUp}
+                onMouseLeave={handleStoryMouseLeave}
+              >
+                <div
+                  className="w-[35%] h-full cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrevStory();
+                  }}
+                />
+                <div
+                  className="w-[65%] h-full cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNextStory();
+                  }}
+                />
+              </div>
             </div>
 
             <div className="bg-white/10 border border-white/15 p-2.5 rounded-2xl flex items-center justify-between gap-2.5 z-10 shadow-lg text-white">
@@ -326,7 +527,7 @@ export function PublicTributeRenderer({
                 </div>
               </div>
               <button
-                onClick={() => setIsPlaying(!isPlaying)}
+                onClick={togglePlay}
                 className="cursor-pointer w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center border border-white/15 shrink-0 transition-colors"
               >
                 {isPlaying ? <Pause className="w-3.5 h-3.5 text-white fill-current" /> : <Play className="w-3.5 h-3.5 text-white fill-current translate-x-0.5" />}
