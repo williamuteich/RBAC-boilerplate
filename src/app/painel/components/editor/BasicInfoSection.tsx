@@ -60,10 +60,13 @@ export function BasicInfoSection() {
               type="text"
               value={anniversary}
               onChange={(e) => setAnniversary(maskDate(e.target.value))}
-              placeholder="DD/MM/AAAA"
+              placeholder="DD/MM/AAAA HH:MM"
               className="pl-10 rounded-xl border-[#E8E6F5] bg-white text-[#2D2A4A] focus-visible:ring-[#9A75F0] text-xs py-5"
             />
           </div>
+          <span className="text-[9px] text-[#8C89A0] font-medium leading-none mt-0.5">
+            Opcional: adicione as horas para um contador preciso (ex: 12/06/2023 18:30)
+          </span>
         </div>
 
         <div className="flex flex-col gap-1.5">

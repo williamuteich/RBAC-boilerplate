@@ -2,7 +2,9 @@ export function maskDate(value: string): string {
   const clean = value.replace(/\D/g, "");
   if (clean.length <= 2) return clean;
   if (clean.length <= 4) return `${clean.slice(0, 2)}/${clean.slice(2)}`;
-  return `${clean.slice(0, 2)}/${clean.slice(2, 4)}/${clean.slice(4, 8)}`;
+  if (clean.length <= 8) return `${clean.slice(0, 2)}/${clean.slice(2, 4)}/${clean.slice(4)}`;
+  if (clean.length <= 10) return `${clean.slice(0, 2)}/${clean.slice(2, 4)}/${clean.slice(4, 8)} ${clean.slice(8)}`;
+  return `${clean.slice(0, 2)}/${clean.slice(2, 4)}/${clean.slice(4, 8)} ${clean.slice(8, 10)}:${clean.slice(10, 12)}`;
 }
 
 export function maskCurrency(value: string | number): string {

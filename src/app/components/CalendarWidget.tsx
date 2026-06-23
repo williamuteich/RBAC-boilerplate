@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Heart, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { CalendarWidgetProps } from "@/src/types/love-widgets";
@@ -41,6 +42,57 @@ export function CalendarWidget({ dateStr, size = "md", dark = false }: CalendarW
   const monthName = MONTH_NAMES[month - 1] || "Junho";
   const days = getCalendarDays(month, year);
   const isSm = size === "sm";
+
+  const [timeElapsed, setTimeElapsed] = useState("");
+
+  useEffect(() => {
+    const parseDateTime = (str: string) => {
+      const parts = str.trim().split(" ");
+      const dateParts = parts[0].split("/");
+      let d = 12, m = 6, y = 2023;
+      let hr = 0, min = 0;
+
+      if (dateParts.length === 3) {
+        d = parseInt(dateParts[0], 10) || 12;
+        m = parseInt(dateParts[1], 10) || 6;
+        y = parseInt(dateParts[2], 10) || 2023;
+      }
+      if (parts[1]) {
+        const timeParts = parts[1].split(":");
+        hr = parseInt(timeParts[0], 10) || 0;
+        min = parseInt(timeParts[1], 10) || 0;
+      }
+      return new Date(y, m - 1, d, hr, min);
+    };
+
+    const startDate = parseDateTime(dateStr);
+
+    const updateTimer = () => {
+      const now = new Date();
+      const diffMs = now.getTime() - startDate.getTime();
+      if (diffMs <= 0) {
+        setTimeElapsed("Em breve!");
+        return;
+      }
+
+      const totalSeconds = Math.floor(diffMs / 1000);
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const totalHours = Math.floor(totalMinutes / 60);
+      const daysCount = Math.floor(totalHours / 24);
+
+      const hours = totalHours % 24;
+      const minutes = totalMinutes % 60;
+      const seconds = totalSeconds % 60;
+
+      const pad = (n: number) => String(n).padStart(2, "0");
+
+      setTimeElapsed(`${daysCount}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [dateStr]);
 
   return (
     <Card className={`w-full border shadow-xs relative overflow-hidden flex flex-col transition-all hover:scale-[1.01] shrink-0 ${dark
@@ -90,9 +142,13 @@ export function CalendarWidget({ dateStr, size = "md", dark = false }: CalendarW
         })}
       </div>
 
-      <div className={`text-center font-semibold italic pt-2.5 border-t ${dark ? "border-white/5 text-rose-400" : "border-rose-100/60 text-rose-500"
-        } ${isSm ? "text-[7.5px]" : "text-[10px]"}`}>
-        ✨ quando tudo começou...
+      <div className={`text-center pt-2.5 border-t flex flex-col gap-0.5 items-center justify-center ${dark ? "border-white/5" : "border-rose-100/60"}`}>
+        <span className={`font-mono font-black tracking-wide ${dark ? "text-rose-400" : "text-rose-600"} ${isSm ? "text-[8.5px]" : "text-xs"}`}>
+          {timeElapsed || "Calculando tempo..."}
+        </span>
+        <span className={`font-semibold italic ${dark ? "text-white/40" : "text-slate-400"} ${isSm ? "text-[6.5px]" : "text-[9px]"}`}>
+          quando tudo começou...
+        </span>
       </div>
     </Card>
   );
