@@ -1,4 +1,4 @@
-import { MessageSquare, Mail, PhoneCall } from "lucide-react";
+import { MessageSquare, Mail } from "lucide-react";
 
 export default function SuportePage() {
   return (
@@ -18,32 +18,19 @@ export default function SuportePage() {
 
         <div className="flex flex-col gap-4 text-xs text-[#696684] leading-relaxed">
           <p>
-            Caso tenha qualquer dúvida, sugestão ou dificuldade para editar a sua página de homenagem, entre em contato diretamente conosco através de um dos nossos canais de atendimento oficial:
+            Caso tenha qualquer dúvida, sugestão ou dificuldade para editar a sua página de homenagem, entre em contato diretamente conosco através do nosso canal de atendimento oficial por e-mail:
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+          <div className="w-full mt-2">
             <a 
               href="mailto:contato@glamourlindoia.com.br"
-              className="p-4 rounded-2xl border border-[#E8E6F5] bg-[#FAF9FF] flex flex-col gap-2 hover:border-[#9A75F0] transition-colors cursor-pointer group"
+              className="p-5 rounded-2xl border border-[#E8E6F5] bg-[#FAF9FF] flex flex-col gap-2 hover:border-[#9A75F0] transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2 text-slate-800 font-bold">
                 <Mail className="w-4 h-4 text-[#9A75F0]" />
-                <span>E-mail</span>
+                <span>E-mail de Contato</span>
               </div>
               <span className="font-semibold text-[#9A75F0] group-hover:underline">contato@glamourlindoia.com.br</span>
-            </a>
-
-            <a 
-              href="https://wa.me/5511999999999"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 rounded-2xl border border-[#E8E6F5] bg-[#FAF9FF] flex flex-col gap-2 hover:border-[#9A75F0] transition-colors cursor-pointer group"
-            >
-              <div className="flex items-center gap-2 text-slate-800 font-bold">
-                <PhoneCall className="w-4 h-4 text-[#9A75F0]" />
-                <span>WhatsApp</span>
-              </div>
-              <span className="font-semibold text-[#9A75F0] group-hover:underline">(11) 99999-9999</span>
             </a>
           </div>
 

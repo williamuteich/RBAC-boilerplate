@@ -5,10 +5,27 @@ import { Heart, Edit3, ExternalLink, LogOut, MessageSquare } from "lucide-react"
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState, useEffect } from "react";
 
 export function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [tributeId, setTributeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetch("/api/painel");
+        if (res.ok) {
+          const data = await res.json();
+          setTributeId(data.tributeId || null);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    loadData();
+  }, []);
 
   if (!session) return null;
 
@@ -25,9 +42,10 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     },
     {
       title: "Ver Página",
-      href: "/",
+      href: tributeId ? `/p/${tributeId}` : "#",
       icon: ExternalLink,
       external: true,
+      disabled: !tributeId,
     },
     {
       title: "Suporte",
@@ -56,6 +74,18 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
         {navigation.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
+
+          if (item.disabled) {
+            return (
+              <div
+                key={item.title}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 cursor-not-allowed select-none opacity-50"
+              >
+                <Icon className="w-4.5 h-4.5 shrink-0 text-slate-300" />
+                <span className="flex-1">{item.title}</span>
+              </div>
+            );
+          }
 
           return (
             <div key={item.title} onClick={onClose}>
