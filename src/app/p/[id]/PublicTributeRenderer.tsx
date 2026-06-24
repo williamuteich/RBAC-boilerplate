@@ -144,7 +144,7 @@ export function PublicTributeRenderer({
 
     return {
       style: baseStyle,
-      className: "absolute inset-0 w-full h-full object-cover"
+      className: `absolute inset-0 w-full h-full object-cover ${isActive ? "animate-ken-burns" : ""}`
     };
   };
 

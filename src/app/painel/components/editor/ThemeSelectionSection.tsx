@@ -51,7 +51,7 @@ export function ThemeSelectionSection() {
         opacity: idx === 0 ? 1 : 0,
         zIndex: idx === 0 ? 10 : 0,
       },
-      className: "absolute inset-0 w-full h-full object-cover"
+      className: `absolute inset-0 w-full h-full object-cover ${idx === 0 ? "animate-ken-burns" : ""}`
     }),
     backgroundHearts: [
       { id: 1, left: 10, size: 12, delay: 0, duration: 8 },

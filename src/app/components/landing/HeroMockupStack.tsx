@@ -177,11 +177,19 @@ export function HeroMockupStack() {
                       key={index}
                       src={photo.url}
                       alt="Couple Moment"
-                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${isActive ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-95"
+                      className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${isActive ? "opacity-100 z-10 animate-ken-burns" : "opacity-0 z-0 scale-95"
                         }`}
                     />
                   );
                 })}
+                {CAROUSEL_PHOTOS[activePhotoIdx]?.label && (
+                  <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-40 max-w-[90%] bg-neutral-950/80 backdrop-blur-md border border-white/10 px-2 py-0.5 rounded-full shadow-lg text-center pointer-events-none animate-in fade-in flex items-center justify-center gap-1">
+                    <Heart className="w-2 h-2 text-rose-500 fill-rose-500 animate-pulse shrink-0" />
+                    <span className="text-[6.5px] font-bold text-white tracking-wide whitespace-nowrap">
+                      {CAROUSEL_PHOTOS[activePhotoIdx].label}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="w-full flex items-center justify-between mt-1">

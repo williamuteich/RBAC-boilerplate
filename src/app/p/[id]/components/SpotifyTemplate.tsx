@@ -101,8 +101,9 @@ export default function SpotifyTemplate({
         </div>
 
         {data.photos[activePhotoIdx]?.label && (
-          <div className="absolute bottom-11 left-1/2 -translate-x-1/2 z-40 bg-white/80 backdrop-blur-md border border-rose-100/50 px-4 py-2 rounded-2xl shadow-xl shadow-rose-900/10 text-center pointer-events-none animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <span className="text-[10px] font-extrabold text-rose-600 tracking-wide">
+          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-40 max-w-[90%] bg-neutral-950/80 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full shadow-lg text-center pointer-events-none animate-in fade-in slide-in-from-bottom-2 duration-300 flex items-center justify-center gap-1.5 whitespace-nowrap">
+            <Heart className="w-2.5 h-2.5 text-rose-500 fill-rose-500 animate-pulse shrink-0" />
+            <span className="text-[10px] font-bold text-white tracking-wide">
               {data.photos[activePhotoIdx].label}
             </span>
           </div>
