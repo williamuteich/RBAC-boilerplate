@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { LayoutGrid, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useEditor } from "./EditorContext";
-import SpotifyTemplate from "@/src/app/p/[id]/components/SpotifyTemplate";
-import StoryTemplate from "@/src/app/p/[id]/components/StoryTemplate";
+import SpotifyTemplate from "@/src/app/p/[id]/components/spotify/SpotifyTemplate";
+import StoryTemplate from "@/src/app/p/[id]/components/story/StoryTemplate";
 
 export function ThemeSelectionSection() {
   const { theme, setTheme } = useEditor();
