@@ -33,4 +33,6 @@ export interface TemplateProps {
   handleStoryMouseUp: () => void;
   handleStoryMouseLeave: () => void;
   isStoryPaused: boolean;
+  toggleQrCode?: () => void;
 }
+

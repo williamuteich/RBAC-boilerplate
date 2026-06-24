@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Volume2, VolumeX, Pause, Play } from "lucide-react";
+import { Heart, Volume2, VolumeX, Pause, Play, QrCode } from "lucide-react";
 import { CalendarWidget } from "@/src/app/components/CalendarWidget";
 import { LoveLetterWidget } from "@/src/app/components/LoveLetterWidget";
 import { TemplateProps } from "./types";
@@ -25,9 +25,11 @@ export default function StoryTemplate({
   handleStoryMouseUp,
   handleStoryMouseLeave,
   isStoryPaused,
+  toggleQrCode,
 }: TemplateProps) {
   return (
     <div className="w-full min-h-screen bg-[#121212] text-white flex flex-col px-4 pt-4 pb-12 gap-4 relative animate-in fade-in duration-500">
+
 
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-20">
         <img
@@ -106,12 +108,22 @@ export default function StoryTemplate({
             </span>
           </div>
         </div>
-        <button
-          onClick={toggleMute}
-          className="p-1.5 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/5 cursor-pointer"
-        >
-          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        </button>
+        <div className="flex items-center gap-1.5">
+          {toggleQrCode && (
+            <button
+              onClick={toggleQrCode}
+              className="p-1.5 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/5 cursor-pointer"
+            >
+              <QrCode className="w-4 h-4" />
+            </button>
+          )}
+          <button
+            onClick={toggleMute}
+            className="p-1.5 bg-white/5 hover:bg-white/10 rounded-full text-white transition-colors border border-white/5 cursor-pointer"
+          >
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
 
       <div className="w-full aspect-4/5 max-h-[400px] relative z-10 flex items-center justify-center px-4 pt-2 pb-10 my-1">

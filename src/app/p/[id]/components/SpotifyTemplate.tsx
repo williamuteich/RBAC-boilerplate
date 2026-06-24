@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, ChevronDown, Volume2, VolumeX, Shuffle, SkipBack, Pause, SkipForward, Repeat } from "lucide-react";
+import { Heart, QrCode, Volume2, VolumeX, Shuffle, SkipBack, Pause, SkipForward, Repeat } from "lucide-react";
 import { CalendarWidget } from "@/src/app/components/CalendarWidget";
 import { LoveLetterWidget } from "@/src/app/components/LoveLetterWidget";
 import { TemplateProps } from "./types";
@@ -19,6 +19,7 @@ export default function SpotifyTemplate({
   backgroundHearts,
   reactions,
   triggerReaction,
+  toggleQrCode,
 }: TemplateProps) {
   return (
     <div className="w-full min-h-screen bg-[#FAF9FF] text-[#2D2A4A] relative flex flex-col px-4 pt-4 pb-12 gap-5 animate-in fade-in duration-500">
@@ -58,7 +59,16 @@ export default function SpotifyTemplate({
       </div>
 
       <div className="w-full flex items-center justify-between text-[#2D2A4A] z-10 mt-1">
-        <ChevronDown className="w-5 h-5 text-[#2D2A4A] shrink-0" />
+        {toggleQrCode ? (
+          <button
+            onClick={toggleQrCode}
+            className="p-1 hover:bg-slate-100 rounded-lg text-[#2D2A4A] shrink-0 transition-colors cursor-pointer"
+          >
+            <QrCode className="w-5 h-5 text-[#2D2A4A]" />
+          </button>
+        ) : (
+          <QrCode className="w-5 h-5 text-[#2D2A4A] shrink-0 opacity-40" />
+        )}
         <span className="font-extrabold text-[10px] text-center tracking-tight text-rose-600 truncate max-w-[200px] uppercase">
           {data.partnerA} &amp; {data.partnerB}
         </span>
@@ -69,6 +79,7 @@ export default function SpotifyTemplate({
           {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
         </button>
       </div>
+
 
       <div className="w-full aspect-square max-h-[360px] relative z-10 flex items-center justify-center px-4 pt-2 pb-8">
         <div

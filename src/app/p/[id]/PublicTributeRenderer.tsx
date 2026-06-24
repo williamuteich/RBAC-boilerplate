@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import dynamic from "next/dynamic";
-import { Heart } from "lucide-react";
+import { Heart, Copy, X, QrCode, Download } from "lucide-react";
 import { PhotoItem } from "@/src/types/love-widgets";
 
 const SpotifyTemplate = dynamic(() => import("./components/SpotifyTemplate"), { ssr: false });
@@ -29,6 +29,43 @@ export function PublicTributeRenderer({
   const [isMuted, setIsMuted] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [origin, setOrigin] = useState("");
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setShareUrl(window.location.href);
+    }
+  }, []);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownloadQrCode = async () => {
+    try {
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(shareUrl)}`;
+      const response = await fetch(qrUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "homenagem-qrcode.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      window.open(`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(shareUrl)}`, "_blank");
+    }
+  };
+
+  const toggleQrCode = () => {
+    setShowQrModal((prev) => !prev);
+  };
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -563,6 +600,7 @@ export function PublicTributeRenderer({
             handleStoryMouseUp={handleStoryMouseUp}
             handleStoryMouseLeave={handleStoryMouseLeave}
             isStoryPaused={isStoryPaused}
+            toggleQrCode={toggleQrCode}
           />
         ) : (
           <StoryTemplate
@@ -588,9 +626,66 @@ export function PublicTributeRenderer({
             handleStoryMouseUp={handleStoryMouseUp}
             handleStoryMouseLeave={handleStoryMouseLeave}
             isStoryPaused={isStoryPaused}
+            toggleQrCode={toggleQrCode}
           />
         )}
       </div>
+
+      {showQrModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-xs flex flex-col items-center justify-center z-50 p-6 text-center animate-in fade-in duration-200">
+          <div className="flex flex-col items-center p-6 bg-white rounded-3xl shadow-2xl w-full max-w-xs text-center border border-slate-100 scale-95 animate-in zoom-in-95 duration-200 relative">
+            <button
+              onClick={() => setShowQrModal(false)}
+              className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-50 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <h4 className="font-extrabold text-[#2D2A4A] text-sm mb-4">Compartilhar Homenagem</h4>
+
+            <div className="w-32 h-32 bg-white border border-[#E8E6F5] rounded-xl flex items-center justify-center p-1 relative overflow-hidden shadow-xs mb-2">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(shareUrl)}`}
+                alt="QR Code"
+                className="w-full h-full object-contain rounded-lg select-none"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleDownloadQrCode}
+              className="cursor-pointer flex items-center justify-center gap-1 text-[10px] font-bold text-[#9A75F0] hover:text-[#8B5CF6] transition-colors mb-4"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Baixar QR Code</span>
+            </button>
+
+            <div className="flex items-center gap-1.5 bg-[#FAF9FF] border border-[#E8E6F5] p-1.5 rounded-xl w-full mb-4">
+              <input
+                type="text"
+                readOnly
+                value={shareUrl}
+                onClick={(e) => (e.target as HTMLInputElement).select()}
+                className="text-[10px] font-bold text-[#2D2A4A] bg-transparent outline-hidden px-1 py-0.5 flex-1 truncate select-all"
+              />
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="cursor-pointer p-1.5 hover:bg-white rounded-lg border border-transparent hover:border-[#E8E6F5] text-slate-500 hover:text-[#9A75F0] transition-all flex items-center justify-center"
+              >
+                {copied ? <span className="text-[9px] font-bold text-emerald-600">Copiado</span> : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowQrModal(false)}
+              className="cursor-pointer w-full bg-slate-900 hover:bg-slate-800 text-white font-bold h-10 text-xs rounded-xl"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
