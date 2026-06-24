@@ -33,8 +33,8 @@ export function ThemeSelectionSection() {
     activePhotoIdx: 0,
     currentTime: 75,
     duration: 180,
-    togglePlay: () => { },
-    toggleMute: () => { },
+    togglePlay: () => {},
+    toggleMute: () => {},
     formatTime: (s: number) => {
       const mins = Math.floor(s / 60);
       const secs = Math.floor(s % 60);
@@ -59,15 +59,15 @@ export function ThemeSelectionSection() {
       { id: 3, left: 80, size: 10, delay: -4, duration: 7 }
     ],
     reactions: [],
-    triggerReaction: () => { },
+    triggerReaction: () => {},
     storyProgress: 0,
-    handlePrevStory: () => { },
-    handleNextStory: () => { },
-    handleStoryTouchStart: () => { },
-    handleStoryTouchEnd: () => { },
-    handleStoryMouseDown: () => { },
-    handleStoryMouseUp: () => { },
-    handleStoryMouseLeave: () => { },
+    handlePrevStory: () => {},
+    handleNextStory: () => {},
+    handleStoryTouchStart: () => {},
+    handleStoryTouchEnd: () => {},
+    handleStoryMouseDown: () => {},
+    handleStoryMouseUp: () => {},
+    handleStoryMouseLeave: () => {},
     isStoryPaused: true
   };
 
@@ -110,18 +110,21 @@ export function ThemeSelectionSection() {
 
           <div className="w-full flex justify-center">
             {activeSlide === 0 ? (
-              <button
-                type="button"
+              <div
                 onClick={() => setTheme("spotify")}
-                className={`w-full max-w-[290px] flex flex-col items-center rounded-3xl p-0 overflow-hidden border-2 transition-all duration-300 ${theme === "spotify"
+                className={`w-full max-w-[310px] flex flex-col items-center rounded-3xl p-3 border-2 transition-all duration-300 cursor-pointer ${
+                  theme === "spotify"
                     ? "border-[#9A75F0] bg-slate-50/50 shadow-md ring-2 ring-[#9A75F0]/10"
                     : "border-slate-100 hover:border-slate-200"
-                  }`}
+                }`}
               >
-                <div className="w-full aspect-9/16 max-h-[420px] overflow-y-auto bg-white relative select-none pointer-events-none">
-                  <SpotifyTemplate data={mockData} {...templateProps} />
+                <div className="relative mx-auto w-[275px] h-[550px] bg-black rounded-[42px] shadow-[0_20px_40px_rgba(45,42,74,0.12)] border-8 border-neutral-900 p-1.5 overflow-hidden flex flex-col justify-between mb-4">
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 h-4 w-24 bg-black rounded-full z-30"></div>
+                  <div className="w-full h-full rounded-[32px] overflow-y-auto relative scrollbar-hidden">
+                    <SpotifyTemplate data={mockData} {...templateProps} />
+                  </div>
                 </div>
-                <div className="text-center p-3">
+                <div className="text-center">
                   <span className="text-sm font-extrabold text-[#2D2A4A] flex items-center justify-center gap-1">
                     Modelo Spotify
                     {theme === "spotify" && <Check className="w-4 h-4 text-emerald-500" />}
@@ -130,20 +133,23 @@ export function ThemeSelectionSection() {
                     Reprodutor musical dark, ideal para casais conectados por músicas especiais.
                   </span>
                 </div>
-              </button>
+              </div>
             ) : (
-              <button
-                type="button"
+              <div
                 onClick={() => setTheme("story")}
-                className={`w-full max-w-[290px] flex flex-col items-center rounded-3xl p-0 overflow-hidden border-2 transition-all duration-300 ${theme === "story"
+                className={`w-full max-w-[310px] flex flex-col items-center rounded-3xl p-3 border-2 transition-all duration-300 cursor-pointer ${
+                  theme === "story"
                     ? "border-[#9A75F0] bg-slate-50/50 shadow-md ring-2 ring-[#9A75F0]/10"
                     : "border-slate-100 hover:border-slate-200"
-                  }`}
+                }`}
               >
-                <div className="w-full aspect-9/16 max-h-[420px] overflow-y-auto bg-[#121212] relative select-none pointer-events-none">
-                  <StoryTemplate data={mockData} {...templateProps} />
+                <div className="relative mx-auto w-[275px] h-[550px] bg-black rounded-[42px] shadow-[0_20px_40px_rgba(45,42,74,0.12)] border-8 border-neutral-900 p-1.5 overflow-hidden flex flex-col justify-between mb-4">
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 h-4 w-24 bg-black rounded-full z-30"></div>
+                  <div className="w-full h-full rounded-[32px] overflow-y-auto relative scrollbar-hidden">
+                    <StoryTemplate data={mockData} {...templateProps} />
+                  </div>
                 </div>
-                <div className="text-center p-3">
+                <div className="text-center">
                   <span className="text-sm font-extrabold text-[#2D2A4A] flex items-center justify-center gap-1">
                     Modelo Story
                     {theme === "story" && <Check className="w-4 h-4 text-emerald-500" />}
@@ -152,7 +158,7 @@ export function ThemeSelectionSection() {
                     Estilo redes sociais com transições dinâmicas de imagens.
                   </span>
                 </div>
-              </button>
+              </div>
             )}
           </div>
 
@@ -160,32 +166,37 @@ export function ThemeSelectionSection() {
             <button
               type="button"
               onClick={() => selectTheme("spotify", 0)}
-              className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${activeSlide === 0 ? "bg-[#9A75F0] w-6" : "bg-slate-200"
-                }`}
+              className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
+                activeSlide === 0 ? "bg-[#9A75F0] w-6" : "bg-slate-200"
+              }`}
             />
             <button
               type="button"
               onClick={() => selectTheme("story", 1)}
-              className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${activeSlide === 1 ? "bg-[#9A75F0] w-6" : "bg-slate-200"
-                }`}
+              className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
+                activeSlide === 1 ? "bg-[#9A75F0] w-6" : "bg-slate-200"
+              }`}
             />
           </div>
         </div>
       </div>
 
       <div className="hidden md:grid grid-cols-2 gap-6">
-        <button
-          type="button"
+        <div
           onClick={() => setTheme("spotify")}
-          className={`flex flex-col items-center rounded-3xl p-0 overflow-hidden border-2 transition-all duration-300 cursor-pointer ${theme === "spotify"
+          className={`flex flex-col items-center rounded-3xl p-4 border-2 transition-all duration-300 cursor-pointer ${
+            theme === "spotify"
               ? "border-[#9A75F0] bg-slate-50/50 shadow-md ring-2 ring-[#9A75F0]/10"
               : "border-[#E8E6F5] hover:border-[#9A75F0]/50 hover:bg-slate-50/50"
-            }`}
+          }`}
         >
-          <div className="w-full aspect-9/16 max-h-[460px] overflow-y-auto bg-white relative select-none pointer-events-none">
-            <SpotifyTemplate data={mockData} {...templateProps} />
+          <div className="relative mx-auto w-[275px] h-[550px] bg-black rounded-[42px] shadow-[0_20px_40px_rgba(45,42,74,0.12)] border-8 border-neutral-900 p-1.5 overflow-hidden flex flex-col justify-between mb-4">
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 h-4 w-24 bg-black rounded-full z-30"></div>
+            <div className="w-full h-full rounded-[32px] overflow-y-auto relative scrollbar-hidden">
+              <SpotifyTemplate data={mockData} {...templateProps} />
+            </div>
           </div>
-          <div className="text-center p-4 max-w-[240px]">
+          <div className="text-center max-w-[240px]">
             <span className="text-sm font-extrabold text-[#2D2A4A] flex items-center justify-center gap-1">
               Modelo Spotify
               {theme === "spotify" && <Check className="w-4 h-4 text-emerald-500" />}
@@ -194,20 +205,23 @@ export function ThemeSelectionSection() {
               Ideal para casais conectados por músicas especiais, com visual reprodutor dark e contador de dias.
             </span>
           </div>
-        </button>
+        </div>
 
-        <button
-          type="button"
+        <div
           onClick={() => setTheme("story")}
-          className={`flex flex-col items-center rounded-3xl p-0 overflow-hidden border-2 transition-all duration-300 cursor-pointer ${theme === "story"
+          className={`flex flex-col items-center rounded-3xl p-4 border-2 transition-all duration-300 cursor-pointer ${
+            theme === "story"
               ? "border-[#9A75F0] bg-slate-50/50 shadow-md ring-2 ring-[#9A75F0]/10"
               : "border-[#E8E6F5] hover:border-[#9A75F0]/50 hover:bg-slate-50/50"
-            }`}
+          }`}
         >
-          <div className="w-full aspect-9/16 max-h-[460px] overflow-y-auto bg-[#121212] relative select-none pointer-events-none">
-            <StoryTemplate data={mockData} {...templateProps} />
+          <div className="relative mx-auto w-[275px] h-[550px] bg-black rounded-[42px] shadow-[0_20px_40px_rgba(45,42,74,0.12)] border-8 border-neutral-900 p-1.5 overflow-hidden flex flex-col justify-between mb-4">
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 h-4 w-24 bg-black rounded-full z-30"></div>
+            <div className="w-full h-full rounded-[32px] overflow-y-auto relative scrollbar-hidden">
+              <StoryTemplate data={mockData} {...templateProps} />
+            </div>
           </div>
-          <div className="text-center p-4 max-w-[240px]">
+          <div className="text-center max-w-[240px]">
             <span className="text-sm font-extrabold text-[#2D2A4A] flex items-center justify-center gap-1">
               Modelo Story
               {theme === "story" && <Check className="w-4 h-4 text-emerald-500" />}
@@ -216,7 +230,7 @@ export function ThemeSelectionSection() {
               Estilo redes sociais, com transições dinâmicas de imagens (Stories), cores suaves e design interativo.
             </span>
           </div>
-        </button>
+        </div>
       </div>
     </div>
   );
