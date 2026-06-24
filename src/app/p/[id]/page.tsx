@@ -14,7 +14,7 @@ export async function generateMetadata({
       where: { tributeId: id }
     });
 
-    if (!client) {
+    if (!client || client.status !== "ACTIVE") {
       return {
         title: "Surpresa de Amor - Homenagem Especial",
       };
@@ -60,7 +60,7 @@ async function TributeContent({
     where: { tributeId: id }
   });
 
-  if (!client || client.status === "CANCELLED") {
+  if (!client || client.status !== "ACTIVE") {
     notFound();
   }
 
