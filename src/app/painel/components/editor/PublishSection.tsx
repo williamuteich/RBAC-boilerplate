@@ -19,7 +19,8 @@ export function PublishSection() {
   const [copied, setCopied] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
-  const absoluteUrl = `https://glamourlindoia.com.br/p/${tributeId}`;
+  const absoluteUrl =
+    `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/p/${tributeId}`;
 
   useEffect(() => {
     if (saveSuccess) {
@@ -58,7 +59,7 @@ export function PublishSection() {
 
   return (
     <div className="bg-white border border-[#E8E6F5] p-6 md:p-8 rounded-[32px] shadow-[0_10px_40px_rgba(45,42,74,0.02)] flex flex-col items-center text-center">
-      
+
       {showSuccessAlert && (
         <div className="w-full bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center gap-3 mb-6 animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
