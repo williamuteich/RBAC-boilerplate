@@ -1,7 +1,34 @@
 import { Suspense } from "react";
 import { prisma } from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
+import { cacheTag, cacheLife } from "next/cache";
 import { PublicTributeRenderer } from "./PublicTributeRenderer";
+
+async function getTributeData(id: string) {
+  "use cache";
+  cacheTag(`tribute-${id}`);
+  cacheLife("days");
+
+  return prisma.saaSClient.findUnique({
+    where: { tributeId: id },
+    select: {
+      id: true,
+      tributeId: true,
+      partnerA: true,
+      partnerB: true,
+      anniversary: true,
+      theme: true,
+      songTitle: true,
+      songArtist: true,
+      songUrl: true,
+      letterTitle: true,
+      letterBody: true,
+      photos: true,
+      status: true,
+      expirationDate: true,
+    },
+  });
+}
 
 export async function generateMetadata({
   params,
@@ -10,11 +37,13 @@ export async function generateMetadata({
 }) {
   const { id } = await params;
   try {
-    const client = await prisma.saaSClient.findUnique({
-      where: { tributeId: id },
-    });
+    const client = await getTributeData(id);
 
-    if (!client || client.status !== "ACTIVE" || (client.expirationDate && new Date(client.expirationDate) < new Date())) {
+    if (
+      !client ||
+      client.status !== "ACTIVE" ||
+      (client.expirationDate && new Date(client.expirationDate) < new Date())
+    ) {
       return { title: "Surpresa de Amor - Homenagem Especial" };
     }
 
@@ -52,11 +81,13 @@ async function TributeContent({
 }) {
   const { id } = await params;
 
-  const client = await prisma.saaSClient.findUnique({
-    where: { tributeId: id },
-  });
+  const client = await getTributeData(id);
 
-  if (!client || client.status !== "ACTIVE" || (client.expirationDate && new Date(client.expirationDate) < new Date())) {
+  if (
+    !client ||
+    client.status !== "ACTIVE" ||
+    (client.expirationDate && new Date(client.expirationDate) < new Date())
+  ) {
     notFound();
   }
 
@@ -65,13 +96,28 @@ async function TributeContent({
     Array.isArray(rawPhotos) && rawPhotos.length > 0
       ? rawPhotos
       : [
-        { id: "default-1", url: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop", label: "Nosso Começo" },
-        { id: "default-2", url: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=600&auto=format&fit=crop", label: "Minha Vida" },
-        { id: "default-3", url: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=600&auto=format&fit=crop", label: "Te Amo" },
+        {
+          id: "default-1",
+          url: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop",
+          label: "Nosso Começo",
+        },
+        {
+          id: "default-2",
+          url: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=600&auto=format&fit=crop",
+          label: "Minha Vida",
+        },
+        {
+          id: "default-3",
+          url: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=600&auto=format&fit=crop",
+          label: "Te Amo",
+        },
       ];
 
   const letterLines = client.letterBody
-    ? client.letterBody.split("\n").map((l) => l.trim()).filter(Boolean)
+    ? client.letterBody
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean)
     : [client.letterTitle || "Para Meu Amor,", "Te amo hoje, amanhã e para todo o sempre."];
 
   const tributeData = {

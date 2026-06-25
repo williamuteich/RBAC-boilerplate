@@ -6,6 +6,7 @@ import { Sidebar } from "./components/sidebar/Sidebar";
 import { Header } from "./components/header/Header";
 import { cookies } from "next/headers";
 import { ImpersonationBanner } from "./components/ImpersonationBanner";
+import { ExpirationBanner } from "./components/ExpirationBanner";
 
 async function ImpersonationBannerContainer() {
   const session = await getServerSession(auth);
@@ -46,6 +47,9 @@ export default function PainelLayout({ children }: { children: ReactNode }) {
       <div className="flex flex-col h-screen bg-[#FAF9FF] overflow-hidden text-slate-900 font-sans">
         <Suspense fallback={null}>
           <ImpersonationBannerContainer />
+        </Suspense>
+        <Suspense fallback={null}>
+          <ExpirationBanner />
         </Suspense>
         <div className="flex flex-1 overflow-hidden w-full max-w-full">
           <aside className="w-64 bg-white hidden lg:flex flex-col h-full shrink-0 relative">

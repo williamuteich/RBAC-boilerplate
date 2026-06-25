@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { auth } from "@/src/lib/auth-config";
 import { prisma } from "@/src/lib/prisma";
 import { cookies } from "next/headers";
+import { revalidateTag } from "next/cache";
 import { painelUpdateSchema } from "@/src/schemas/painel";
 
 async function getClientEmailFromSession(session: any) {
@@ -48,7 +49,9 @@ export async function GET() {
     songUrl: client.songUrl,
     letterTitle: client.letterTitle,
     letterBody: client.letterBody,
-    photos: client.photos
+    photos: client.photos,
+    expirationDate: client.expirationDate,
+    plan: client.plan,
   });
 }
 
@@ -100,6 +103,8 @@ export async function PUT(req: Request) {
         photosCount: data.photos.length
       }
     });
+
+    revalidateTag(`tribute-${client.tributeId}`, 'max');
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { auth } from "@/src/lib/auth-config";
 import { prisma } from "@/src/lib/prisma";
 import { cookies } from "next/headers";
+import { revalidateTag } from "next/cache";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
@@ -79,6 +80,8 @@ export async function POST(req: Request) {
     await writeFile(filePath, buffer);
 
     const fileUrl = `/uploads/clients/${client.id}/${filename}`;
+
+    revalidateTag(`tribute-${client.tributeId}`, 'max');
 
     return NextResponse.json({ url: fileUrl });
   } catch (error) {
