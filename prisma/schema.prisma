@@ -89,7 +89,8 @@ model Coupon {
   used      Boolean   @default(false)
   usedBy    String?
   usedAt    DateTime?
-  expiresAt DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  expiresAt    DateTime?
+  durationDays Int       @default(7)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }

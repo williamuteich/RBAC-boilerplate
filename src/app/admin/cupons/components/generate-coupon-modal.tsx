@@ -63,15 +63,16 @@ export function GenerateCouponModal({
             </div>
 
             <div className="space-y-2">
-              <Label>Validade do Cupom (Dias)</Label>
+              <Label>Dias de Acesso Concedidos</Label>
               <Input
                 name="expiresInDays"
                 type="number"
-                placeholder="Ex: 7 (Deixe vazio para nunca expirar)"
+                placeholder="Ex: 7"
                 defaultValue="7"
+                required
               />
               <span className="text-[10px] text-[#696684] block leading-normal mt-1">
-                Atenção: Esta é a validade para o cupom ser resgatado. Após resgatado, o cliente terá os 7 dias gratuitos normais.
+                Atenção: Esta é a quantidade de dias que o cliente terá de acesso à homenagem após resgatar este cupom.
               </span>
             </div>
           </div>

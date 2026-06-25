@@ -42,6 +42,10 @@ export function ClientsTable({
   };
 
   const getPlanLabel = (p: string) => {
+    if (p && p.endsWith("_DAYS")) {
+      const days = p.split("_")[0];
+      return `${days} ${days === "1" ? "Dia" : "Dias"}`;
+    }
     switch (p) {
       case "7_DAYS":
         return "7 Dias";

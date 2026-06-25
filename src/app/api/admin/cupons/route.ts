@@ -103,7 +103,7 @@ async function _POST(request: Request) {
     }
 
     const { quantity, prefix, expiresInDays } = validated.data;
-    const expiresAt = expiresInDays ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000) : null;
+    const durationDays = expiresInDays || 7;
 
     const createdCodes: string[] = [];
     const dataToCreate: any[] = [];
@@ -115,7 +115,8 @@ async function _POST(request: Request) {
       dataToCreate.push({
         code,
         used: false,
-        expiresAt
+        durationDays,
+        expiresAt: null
       });
       createdCodes.push(code);
     }

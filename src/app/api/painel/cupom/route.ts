@@ -58,8 +58,8 @@ export async function POST(req: Request) {
         where: { id: clientId },
         data: {
           status: "ACTIVE",
-          plan: "7_DAYS",
-          expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          plan: `${coupon.durationDays}_DAYS`,
+          expirationDate: new Date(Date.now() + coupon.durationDays * 24 * 60 * 60 * 1000),
         },
       }),
     ]);
