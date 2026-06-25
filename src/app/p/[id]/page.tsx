@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { prisma } from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
 import { PublicTributeRenderer } from "./PublicTributeRenderer";
-import { SpotifySkeleton, StorySkeleton } from "./components/TributeSkeleton";
 
 export async function generateMetadata({
   params,
