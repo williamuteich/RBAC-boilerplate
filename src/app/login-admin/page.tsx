@@ -10,7 +10,11 @@ async function LoginContent() {
   const session = await getServerSession(auth);
 
   if (session) {
-    redirect("/admin");
+    if (session.user.tipo === "ADMINISTRATOR") {
+      redirect("/admin");
+    } else {
+      redirect("/painel");
+    }
   }
   return (
     <main className="flex min-h-screen w-full">
