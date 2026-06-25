@@ -23,14 +23,14 @@ export default function SuportePage() {
 
           <div className="w-full mt-2">
             <a 
-              href="mailto:contato@glamourlindoia.com.br"
+              href="mailto:lindoiaglamour@gmail.com"
               className="p-5 rounded-2xl border border-[#E8E6F5] bg-[#FAF9FF] flex flex-col gap-2 hover:border-[#9A75F0] transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2 text-slate-800 font-bold">
                 <Mail className="w-4 h-4 text-[#9A75F0]" />
                 <span>E-mail de Contato</span>
               </div>
-              <span className="font-semibold text-[#9A75F0] group-hover:underline">contato@glamourlindoia.com.br</span>
+              <span className="font-semibold text-[#9A75F0] group-hover:underline">lindoiaglamour@gmail.com</span>
             </a>
           </div>
 

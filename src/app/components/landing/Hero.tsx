@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { Check, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { HeroMockupStack } from "./HeroMockupStack";
 
 export function Hero() {
@@ -19,6 +17,7 @@ export function Hero() {
           Crie uma homenagem digital eterna para o seu amor com fotos, música, calendário personalizado e link com QR Code exclusivo. Esta homenagem é ideal para o Dia dos Namorados, o dia em que o casal se conheceu ou até mesmo em dias comuns para lembrar o quanto você ama essa pessoa. Pronto em 5 minutos.
         </p>
 
+        {/* === SEÇÃO DE PREÇO — COMENTADA ATÉ INTEGRAÇÃO COM STRIPE ===
         <Card className="w-full bg-[#11101E] border border-slate-800 p-6 md:p-8 rounded-3xl flex flex-col items-center gap-6 shadow-xl relative overflow-hidden text-center">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#9A75F0]/5 rounded-full blur-2xl pointer-events-none"></div>
 
@@ -27,16 +26,12 @@ export function Hero() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h3 className="text-base font-bold text-slate-100">
-              Página Personalizada Completa
-            </h3>
+            <h3 className="text-base font-bold text-slate-100">Página Personalizada Completa</h3>
             <div className="flex items-baseline justify-center gap-1">
               <span className="text-2xl font-black text-white">R$ 29</span>
               <span className="text-sm font-bold text-white">,90</span>
             </div>
-            <span className="text-[11px] text-slate-400">
-              Pagamento único &bull; Acesso por 1 ano
-            </span>
+            <span className="text-[11px] text-slate-400">Pagamento único &bull; Acesso por 1 ano</span>
           </div>
 
           <div className="flex flex-col gap-3 w-full text-left max-w-xs mx-auto border-t border-slate-800/80 pt-5">
@@ -70,6 +65,13 @@ export function Hero() {
             </div>
           </div>
         </Card>
+        === FIM DA SEÇÃO DE PREÇO === */}
+
+        <Link href="#simulador">
+          <Button className="w-full bg-linear-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-rose-500/20 border-none transition-transform hover:scale-[1.02] active:scale-[0.98] text-sm">
+            Ver como fica a sua página ✨
+          </Button>
+        </Link>
       </div>
 
       <div className="flex-1 w-full flex items-center justify-center">
