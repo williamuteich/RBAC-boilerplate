@@ -1,4 +1,4 @@
-import { ShieldCheck, Key, History, Users } from "lucide-react";
+import { ShieldCheck, Key, History, Users, Ticket } from "lucide-react";
 import { NavConfig } from "@/src/types/dashboard/components";
 
 export const ADMIN_NAVIGATION: NavConfig[] = [
@@ -7,6 +7,13 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         href: "/admin/clientes",
         icon: Users,
         resource: "clientes",
+        section: "MAIN MENU"
+    },
+    {
+        title: "Cupons",
+        href: "/admin/cupons",
+        icon: Ticket,
+        resource: "cupons",
         section: "MAIN MENU"
     },
     {
@@ -34,6 +41,7 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
 
 export const RESOURCE_ACTIONS: Record<string, string[]> = {
     clientes: ["visualizar", "criar", "editar", "deletar"],
+    cupons: ["visualizar", "criar", "editar", "deletar"],
     usuarios: ["visualizar", "criar", "editar", "deletar"],
     cargos: ["visualizar", "criar", "editar", "deletar"],
     relatorios: ["visualizar", "criar", "editar", "deletar"],
@@ -41,3 +49,4 @@ export const RESOURCE_ACTIONS: Record<string, string[]> = {
 };
 
 export const ALL_RESOURCES = Object.keys(RESOURCE_ACTIONS);
+
