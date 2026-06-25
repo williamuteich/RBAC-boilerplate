@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Heart } from "lucide-react";
 
 export function Footer() {
@@ -13,9 +14,17 @@ export function Footer() {
           </span>
         </div>
 
-        <p className="text-[#696684] text-xs text-center md:text-right">
-          &copy; 2026 Glamour Lindóia. Feito para aproximar corações. Todos os direitos reservados.
-        </p>
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          <Link
+            href="/login"
+            className="text-[#9A75F0]/70 hover:text-[#9A75F0] text-xs transition-colors underline-offset-4 hover:underline"
+          >
+            Área do cliente
+          </Link>
+          <p className="text-[#696684] text-xs text-center md:text-right">
+            &copy; 2026 Glamour Lindóia. Feito para aproximar corações. Todos os direitos reservados.
+          </p>
+        </div>
       </div>
     </footer>
   );

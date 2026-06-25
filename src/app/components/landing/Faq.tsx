@@ -23,7 +23,7 @@ export function Faq() {
         <Card className="bg-white border-[#E8E6F5] p-5 flex flex-col gap-2 rounded-2xl shadow-[0_4px_20px_rgba(45,42,74,0.02)]">
           <h4 className="text-sm font-extrabold text-[#2D2A4A]">Por quanto tempo a página fica ativa?</h4>
           <p className="text-xs text-[#696684] leading-relaxed">
-            A página fica ativa pelo período do plano escolhido (7, 30 ou 60 dias). Após esse período, você pode renovar para continuar mantendo seu link de amor ativo e acessível.
+            A página fica ativa pelo período que você escolher ao criá-la (7, 14 ou 30 dias). Após esse período, você pode renovar para continuar mantendo seu link de amor ativo e acessível.
           </p>
         </Card>
 
