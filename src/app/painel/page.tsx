@@ -1,7 +1,26 @@
 import { Suspense } from "react";
 import { DashboardEditor } from "./components/editor/DashboardEditor";
+import { getServerSession } from "next-auth";
+import { auth } from "@/src/lib/auth-config";
+import { prisma } from "@/src/lib/prisma";
+import { redirect } from "next/navigation";
 
-export default function PainelPage() {
+export default async function PainelPage() {
+  const session = await getServerSession(auth);
+  if (!session) {
+    redirect("/login");
+  }
+
+  if (session.user.tipo === "USER") {
+    const client = await prisma.saaSClient.findUnique({
+      where: { id: Number(session.user.id) }
+    });
+
+    if (client && client.status === "PENDING") {
+      redirect("/painel/cupom");
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div>

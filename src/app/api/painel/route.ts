@@ -32,6 +32,10 @@ export async function GET() {
     return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
   }
 
+  if (client.status === "PENDING" && session.user.tipo !== "ADMINISTRATOR") {
+    return NextResponse.json({ error: "Sua conta está pendente. Resgate um cupom para ativar." }, { status: 403 });
+  }
+
   return NextResponse.json({
     id: client.id,
     tributeId: client.tributeId,
@@ -72,6 +76,10 @@ export async function PUT(req: Request) {
 
     if (!client) {
       return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
+    }
+
+    if (client.status === "PENDING" && session.user.tipo !== "ADMINISTRATOR") {
+      return NextResponse.json({ error: "Sua conta está pendente. Resgate um cupom para ativar." }, { status: 403 });
     }
 
     const data = validated.data;

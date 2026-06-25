@@ -36,6 +36,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
   }
 
+  if (client.status === "PENDING" && session.user.tipo !== "ADMINISTRATOR") {
+    return NextResponse.json({ error: "Sua conta está pendente. Resgate um cupom para ativar." }, { status: 403 });
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;

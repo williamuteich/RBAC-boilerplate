@@ -67,8 +67,8 @@ export function GenerateCouponModal({
               <Input
                 name="expiresInDays"
                 type="number"
-                placeholder="Ex: 30 (Deixe vazio para nunca expirar)"
-                defaultValue="30"
+                placeholder="Ex: 7 (Deixe vazio para nunca expirar)"
+                defaultValue="7"
               />
               <span className="text-[10px] text-[#696684] block leading-normal mt-1">
                 Atenção: Esta é a validade para o cupom ser resgatado. Após resgatado, o cliente terá os 7 dias gratuitos normais.

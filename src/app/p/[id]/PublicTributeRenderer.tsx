@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
+import { useState, Suspense, lazy } from "react";
 import { Heart } from "lucide-react";
 import { PhotoItem } from "@/src/types/love-widgets";
+import { SpotifySkeleton, StorySkeleton } from "./components/TributeSkeleton";
 
-const SpotifyTemplate = dynamic(() => import("./components/spotify/SpotifyTemplate"), { ssr: false });
-const StoryTemplate = dynamic(() => import("./components/story/StoryTemplate"), { ssr: false });
+const SpotifyTemplate = lazy(() => import("./components/spotify/SpotifyTemplate"));
+const StoryTemplate = lazy(() => import("./components/story/StoryTemplate"));
 
 export function PublicTributeRenderer({
   data
@@ -22,7 +22,7 @@ export function PublicTributeRenderer({
     letterTitle: string;
     letterLines: string[];
     photos: PhotoItem[];
-  }
+  };
 }) {
   const [unlocked, setUnlocked] = useState(false);
 
@@ -74,14 +74,18 @@ export function PublicTributeRenderer({
     );
   }
 
+  const skeleton = data.theme === "spotify" ? <SpotifySkeleton /> : <StorySkeleton />;
+
   return (
     <div className="min-h-screen w-full flex justify-center items-start font-sans relative overflow-x-hidden select-none bg-[#FAF9FF]">
       <div className="w-full max-w-md min-h-screen z-10 flex flex-col">
-        {data.theme === "spotify" ? (
-          <SpotifyTemplate data={data} isPublic={true} />
-        ) : (
-          <StoryTemplate data={data} isPublic={true} />
-        )}
+        <Suspense fallback={skeleton}>
+          {data.theme === "spotify" ? (
+            <SpotifyTemplate data={data} isPublic={true} />
+          ) : (
+            <StoryTemplate data={data} isPublic={true} />
+          )}
+        </Suspense>
       </div>
     </div>
   );
