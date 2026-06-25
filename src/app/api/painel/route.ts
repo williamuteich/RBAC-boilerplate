@@ -33,8 +33,22 @@ export async function GET() {
     return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
   }
 
-  if ((client.status === "PENDING" || (client.expirationDate && new Date(client.expirationDate) < new Date())) && session.user.tipo !== "ADMINISTRATOR") {
-    return NextResponse.json({ error: "Sua conta está pendente ou expirada. Resgate um cupom para ativar." }, { status: 403 });
+  if (session.user.tipo !== "ADMINISTRATOR") {
+    const isExpired = client.expirationDate && new Date(client.expirationDate) < new Date();
+
+    if (client.status === "PENDING" || client.status === "SUSPENDED") {
+      return NextResponse.json({ error: "Sua conta está pendente ou suspensa. Resgate um cupom para ativar." }, { status: 403 });
+    }
+
+    if (isExpired) {
+      if (client.status === "ACTIVE") {
+        await prisma.saaSClient.update({
+          where: { id: client.id },
+          data: { status: "SUSPENDED" },
+        });
+      }
+      return NextResponse.json({ error: "Seu plano expirou. Resgate um novo cupom para reativar o acesso." }, { status: 403 });
+    }
   }
 
   return NextResponse.json({
@@ -81,8 +95,19 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
     }
 
-    if ((client.status === "PENDING" || (client.expirationDate && new Date(client.expirationDate) < new Date())) && session.user.tipo !== "ADMINISTRATOR") {
-      return NextResponse.json({ error: "Sua conta está pendente ou expirada. Resgate um cupom para ativar." }, { status: 403 });
+    if (session.user.tipo !== "ADMINISTRATOR") {
+      const isExpired = client.expirationDate && new Date(client.expirationDate) < new Date();
+
+      if (client.status === "PENDING" || client.status === "SUSPENDED") {
+        return NextResponse.json({ error: "Sua conta está pendente ou suspensa. Resgate um cupom para ativar." }, { status: 403 });
+      }
+
+      if (isExpired) {
+        if (client.status === "ACTIVE") {
+          await prisma.saaSClient.update({ where: { id: client.id }, data: { status: "SUSPENDED" } });
+        }
+        return NextResponse.json({ error: "Seu plano expirou. Resgate um novo cupom para reativar o acesso." }, { status: 403 });
+      }
     }
 
     const data = validated.data;

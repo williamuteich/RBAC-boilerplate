@@ -16,7 +16,12 @@ export default async function PainelPage() {
       where: { id: Number(session.user.id) }
     });
 
-    if (client && (client.status === "PENDING" || (client.expirationDate && new Date(client.expirationDate) < new Date()))) {
+    if (!client) {
+      redirect("/painel/cupom");
+    }
+
+    const isExpired = client.expirationDate && new Date(client.expirationDate) < new Date();
+    if (client.status === "PENDING" || client.status === "SUSPENDED" || isExpired) {
       redirect("/painel/cupom");
     }
   }

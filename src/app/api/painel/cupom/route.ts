@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { auth } from "@/src/lib/auth-config";
 import { prisma } from "@/src/lib/prisma";
+import { revalidateTag } from "next/cache";
 
 export async function POST(req: Request) {
   const session = await getServerSession(auth);
@@ -26,11 +27,21 @@ export async function POST(req: Request) {
     if (!client) {
       return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
     }
-    if (client.status === "ACTIVE") {
-      return NextResponse.json({ error: "Sua conta já está ativa" }, { status: 400 });
-    }
-    if (client.status === "CANCELLED") {
-      return NextResponse.json({ error: "Conta cancelada, entre em contato com o suporte" }, { status: 403 });
+
+    const isExpired = client.expirationDate && new Date(client.expirationDate) < new Date();
+    const canRedeem =
+      client.status === "PENDING" ||
+      client.status === "SUSPENDED" ||
+      (client.status === "ACTIVE" && isExpired);
+
+    if (!canRedeem) {
+      if (client.status === "CANCELLED") {
+        return NextResponse.json({ error: "Conta cancelada, entre em contato com o suporte" }, { status: 403 });
+      }
+      return NextResponse.json(
+        { error: "Sua conta ainda está ativa. Você pode resgatar um novo cupom após o término do seu plano atual." },
+        { status: 400 }
+      );
     }
 
     const coupon = await prisma.coupon.findUnique({ where: { code } });
@@ -45,12 +56,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Este cupom está expirado" }, { status: 400 });
     }
 
+    const now = new Date();
+    const baseDate =
+      client.expirationDate && new Date(client.expirationDate) > now
+        ? new Date(client.expirationDate)
+        : now;
+
+    const newExpirationDate = new Date(baseDate.getTime() + coupon.durationDays * 24 * 60 * 60 * 1000);
+
     await prisma.$transaction([
       prisma.coupon.update({
         where: { id: coupon.id },
         data: {
           used: true,
-          usedAt: new Date(),
+          usedAt: now,
           usedBy: client.email,
         },
       }),
@@ -59,12 +78,26 @@ export async function POST(req: Request) {
         data: {
           status: "ACTIVE",
           plan: `${coupon.durationDays}_DAYS`,
-          expirationDate: new Date(Date.now() + coupon.durationDays * 24 * 60 * 60 * 1000),
+          expirationDate: newExpirationDate,
         },
       }),
     ]);
 
-    return NextResponse.json({ success: true, message: "Cupom resgatado com sucesso! Sua conta está ativa." });
+    revalidateTag(`tribute-${client.tributeId}`, 'max');
+
+    const formattedDate = newExpirationDate.toLocaleString("pt-BR", {
+      timeZone: "America/Sao_Paulo",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `Cupom resgatado com sucesso! Seu acesso está ativo até ${formattedDate}.`,
+    });
   } catch (error) {
     console.error("Erro ao resgatar cupom:", error);
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
