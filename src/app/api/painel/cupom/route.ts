@@ -56,7 +56,11 @@ export async function POST(req: Request) {
       }),
       prisma.saaSClient.update({
         where: { id: clientId },
-        data: { status: "ACTIVE" },
+        data: {
+          status: "ACTIVE",
+          plan: "7_DAYS",
+          expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
       }),
     ]);
 

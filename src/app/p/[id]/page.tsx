@@ -15,7 +15,7 @@ export async function generateMetadata({
       where: { tributeId: id },
     });
 
-    if (!client || client.status !== "ACTIVE") {
+    if (!client || client.status !== "ACTIVE" || (client.expirationDate && new Date(client.expirationDate) < new Date())) {
       return { title: "Surpresa de Amor - Homenagem Especial" };
     }
 
@@ -57,7 +57,7 @@ async function TributeContent({
     where: { tributeId: id },
   });
 
-  if (!client || client.status !== "ACTIVE") {
+  if (!client || client.status !== "ACTIVE" || (client.expirationDate && new Date(client.expirationDate) < new Date())) {
     notFound();
   }
 

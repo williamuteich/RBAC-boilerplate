@@ -32,8 +32,8 @@ export async function GET() {
     return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
   }
 
-  if (client.status === "PENDING" && session.user.tipo !== "ADMINISTRATOR") {
-    return NextResponse.json({ error: "Sua conta está pendente. Resgate um cupom para ativar." }, { status: 403 });
+  if ((client.status === "PENDING" || (client.expirationDate && new Date(client.expirationDate) < new Date())) && session.user.tipo !== "ADMINISTRATOR") {
+    return NextResponse.json({ error: "Sua conta está pendente ou expirada. Resgate um cupom para ativar." }, { status: 403 });
   }
 
   return NextResponse.json({
@@ -78,8 +78,8 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
     }
 
-    if (client.status === "PENDING" && session.user.tipo !== "ADMINISTRATOR") {
-      return NextResponse.json({ error: "Sua conta está pendente. Resgate um cupom para ativar." }, { status: 403 });
+    if ((client.status === "PENDING" || (client.expirationDate && new Date(client.expirationDate) < new Date())) && session.user.tipo !== "ADMINISTRATOR") {
+      return NextResponse.json({ error: "Sua conta está pendente ou expirada. Resgate um cupom para ativar." }, { status: 403 });
     }
 
     const data = validated.data;

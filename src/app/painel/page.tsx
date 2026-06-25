@@ -16,7 +16,7 @@ export default async function PainelPage() {
       where: { id: Number(session.user.id) }
     });
 
-    if (client && client.status === "PENDING") {
+    if (client && (client.status === "PENDING" || (client.expirationDate && new Date(client.expirationDate) < new Date()))) {
       redirect("/painel/cupom");
     }
   }
