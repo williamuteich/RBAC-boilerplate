@@ -9,18 +9,21 @@ function formatExpiration(date: Date): { label: string; isUrgent: boolean } {
 
   if (diff <= 0) return { label: "expirado", isUrgent: true };
 
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const days = Math.floor(hours / 24);
-  const remainingHours = hours % 24;
+  const totalMinutes = Math.floor(diff / (1000 * 60));
+  const totalHours = Math.floor(totalMinutes / 60);
+  const days = Math.floor(totalHours / 24);
+  const remainingHours = totalHours % 24;
+  const remainingMins = totalMinutes % 60;
 
-  if (days === 0 && hours < 24) {
-    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    if (hours === 0) return { label: `${mins} min`, isUrgent: true };
-    return { label: `${hours}h ${mins}min`, isUrgent: true };
+  if (days === 0) {
+    if (totalHours === 0) {
+      return { label: `${remainingMins}min`, isUrgent: true };
+    }
+    return { label: `${totalHours}h ${remainingMins}min`, isUrgent: true };
   }
 
   return {
-    label: `${days}d ${remainingHours}h`,
+    label: `${days}d ${remainingHours}h ${remainingMins}min`,
     isUrgent: days < 2,
   };
 }
