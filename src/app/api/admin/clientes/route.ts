@@ -55,10 +55,10 @@ export async function GET(request: Request) {
     let mrr = 0;
     for (const client of activeClientsPayments) {
       const val = client.lastPaymentValue || 0;
-      if (client.plan === "7_DAYS") {
+      if (client.plan === "1_DAY") {
+        mrr += val * 30;
+      } else if (client.plan === "7_DAYS") {
         mrr += val * (30 / 7);
-      } else if (client.plan === "14_DAYS") {
-        mrr += val * (30 / 14);
       } else if (client.plan === "30_DAYS") {
         mrr += val;
       }

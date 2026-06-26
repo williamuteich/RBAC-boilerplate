@@ -37,6 +37,10 @@ export async function GET(req: Request) {
         const daysToGrant = Number(checkoutSession.metadata?.daysToGrant ?? 30)
         const planKey = checkoutSession.metadata?.plan ?? 'standard'
 
+        let dbPlan = '7_DAYS'
+        if (planKey === 'basic') dbPlan = '1_DAY'
+        else if (planKey === 'pro') dbPlan = '30_DAYS'
+
         const now = new Date()
         const baseDate = client.expirationDate && new Date(client.expirationDate) > now
           ? new Date(client.expirationDate)
@@ -48,7 +52,7 @@ export async function GET(req: Request) {
           where: { id: clientId },
           data: {
             status: 'ACTIVE',
-            plan: planKey.toUpperCase(),
+            plan: dbPlan,
             expirationDate: newExpirationDate,
             lastPaymentValue: checkoutSession.amount_total ? checkoutSession.amount_total / 100 : null,
             lastPaymentDate: now,
