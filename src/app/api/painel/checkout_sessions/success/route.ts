@@ -43,7 +43,8 @@ export async function GET(req: Request) {
         }
 
         const client = await prisma.saaSClient.findUnique({
-          where: { id: clientId }
+          where: { id: clientId },
+          include: { tribute: true }
         })
 
         if (!client) {
@@ -79,7 +80,9 @@ export async function GET(req: Request) {
           }
         })
 
-        revalidateTag(`tribute-${client.tributeId}`, 'max' as any)
+        if (client.tribute) {
+          revalidateTag(`tribute-${client.tribute.tributeId}`, 'max')
+        }
       }
     } else {
       return NextResponse.redirect(new URL('/painel/cupom', req.url))

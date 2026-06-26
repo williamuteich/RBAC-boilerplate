@@ -3,31 +3,38 @@ import { prisma } from "@/src/lib/prisma";
 import { notFound } from "next/navigation";
 import { cacheTag, cacheLife } from "next/cache";
 import { PublicTributeRenderer } from "./PublicTributeRenderer";
+import { PhotoItem } from "@/src/types/love-widgets";
 
 async function getTributeData(id: string) {
   "use cache";
   cacheTag(`tribute-${id}`);
   cacheLife("days");
 
-  return prisma.saaSClient.findUnique({
+  const tribute = await prisma.tribute.findUnique({
     where: { tributeId: id },
-    select: {
-      id: true,
-      tributeId: true,
-      partnerA: true,
-      partnerB: true,
-      anniversary: true,
-      theme: true,
-      songTitle: true,
-      songArtist: true,
-      songUrl: true,
-      letterTitle: true,
-      letterBody: true,
-      photos: true,
-      status: true,
-      expirationDate: true,
+    include: {
+      saasClient: true,
     },
   });
+
+  if (!tribute) return null;
+
+  return {
+    id: tribute.id,
+    tributeId: tribute.tributeId,
+    partnerA: tribute.partnerA,
+    partnerB: tribute.partnerB,
+    anniversary: tribute.anniversary,
+    theme: tribute.theme,
+    songTitle: tribute.songTitle,
+    songArtist: tribute.songArtist,
+    songUrl: tribute.songUrl,
+    letterTitle: tribute.letterTitle,
+    letterBody: tribute.letterBody,
+    photos: tribute.photos,
+    status: tribute.saasClient.status,
+    expirationDate: tribute.saasClient.expirationDate,
+  };
 }
 
 const SITE_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
@@ -52,7 +59,7 @@ export async function generateMetadata({
       };
     }
 
-    const rawPhotos = client.photos as any;
+    const rawPhotos = client.photos;
     const firstPhoto =
       Array.isArray(rawPhotos) && rawPhotos.length > 0
         ? (rawPhotos[0] as { url?: string }).url
@@ -130,7 +137,7 @@ async function TributeContent({
     notFound();
   }
 
-  const rawPhotos = client.photos as any;
+  const rawPhotos = client.photos as unknown as PhotoItem[];
   const photos =
     Array.isArray(rawPhotos) && rawPhotos.length > 0
       ? rawPhotos

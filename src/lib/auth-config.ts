@@ -33,6 +33,9 @@ export const auth: NextAuthOptions = {
                             name: user.name ?? token.email,
                             image: user.image ?? null,
                             status: "PENDING",
+                            tribute: {
+                                create: {}
+                            }
                         },
                     });
                 }
@@ -51,7 +54,7 @@ export const auth: NextAuthOptions = {
                 });
 
                 if (!client) {
-                    return {} as any;
+                    return session;
                 }
 
                 session.user.id = String(client.id);

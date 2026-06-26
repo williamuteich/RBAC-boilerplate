@@ -23,7 +23,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Código do cupom é obrigatório" }, { status: 400 });
     }
 
-    const client = await prisma.saaSClient.findUnique({ where: { id: clientId } });
+    const client = await prisma.saaSClient.findUnique({
+      where: { id: clientId },
+      include: { tribute: true }
+    });
     if (!client) {
       return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
     }
@@ -80,7 +83,9 @@ export async function POST(req: Request) {
       }),
     ]);
 
-    revalidateTag(`tribute-${client.tributeId}`, 'max');
+    if (client.tribute) {
+      revalidateTag(`tribute-${client.tribute.tributeId}`, 'max');
+    }
 
     const formattedDate = newExpirationDate.toLocaleString("pt-BR", {
       timeZone: "America/Sao_Paulo",

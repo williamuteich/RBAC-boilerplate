@@ -21,7 +21,8 @@ export async function POST(req: Request) {
   }
 
   const client = await prisma.saaSClient.findUnique({
-    where: { email: clientEmail }
+    where: { email: clientEmail },
+    include: { tribute: true }
   });
 
   if (!client) {
@@ -72,7 +73,9 @@ export async function POST(req: Request) {
 
     const fileUrl = `/uploads/clients/${client.id}/${filename}`;
 
-    revalidateTag(`tribute-${client.tributeId}`, 'max');
+    if (client.tribute) {
+      revalidateTag(`tribute-${client.tribute.tributeId}`, 'max');
+    }
 
     return NextResponse.json({ url: fileUrl });
   } catch (error) {

@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
             secret: process.env.NEXTAUTH_SECRET,
         });
 
-        if (!token || (token as any).tipo !== "USER") {
+        if (!token || (token as { tipo?: string }).tipo !== "USER") {
             if (pathname.startsWith("/api/")) {
                 return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
             }

@@ -17,7 +17,8 @@ export async function GET() {
   }
 
   const client = await prisma.saaSClient.findUnique({
-    where: { email: clientEmail }
+    where: { email: clientEmail },
+    include: { tribute: true }
   });
 
   if (!client) {
@@ -42,17 +43,17 @@ export async function GET() {
 
   return NextResponse.json({
     id: client.id,
-    tributeId: client.tributeId,
-    partnerA: client.partnerA,
-    partnerB: client.partnerB,
-    anniversary: client.anniversary,
-    theme: client.theme,
-    songTitle: client.songTitle,
-    songArtist: client.songArtist,
-    songUrl: client.songUrl,
-    letterTitle: client.letterTitle,
-    letterBody: client.letterBody,
-    photos: client.photos,
+    tributeId: client.tribute?.tributeId ?? "",
+    partnerA: client.tribute?.partnerA ?? "Lucas",
+    partnerB: client.tribute?.partnerB ?? "Gabriela",
+    anniversary: client.tribute?.anniversary ?? "12/06/2023",
+    theme: client.tribute?.theme ?? "spotify",
+    songTitle: client.tribute?.songTitle ?? "Perfect",
+    songArtist: client.tribute?.songArtist ?? "Ed Sheeran",
+    songUrl: client.tribute?.songUrl ?? "https://www.youtube.com/watch?v=yKNxeF4Kxyc",
+    letterTitle: client.tribute?.letterTitle ?? "Para Minha Vida,",
+    letterBody: client.tribute?.letterBody ?? "",
+    photos: client.tribute?.photos ?? [],
     expirationDate: client.expirationDate,
     plan: client.plan,
   });
@@ -77,7 +78,8 @@ export async function PUT(req: Request) {
     }
 
     const client = await prisma.saaSClient.findUnique({
-      where: { email: clientEmail }
+      where: { email: clientEmail },
+      include: { tribute: true }
     });
 
     if (!client) {
@@ -99,9 +101,23 @@ export async function PUT(req: Request) {
 
     const data = validated.data;
 
-    await prisma.saaSClient.update({
-      where: { id: client.id },
-      data: {
+    const updatedTribute = await prisma.tribute.upsert({
+      where: { saasClientId: client.id },
+      create: {
+        saasClientId: client.id,
+        partnerA: data.partnerA,
+        partnerB: data.partnerB,
+        anniversary: data.anniversary,
+        theme: data.theme,
+        songTitle: data.songTitle,
+        songArtist: data.songArtist,
+        songUrl: data.songUrl,
+        letterTitle: data.letterTitle,
+        letterBody: data.letterBody,
+        photos: data.photos,
+        photosCount: data.photos.length
+      },
+      update: {
         partnerA: data.partnerA,
         partnerB: data.partnerB,
         anniversary: data.anniversary,
@@ -116,7 +132,7 @@ export async function PUT(req: Request) {
       }
     });
 
-    revalidateTag(`tribute-${client.tributeId}`, 'max');
+    revalidateTag(`tribute-${updatedTribute.tributeId}`, 'max');
 
     return NextResponse.json({ success: true });
   } catch (error) {
