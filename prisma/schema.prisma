@@ -59,6 +59,7 @@ enum AdminActionType {
 model SaaSClient {
   id               Int       @id @default(autoincrement())
   email            String    @unique
+  emailHash        String?
   name             String
   image            String?
   status           String    @default("ACTIVE")

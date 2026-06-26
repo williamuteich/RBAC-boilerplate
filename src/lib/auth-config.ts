@@ -1,5 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { hashSha256 } from "@/src/lib/cryptography";
 import { prisma } from "@/src/lib/prisma";
 
 export const auth: NextAuthOptions = {
@@ -30,6 +31,7 @@ export const auth: NextAuthOptions = {
                     client = await prisma.saaSClient.create({
                         data: {
                             email: token.email,
+                            emailHash: hashSha256(token.email),
                             name: user.name ?? token.email,
                             image: user.image ?? null,
                             status: "PENDING",
