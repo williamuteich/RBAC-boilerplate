@@ -4,7 +4,7 @@ import { CouponFilters, CuponsResponse } from "@/src/types/dashboard/cupons";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 export async function getCoupons(filters: CouponFilters = { page: 1, limit: 10 }): Promise<CuponsResponse | null> {
   const cookie = (await headers()).get("cookie") || "";

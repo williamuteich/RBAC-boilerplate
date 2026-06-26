@@ -4,7 +4,7 @@ import { ClienteFilters, ClientesResponse } from "@/src/types/dashboard/clientes
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 export async function getClientes(filters: ClienteFilters = { page: 1, limit: 10 }): Promise<ClientesResponse | null> {
   const cookie = (await headers()).get("cookie") || "";
@@ -15,7 +15,7 @@ export async function getClientes(filters: ClienteFilters = { page: 1, limit: 10
   if (filters.status) params.set("status", filters.status);
   if (filters.plan) params.set("plan", filters.plan);
 
-  const res = await fetch(`${API_URL}/api/admin/clientes?${params.toString()}`, { 
+  const res = await fetch(`${API_URL}/api/admin/clientes?${params.toString()}`, {
     headers: { Cookie: cookie },
     cache: "no-store"
   });
@@ -25,7 +25,7 @@ export async function getClientes(filters: ClienteFilters = { page: 1, limit: 10
 }
 
 export async function updateCliente(
-  id: number, 
+  id: number,
   data: { plan?: string; status?: string; expirationDate?: string | null; lastPaymentValue?: number }
 ): Promise<{ success: boolean; error?: string }> {
   const cookie = (await headers()).get("cookie") || "";
