@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 import { getCuponsQuerySchema, generateCouponsSchema } from "@/src/schemas/cupons";
@@ -109,7 +110,7 @@ async function _POST(request: Request) {
     const dataToCreate: any[] = [];
 
     for (let i = 0; i < quantity; i++) {
-      const randomHex = Math.random().toString(16).substring(2, 6).toUpperCase();
+      const randomHex = randomBytes(3).toString("hex").toUpperCase();
       const code = `${prefix.toUpperCase()}-${randomHex}`;
 
       dataToCreate.push({

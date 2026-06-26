@@ -56,13 +56,19 @@ enum AdminActionType {
   DELETE
 }
 
+enum ClientStatus {
+  ACTIVE
+  PENDING
+  SUSPENDED
+}
+
 model SaaSClient {
   id               Int       @id @default(autoincrement())
   email            String    @unique
   name             String
   image            String?
   tributeId        String    @unique @default(uuid())
-  status           String    @default("ACTIVE")
+  status           ClientStatus @default(PENDING)
   plan             String    @default("MONTHLY")
   lastPaymentValue Float?
   lastPaymentDate  DateTime?
