@@ -10,6 +10,8 @@ import { FiltersBar } from "./filters-bar";
 import { ClientsTable } from "./clients-table";
 import { EditClientModal } from "./edit-client-modal";
 
+import { useToast } from "@/src/app/components/toast-provider";
+
 export function ClientesDashboard({
   initialData
 }: {
@@ -17,6 +19,7 @@ export function ClientesDashboard({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { success, error } = useToast();
 
   const [search, setSearch] = useQueryState("search", { defaultValue: "", shallow: false });
   const [status, setStatus] = useQueryState("status", { defaultValue: "", shallow: false });
@@ -47,7 +50,10 @@ export function ClientesDashboard({
       if (res.success) {
         setEditOpen(false);
         setEditingClient(null);
+        success("Cliente atualizado com sucesso!");
         router.refresh();
+      } else {
+        error(res.error || "Erro ao atualizar cliente.");
       }
     });
   };

@@ -14,6 +14,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Coupon, CuponsTableProps } from "@/src/types/dashboard/cupons";
 import { Pagination } from "@/src/app/admin/components/pagination";
+import { useToast } from "@/src/app/components/toast-provider";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export function CuponsTable({
   coupons,
@@ -26,10 +37,13 @@ export function CuponsTable({
   formatDate
 }: CuponsTableProps) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const { success } = useToast();
 
   const handleCopyCode = (id: number, code: string) => {
     navigator.clipboard.writeText(code);
     setCopiedId(id);
+    success(`Código ${code} copiado com sucesso!`);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -111,11 +125,7 @@ export function CuponsTable({
                     <Button
                       variant="ghost"
                       size="icon-sm"
-                      onClick={() => {
-                        if (confirm("Tem certeza que deseja excluir este cupom?")) {
-                          onDelete(coupon.id);
-                        }
-                      }}
+                      onClick={() => setDeleteConfirmId(coupon.id)}
                       className="cursor-pointer hover:bg-rose-50 group"
                       title="Excluir Cupom"
                     >
@@ -139,6 +149,31 @@ export function CuponsTable({
           return "";
         }}
       />
+
+      <AlertDialog open={deleteConfirmId !== null} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-slate-800 font-bold">Confirmar Exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este cupom? Esta ação não pode ser desfeita e invalidará o código correspondente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteConfirmId !== null) {
+                  onDelete(deleteConfirmId);
+                  setDeleteConfirmId(null);
+                }
+              }}
+              className="bg-rose-600 hover:bg-rose-700 text-white font-bold cursor-pointer border-0"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

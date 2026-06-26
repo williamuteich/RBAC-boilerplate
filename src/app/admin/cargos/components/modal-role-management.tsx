@@ -38,11 +38,13 @@ import { Role, PermissionToRole } from "@/src/types/dashboard/admins";
 import { ALL_RESOURCES, RESOURCE_ACTIONS } from "@/src/lib/navigation";
 import { ViewPermissions } from "./modal-view-permissions";
 import { createRole, updateRole, deleteRole } from "@/src/services/roles";
+import { useToast } from "@/src/app/components/toast-provider";
 
 export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
     const [isPending, startTransition] = useTransition();
     const [open, setOpen] = useState(false);
     const [error, setError] = useState("");
+    const { success, error: toastError } = useToast();
 
     const [editingRole, setEditingRole] = useState<Role | null>(null);
     const [selectedPermissions, setSelectedPermissions] = useState<{ resource: string, action: string }[]>([]);
@@ -69,7 +71,9 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
             const res = editingRole ? await updateRole(editingRole.id, data) : await createRole(data);
             if (res.success) {
                 setOpen(false);
+                success(editingRole ? "Cargo atualizado com sucesso!" : "Cargo criado com sucesso!");
             } else {
+                toastError(res.error || "Erro ao salvar");
                 setError(res.error || "Erro ao salvar");
             }
         });
@@ -175,7 +179,12 @@ export function RoleManagement({ initialRoles }: { initialRoles: Role[] }) {
                                                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
                                                             <AlertDialogAction disabled={isPending} onClick={() => startTransition(async () => {
                                                                 const res = await deleteRole(role.id);
-                                                                if (!res.success) setError(res.error || "Erro ao excluir");
+                                                                if (res.success) {
+                                                                    success("Cargo excluído com sucesso!");
+                                                                } else {
+                                                                    toastError(res.error || "Erro ao excluir");
+                                                                    setError(res.error || "Erro ao excluir");
+                                                                }
                                                             })} className="bg-red-600 hover:bg-red-700 text-white">Sim, excluir</AlertDialogAction>
                                                         </AlertDialogFooter>
                                                     </AlertDialogContent>

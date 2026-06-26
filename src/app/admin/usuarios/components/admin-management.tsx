@@ -48,6 +48,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Admin, Role, AdminsResponse } from "@/src/types/dashboard/admins";
 import { createAdmin, updateAdmin, deleteAdmin } from "@/src/services/administrator";
+import { useToast } from "@/src/app/components/toast-provider";
 
 export function AdminManagement({
     initialData: data,
@@ -62,6 +63,7 @@ export function AdminManagement({
     const [open, setOpen] = useState(false);
     const [error, setError] = useState("");
     const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
+    const { success, error: toastError } = useToast();
 
     const handleAction = (formData: FormData) => {
         startTransition(async () => {
@@ -75,8 +77,10 @@ export function AdminManagement({
 
             if (res.success) {
                 setOpen(false);
+                success(editingAdmin ? "Administrador atualizado com sucesso!" : "Administrador cadastrado com sucesso!");
                 router.refresh();
             } else {
+                toastError(res.error || "Erro ao salvar");
                 setError(res.error || "Erro ao salvar");
             }
         });
@@ -198,9 +202,10 @@ export function AdminManagement({
                                                                 <AlertDialogAction disabled={isPending} onClick={() => startTransition(async () => {
                                                                     const res = await deleteAdmin(admin.id);
                                                                     if (res.success) {
+                                                                        success("Administrador excluído com sucesso!");
                                                                         router.refresh();
                                                                     } else {
-                                                                        setError(res.error || "Erro ao excluir");
+                                                                        toastError(res.error || "Erro ao excluir");
                                                                     }
                                                                 })} className="bg-red-600 hover:bg-red-700 text-white">Sim, excluir</AlertDialogAction>
                                                             </AlertDialogFooter>
