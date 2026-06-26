@@ -28,7 +28,7 @@ export async function GET(request: Request) {
           OR: [
             { name: { contains: search, mode: "insensitive" as const } },
             { email: { contains: search, mode: "insensitive" as const } },
-            { tributeId: { contains: search, mode: "insensitive" as const } }
+            { tribute: { tributeId: { contains: search, mode: "insensitive" as const } } }
           ]
         } : {},
         status ? { status } : {},
@@ -42,6 +42,7 @@ export async function GET(request: Request) {
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: "desc" },
+        include: { tribute: true }
       }),
       prisma.saaSClient.count({ where }),
       prisma.saaSClient.count(),
@@ -66,8 +67,24 @@ export async function GET(request: Request) {
 
     const activePercentage = totalCount > 0 ? (activeCount / totalCount) * 100 : 0;
 
+    const mappedClients = clients.map((client) => ({
+      id: client.id,
+      email: client.email,
+      name: client.name,
+      image: client.image,
+      tributeId: client.tribute?.tributeId ?? "",
+      status: client.status,
+      plan: client.plan,
+      lastPaymentValue: client.lastPaymentValue,
+      lastPaymentDate: client.lastPaymentDate,
+      expirationDate: client.expirationDate,
+      photosCount: client.tribute?.photosCount ?? 0,
+      createdAt: client.createdAt,
+      updatedAt: client.updatedAt,
+    }));
+
     return NextResponse.json({
-      clients,
+      clients: mappedClients,
       total,
       page,
       limit,
