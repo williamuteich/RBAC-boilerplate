@@ -56,10 +56,9 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.redirect(session.url!, 303)
-    } catch (err: any) {
-        return NextResponse.json(
-            { error: err.message || 'Erro ao criar sessão de checkout' },
-            { status: err.statusCode || 500 }
-        )
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Erro ao criar sessão de checkout';
+        const status = (err as { statusCode?: number }).statusCode ?? 500;
+        return NextResponse.json({ error: message }, { status })
     }
 }

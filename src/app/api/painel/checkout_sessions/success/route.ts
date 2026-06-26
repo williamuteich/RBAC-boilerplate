@@ -90,7 +90,7 @@ export async function GET(req: Request) {
 
     const plan = checkoutSession.metadata?.plan ?? 'standard'
     return NextResponse.redirect(new URL(`/painel/success?plan=${plan}`, req.url), 303)
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[Checkout Success Error]', err)
     return NextResponse.redirect(new URL('/painel/cupom', req.url))
   }

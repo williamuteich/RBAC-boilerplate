@@ -172,9 +172,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
       } else {
         setErrorMessage(res.error || "Erro ao salvar alterações.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Erro ao salvar dados do painel:", err);
-      setErrorMessage(err.message || "Erro de conexão ao salvar.");
+      setErrorMessage(err instanceof Error ? err.message : "Erro de conexão ao salvar.");
     } finally {
       setIsSaving(false);
     }

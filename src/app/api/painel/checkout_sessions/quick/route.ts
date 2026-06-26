@@ -69,10 +69,8 @@ export async function GET(req: Request) {
     cookieStore.delete('checkout_plan')
 
     return NextResponse.redirect(session.url!, 303)
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message || 'Erro ao criar sessão de checkout' },
-      { status: 500 }
-    )
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Erro ao criar sessão de checkout';
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
