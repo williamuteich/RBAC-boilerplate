@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Check, Zap, Star, Crown, ArrowRight } from "lucide-react";
 
 const PLANS = [
@@ -142,14 +141,14 @@ export function Pricing() {
                   </ul>
                 </div>
 
-                <Link href="/login" className="mt-6 block">
+                <a href={`/api/painel/checkout_sessions/quick?plan=${plan.key}`} className="mt-6 block">
                   <button
                     className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer ${plan.ctaClass}`}
                   >
                     {plan.cta}
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
-                </Link>
+                </a>
               </div>
             );
           })}
