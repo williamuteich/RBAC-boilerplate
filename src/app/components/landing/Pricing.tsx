@@ -141,7 +141,7 @@ export function Pricing() {
                   </ul>
                 </div>
 
-                <a href={`/api/painel/checkout_sessions/quick?plan=${plan.key}`} className="mt-6 block">
+                <a href="/login" className="mt-6 block">
                   <button
                     className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer ${plan.ctaClass}`}
                   >
