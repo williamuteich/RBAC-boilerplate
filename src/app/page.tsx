@@ -1,8 +1,10 @@
 import { Suspense } from "react";
 import { Header } from "./components/landing/Header";
 import { Hero } from "./components/landing/Hero";
+import { HowItWorks } from "./components/landing/HowItWorks";
 import { LoveSim } from "./components/LoveSim";
 import { Features } from "./components/landing/Features";
+import { Pricing } from "./components/landing/Pricing";
 import { Faq } from "./components/landing/Faq";
 import { Footer } from "./components/landing/Footer";
 
@@ -40,7 +42,6 @@ export const metadata = {
   },
 };
 
-
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#FAF9FF] text-[#2D2A4A] flex flex-col font-sans selection:bg-[#9A75F0] selection:text-white overflow-x-hidden">
@@ -52,6 +53,8 @@ export default function LandingPage() {
 
       <main className="flex-1">
         <Hero />
+
+        <HowItWorks />
 
         <section id="simulador" className="py-12 bg-white/50 border-y border-[#E8E6F5] scroll-mt-20">
           <div className="max-w-5xl mx-auto px-4">
@@ -75,6 +78,8 @@ export default function LandingPage() {
         </section>
 
         <Features />
+
+        <Pricing />
 
         <Faq />
       </main>

@@ -16,6 +16,14 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-4">
+          <nav className="hidden sm:flex items-center gap-5">
+            <Link href="#como-funciona" className="text-xs font-semibold text-[#696684] hover:text-[#2D2A4A] transition-colors">
+              Como Funciona
+            </Link>
+            <Link href="#precos" className="text-xs font-semibold text-[#696684] hover:text-[#2D2A4A] transition-colors">
+              Preços
+            </Link>
+          </nav>
           <Link href="/login">
             <Button className="bg-linear-to-r from-[#9A75F0] to-[#8B5CF6] hover:from-[#8B5CF6] hover:to-[#7C3AED] text-white text-xs font-bold rounded-xl px-5 py-2 shadow-md shadow-[#9A75F0]/15 hover:shadow-lg hover:shadow-[#9A75F0]/25 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] border-0 cursor-pointer">
               Entrar
