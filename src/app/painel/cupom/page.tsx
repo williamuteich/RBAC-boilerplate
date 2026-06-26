@@ -189,8 +189,8 @@ export default function ResgateoCupomPage() {
                 <button
                   type="submit"
                   className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer hover:scale-[1.01] active:scale-[0.99] ${plan.popular
-                      ? "bg-[#9A75F0] hover:bg-[#855fe6] text-white shadow-md shadow-[#9A75F0]/20"
-                      : "bg-slate-900 hover:bg-slate-800 text-white"
+                    ? "bg-[#9A75F0] hover:bg-[#855fe6] text-white shadow-md shadow-[#9A75F0]/20"
+                    : "bg-slate-900 hover:bg-slate-800 text-white"
                     }`}
                 >
                   <CreditCard className="w-4 h-4" />
@@ -208,59 +208,83 @@ export default function ResgateoCupomPage() {
       </p>
 
       {/* ── Divisor ── */}
-      <div className="relative my-4 w-full max-w-md mx-auto">
+      <div className="relative my-6 w-full max-w-2xl mx-auto">
         <div className="absolute inset-0 flex items-center" aria-hidden="true">
           <div className="w-full border-t border-[#E8E6F5]"></div>
         </div>
         <div className="relative flex justify-center text-[10px] uppercase tracking-wider font-semibold">
-          <span className="bg-[#FAF9FF] px-3 text-[#696684]">ou resgate um cupom de acesso</span>
+          <span className="bg-[#FAF9FF] px-4 text-[#696684] flex items-center gap-1.5">
+            <Ticket className="w-3 h-3" />
+            Tem um cupom de acesso?
+          </span>
         </div>
       </div>
 
-      {/* ── Seção de Cupom Simplificada ── */}
-      <div className="w-full max-w-md mx-auto bg-white rounded-2xl border border-[#E8E6F5] p-3 shadow-xs">
-        <form onSubmit={handleSubmit} className="flex gap-2">
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => {
-              setCode(e.target.value.toUpperCase());
-              if (status === "error") setStatus("idle");
-            }}
-            placeholder="Digite o código (Ex: LOVE-A3F9)"
-            maxLength={20}
-            className={`flex-1 min-w-0 font-mono text-xs font-bold tracking-wider px-3 py-2.5 rounded-xl border outline-none bg-[#FAFAFA] transition-all placeholder:text-slate-400 placeholder:font-normal placeholder:tracking-normal ${status === "error"
-                ? "border-red-300 text-red-700 bg-red-50/50 focus:border-red-400"
-                : "border-[#E8E6F5] text-[#2D2A4A] focus:border-[#9A75F0] focus:bg-white"
-              }`}
-            autoComplete="off"
-            spellCheck={false}
-          />
-          <button
-            type="submit"
-            disabled={status === "loading" || !code.trim()}
-            className="flex items-center gap-1.5 bg-[#9A75F0] hover:bg-[#855fe6] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 px-4 rounded-xl transition-all text-xs shadow-sm cursor-pointer whitespace-nowrap"
-          >
-            {status === "loading" ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                Validando...
-              </>
-            ) : (
-              <>
-                <Ticket className="w-3.5 h-3.5" />
-                Resgatar
-              </>
-            )}
-          </button>
-        </form>
-
-        {status === "error" && (
-          <div className="flex items-center gap-1.5 text-red-600 text-[10px] font-semibold bg-red-50 border border-red-100 rounded-lg px-3 py-2 mt-2">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-            <span>{message}</span>
+      {/* ── Seção de Cupom Destacada ── */}
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="relative rounded-2xl border-2 border-dashed border-[#C4B5FD] bg-linear-to-br from-[#FAF9FF] to-[#F5F0FF] p-5 shadow-sm shadow-[#9A75F0]/10">
+          {/* Canto decorativo */}
+          <div className="absolute top-3 right-4 opacity-10">
+            <Ticket className="w-10 h-10 text-[#9A75F0]" />
           </div>
-        )}
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            {/* Ícone + texto */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#9A75F0]/10 border border-[#9A75F0]/20 flex items-center justify-center">
+                <Ticket className="w-5 h-5 text-[#9A75F0]" />
+              </div>
+              <div>
+                <p className="text-xs font-black text-[#2D2A4A] leading-tight">Resgate seu Cupom</p>
+                <p className="text-[10px] text-[#696684] mt-0.5">Insira o código e ative seu acesso</p>
+              </div>
+            </div>
+
+            {/* Form inline */}
+            <form onSubmit={handleSubmit} className="flex gap-2 flex-1 w-full">
+              <input
+                type="text"
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value.toUpperCase());
+                  if (status === "error") setStatus("idle");
+                }}
+                placeholder="EX: LOVE-A3F9"
+                maxLength={20}
+                className={`flex-1 min-w-0 font-mono text-sm font-bold tracking-[0.15em] text-center px-4 py-2.5 rounded-xl border-2 outline-none transition-all placeholder:text-slate-300 placeholder:font-normal placeholder:tracking-normal placeholder:text-xs ${status === "error"
+                  ? "border-red-300 text-red-700 bg-red-50/50 focus:border-red-400"
+                  : "border-[#C4B5FD] bg-white text-[#2D2A4A] focus:border-[#9A75F0] focus:bg-white focus:shadow-sm focus:shadow-[#9A75F0]/20"
+                  }`}
+                autoComplete="off"
+                spellCheck={false}
+              />
+              <button
+                type="submit"
+                disabled={status === "loading" || !code.trim()}
+                className="flex items-center gap-1.5 bg-[#9A75F0] hover:bg-[#855fe6] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 px-5 rounded-xl transition-all text-xs shadow-md shadow-[#9A75F0]/20 cursor-pointer whitespace-nowrap hover:scale-[1.01] active:scale-[0.99]"
+              >
+                {status === "loading" ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Validando...
+                  </>
+                ) : (
+                  <>
+                    <Ticket className="w-3.5 h-3.5" />
+                    Resgatar
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {status === "error" && (
+            <div className="flex items-center gap-1.5 text-red-600 text-[10px] font-semibold bg-red-50 border border-red-200 rounded-lg px-3 py-2 mt-3">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{message}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <p className="text-xs text-center text-[#696684] -mt-2">

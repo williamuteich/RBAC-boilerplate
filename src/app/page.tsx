@@ -6,10 +6,40 @@ import { Features } from "./components/landing/Features";
 import { Faq } from "./components/landing/Faq";
 import { Footer } from "./components/landing/Footer";
 
+const SITE_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
 export const metadata = {
-  title: "Glamour Lindóia - Homenageie quem você ama",
-  description: "Crie uma homenagem digital eterna para o seu amor com fotos, música do casal, calendário personalizado e link com QR Code. Perfeito para o Dia dos Namorados, aniversários ou dias comuns.",
+  metadataBase: new URL(SITE_URL),
+  title: "Glamour Lindóia – Crie uma homenagem de amor digital",
+  description:
+    "Surpreenda quem você ama com uma homenagem digital personalizada: fotos, música do casal, carta e link compartilhável. Perfeito para aniversários, Dia dos Namorados e momentos especiais.",
+  keywords: ["homenagem digital", "surpresa romântica", "declaração de amor", "página de casal", "glamour lindoia"],
+  authors: [{ name: "Glamour Lindóia" }],
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: SITE_URL,
+    siteName: "Glamour Lindóia",
+    title: "Glamour Lindóia – Homenageie quem você ama 💜",
+    description:
+      "Crie uma homenagem digital com fotos, música e carta para a pessoa que você ama. Compartilhe o link especial e surpreenda!",
+    images: [
+      {
+        url: "/og-home.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Glamour Lindóia – Homenagem Digital de Amor",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Glamour Lindóia – Homenageie quem você ama 💜",
+    description: "Crie uma homenagem digital com fotos, música e carta.",
+    images: ["/og-home.jpg"],
+  },
 };
+
 
 export default function LandingPage() {
   return (

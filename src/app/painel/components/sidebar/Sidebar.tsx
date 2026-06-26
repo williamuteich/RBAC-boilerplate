@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Heart, Edit3, ExternalLink, LogOut, MessageSquare, Ticket } from "lucide-react";
+import { Heart, Edit3, ExternalLink, LogOut, MessageSquare, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -48,9 +48,9 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
       disabled: !tributeId,
     },
     {
-      title: "Resgatar Cupom",
+      title: "Pagamento",
       href: "/painel/cupom",
-      icon: Ticket,
+      icon: CreditCard,
     },
     {
       title: "Suporte",

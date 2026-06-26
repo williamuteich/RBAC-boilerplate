@@ -30,6 +30,8 @@ async function getTributeData(id: string) {
   });
 }
 
+const SITE_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
 export async function generateMetadata({
   params,
 }: {
@@ -44,17 +46,54 @@ export async function generateMetadata({
       client.status !== "ACTIVE" ||
       (client.expirationDate && new Date(client.expirationDate) < new Date())
     ) {
-      return { title: "Surpresa de Amor - Homenagem Especial" };
+      return {
+        title: "Surpresa de Amor – Homenagem Especial 💜",
+        description: "Uma homenagem digital especial criada com amor.",
+      };
     }
 
+    const rawPhotos = client.photos as any;
+    const firstPhoto =
+      Array.isArray(rawPhotos) && rawPhotos.length > 0
+        ? (rawPhotos[0] as { url?: string }).url
+        : null;
+
+    const title = `Uma Surpresa Especial para ${client.partnerB} 💜`;
+    const description = `${client.partnerA} preparou uma homenagem digital cheia de fotos, música e amor para ${client.partnerB}. Abra e se surpreenda! ❤️`;
+    const ogImage = firstPhoto ?? `${SITE_URL}/og-home.jpg`;
+
     return {
-      title: `Uma Surpresa Especial para ${client.partnerB} ❤️`,
-      description: `Homenagem de amor especial criada por ${client.partnerA} com fotos e música.`,
+      metadataBase: new URL(SITE_URL),
+      title,
+      description,
+      openGraph: {
+        type: "website",
+        locale: "pt_BR",
+        url: `${SITE_URL}/p/${id}`,
+        siteName: "Glamour Lindóia",
+        title,
+        description,
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: `Homenagem de ${client.partnerA} para ${client.partnerB}`,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [ogImage],
+      },
     };
   } catch {
-    return { title: "Surpresa de Amor - Homenagem Especial" };
+    return { title: "Surpresa de Amor – Homenagem Especial 💜" };
   }
 }
+
 
 export default async function PublicTributePage({
   params,
