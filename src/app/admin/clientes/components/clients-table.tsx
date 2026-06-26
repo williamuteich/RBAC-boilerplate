@@ -22,7 +22,6 @@ export function ClientsTable({
   limit,
   setPage,
   onEdit,
-  onSimulate,
   formatCurrency,
   formatDate
 }: ClientsTableProps) {
@@ -125,14 +124,6 @@ export function ClientsTable({
                       className="cursor-pointer"
                     >
                       <Edit2 className="h-4 w-4 text-slate-500" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onSimulate(client.name, client.email)}
-                      className="text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded px-2 cursor-pointer"
-                    >
-                      Simular
                     </Button>
                   </div>
                 </TableCell>

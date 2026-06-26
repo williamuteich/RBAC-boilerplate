@@ -5,7 +5,6 @@ import { useQueryState } from "nuqs";
 import { ClientesResponse, SaaSClient } from "@/src/types/dashboard/clientes";
 import { updateCliente } from "@/src/services/clientes";
 import { useRouter } from "next/navigation";
-import { SimulationOverlay } from "./simulation-overlay";
 import { StatsCards } from "./stats-cards";
 import { FiltersBar } from "./filters-bar";
 import { ClientsTable } from "./clients-table";
@@ -26,29 +25,6 @@ export function ClientesDashboard({
 
   const [editingClient, setEditingClient] = useState<SaaSClient | null>(null);
   const [editOpen, setEditOpen] = useState(false);
-  const [isSimulating, setIsSimulating] = useState<string | null>(null);
-
-  const handleSimulate = (clientName: string, clientEmail: string) => {
-    setIsSimulating(clientName);
-    startTransition(async () => {
-      try {
-        const res = await fetch("/api/admin/clientes/simulate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ email: clientEmail })
-        });
-        if (res.ok) {
-          router.push("/painel");
-        }
-      } catch (err) {
-        console.error("Erro ao simular cliente:", err);
-      } finally {
-        setIsSimulating(null);
-      }
-    });
-  };
 
   const handleSaveEdit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,8 +73,6 @@ export function ClientesDashboard({
 
   return (
     <div className="flex flex-col gap-8 w-full">
-      <SimulationOverlay clientName={isSimulating} />
-
       <StatsCards 
         stats={initialData.stats} 
         formatCurrency={formatCurrency} 
@@ -123,7 +97,6 @@ export function ClientesDashboard({
         limit={initialData.limit}
         setPage={setPage}
         onEdit={handleOpenEdit}
-        onSimulate={handleSimulate}
         formatCurrency={formatCurrency}
         formatDate={formatDate}
       />

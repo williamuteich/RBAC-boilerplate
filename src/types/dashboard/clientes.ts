@@ -39,9 +39,6 @@ export interface ClienteFilters {
   plan?: string;
 }
 
-export interface SimulationOverlayProps {
-  clientName: string | null;
-}
 
 export interface StatsCardsProps {
   stats: ClientesStats;
@@ -67,7 +64,6 @@ export interface ClientsTableProps {
   limit: number;
   setPage: (val: string) => void;
   onEdit: (client: SaaSClient) => void;
-  onSimulate: (name: string, email: string) => void;
   formatCurrency: (val: number | null) => string;
   formatDate: (date: Date | string | null) => string;
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Providers } from "./components/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,11 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Surpresa de Amor - Homenagem Especial",
-  description: "Uma homenagem personalizada cheia de fotos, música e carinho para quem é especial.",
+  title: "AdminCore – Painel Administrativo",
+  description: "Painel de gerenciamento centralizado com controle de acesso baseado em papéis (RBAC).",
 };
-
-import { Providers } from "./components/providers";
 
 export default function RootLayout({
   children,
@@ -33,9 +31,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Providers>
-          <NuqsAdapter>
-            <main className="flex-1">{children}</main>
-          </NuqsAdapter>
+          {children}
         </Providers>
       </body>
     </html>

@@ -4,16 +4,16 @@ declare module "next-auth" {
     interface Session {
         user: {
             id: string;
-            tipo: "ADMINISTRATOR" | "USER";
-            permissions?: string[];
+            tipo: "ADMINISTRATOR";
+            permissions: string[];
         } & DefaultSession["user"];
     }
 }
 
 declare module "next-auth/jwt" {
     interface JWT {
-        id?: string;
-        tipo?: "ADMINISTRATOR" | "USER";
-        permissions?: string[];
+        id: string;
+        tipo: "ADMINISTRATOR";
+        permissions: string[];
     }
 }
