@@ -4,34 +4,12 @@ import { redirect } from "next/navigation";
 import { ReactNode, Suspense } from "react";
 import { Sidebar } from "./components/sidebar/Sidebar";
 import { Header } from "./components/header/Header";
-import { cookies } from "next/headers";
-import { ImpersonationBanner } from "./components/ImpersonationBanner";
 import { ExpirationBanner } from "./components/ExpirationBanner";
-
-async function ImpersonationBannerContainer() {
-  const session = await getServerSession(auth);
-  if (session?.user.tipo === "ADMINISTRATOR") {
-    const cookieStore = await cookies();
-    const email = cookieStore.get("impersonated_client_email")?.value;
-    if (email) {
-      return <ImpersonationBanner email={email} />;
-    }
-  }
-  return null;
-}
 
 async function PainelAuthGuard() {
   const session = await getServerSession(auth);
-  if (!session) {
+  if (!session || session.user.tipo !== "USER") {
     redirect("/login");
-  }
-
-  if (session.user.tipo === "ADMINISTRATOR") {
-    const cookieStore = await cookies();
-    const impersonated = cookieStore.get("impersonated_client_email")?.value;
-    if (!impersonated) {
-      redirect("/admin");
-    }
   }
   return null;
 }
@@ -45,9 +23,6 @@ export default function PainelLayout({ children }: { children: ReactNode }) {
     }>
       <PainelAuthGuard />
       <div className="flex flex-col h-screen bg-[#FAF9FF] overflow-hidden text-slate-900 font-sans">
-        <Suspense fallback={null}>
-          <ImpersonationBannerContainer />
-        </Suspense>
         <Suspense fallback={null}>
           <ExpirationBanner />
         </Suspense>

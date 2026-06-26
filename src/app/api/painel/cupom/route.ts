@@ -35,9 +35,6 @@ export async function POST(req: Request) {
       (client.status === "ACTIVE" && isExpired);
 
     if (!canRedeem) {
-      if (client.status === "CANCELLED") {
-        return NextResponse.json({ error: "Conta cancelada, entre em contato com o suporte" }, { status: 403 });
-      }
       return NextResponse.json(
         { error: "Sua conta ainda está ativa. Você pode resgatar um novo cupom após o término do seu plano atual." },
         { status: 400 }

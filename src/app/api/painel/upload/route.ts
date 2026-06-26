@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { auth } from "@/src/lib/auth-config";
 import { prisma } from "@/src/lib/prisma";
-import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
@@ -10,21 +9,13 @@ import path from "path";
 const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/avif"];
 const ALLOWED_EXTENSIONS = [".png", ".jpeg", ".jpg", ".webp", ".avif"];
 
-async function getClientEmailFromSession(session: any) {
-  if (session.user.tipo === "ADMINISTRATOR") {
-    const cookieStore = await cookies();
-    return cookieStore.get("impersonated_client_email")?.value || null;
-  }
-  return session.user.email || null;
-}
-
 export async function POST(req: Request) {
   const session = await getServerSession(auth);
-  if (!session) {
+  if (!session || session.user.tipo !== "USER") {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   }
 
-  const clientEmail = await getClientEmailFromSession(session);
+  const clientEmail = session.user.email;
   if (!clientEmail) {
     return NextResponse.json({ error: "Cliente não especificado" }, { status: 401 });
   }
@@ -37,7 +28,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
   }
 
-  if ((client.status === "PENDING" || client.status === "SUSPENDED" || (client.expirationDate && new Date(client.expirationDate) < new Date())) && session.user.tipo !== "ADMINISTRATOR") {
+  if (client.status === "PENDING" || client.status === "SUSPENDED" || (client.expirationDate && new Date(client.expirationDate) < new Date())) {
     return NextResponse.json({ error: "Sua conta está pendente ou suspensa. Resgate um cupom para ativar." }, { status: 403 });
   }
 

@@ -8,11 +8,7 @@ async function LoginContent() {
   const session = await getServerSession(auth);
 
   if (session) {
-    if (session.user.tipo === "ADMINISTRATOR") {
-      redirect("/admin");
-    } else {
-      redirect("/painel");
-    }
+    redirect("/painel");
   }
 
   return <UserLoginForm />;

@@ -1,32 +1,19 @@
 import { getServerSession } from "next-auth";
 import { auth } from "@/src/lib/auth-config";
 import { redirect } from "next/navigation";
-import { hasPermission } from "./auth-helpers";
-export { hasPermission };
 
-export async function requireAdminContext() {
+export async function requireUserContext() {
     const session = await getServerSession(auth);
-    if (!session || session.user.tipo !== "ADMINISTRATOR") {
-        redirect("/login-admin");
+    if (!session || session.user.tipo !== "USER") {
+        redirect("/login");
     }
     return session;
 }
 
-export async function checkAdminApi() {
+export async function checkUserApi() {
     const session = await getServerSession(auth);
-    if (!session || session.user.tipo !== "ADMINISTRATOR") {
+    if (!session || session.user.tipo !== "USER") {
         return null;
-    }
-    return session;
-}
-
-export async function requirePermission(resource: string, action: string) {
-    const session = await getServerSession(auth);
-    if (!session || session.user.tipo !== "ADMINISTRATOR") {
-        redirect("/login-admin");
-    }
-    if (!hasPermission(session, resource, action)) {
-        redirect("/admin/unauthorized");
     }
     return session;
 }
