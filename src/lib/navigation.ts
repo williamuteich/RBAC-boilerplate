@@ -1,4 +1,4 @@
-import { ShieldCheck, Key, History, Users, Ticket, LayoutDashboard } from "lucide-react";
+import { ShieldCheck, Key, History, Users, Ticket, LayoutDashboard, Target } from "lucide-react";
 import { NavConfig } from "@/src/types/dashboard/components";
 
 export const ADMIN_NAVIGATION: NavConfig[] = [
@@ -12,6 +12,13 @@ export const ADMIN_NAVIGATION: NavConfig[] = [
         title: "Clientes",
         href: "/admin/clientes",
         icon: Users,
+        resource: "clientes",
+        section: "MAIN MENU"
+    },
+    {
+        title: "Leads",
+        href: "/admin/leads",
+        icon: Target,
         resource: "clientes",
         section: "MAIN MENU"
     },

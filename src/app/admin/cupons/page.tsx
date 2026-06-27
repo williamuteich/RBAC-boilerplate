@@ -3,12 +3,15 @@ import { getCoupons } from "@/src/services/cupons";
 import NotAuthorized from "@/src/app/components/notAuthorized";
 import { Suspense } from "react";
 import { CuponsDashboard } from "./components/cupons-dashboard";
+import { requirePermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 
 async function CuponsContent({
     searchParamsPromise
 }: {
     searchParamsPromise: Promise<{ [key: string]: string | undefined }>;
 }) {
+    await requirePermission("cupons", "visualizar");
+
     const searchParams = await searchParamsPromise;
     const page = Number(searchParams.page) || 1;
     const limit = Number(searchParams.limit) || 10;

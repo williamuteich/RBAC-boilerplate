@@ -3,12 +3,15 @@ import { ShieldCheck } from "lucide-react";
 import { getAdmins, getRoles } from "@/src/services/administrator";
 import NotAuthorized from "@/src/app/components/notAuthorized";
 import { Suspense } from "react";
+import { requirePermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 
 async function UsersContent({
     searchParamsPromise
 }: {
     searchParamsPromise: Promise<{ [key: string]: string | undefined }>;
 }) {
+    await requirePermission("usuarios", "visualizar");
+
     const searchParams = await searchParamsPromise;
     const page = Number(searchParams.page) || 1;
     const limit = Number(searchParams.limit) || 20;

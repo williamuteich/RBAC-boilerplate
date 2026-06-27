@@ -3,12 +3,15 @@ import { Users } from "lucide-react";
 import { getClientes } from "@/src/services/clientes";
 import NotAuthorized from "@/src/app/components/notAuthorized";
 import { Suspense } from "react";
+import { requirePermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 
 async function ClientesContent({
   searchParamsPromise
 }: {
   searchParamsPromise: Promise<{ [key: string]: string | undefined }>;
 }) {
+  await requirePermission("clientes", "visualizar");
+
   const searchParams = await searchParamsPromise;
   const page = Number(searchParams.page) || 1;
   const limit = Number(searchParams.limit) || 10;

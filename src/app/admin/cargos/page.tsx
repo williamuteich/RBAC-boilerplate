@@ -3,8 +3,11 @@ import { Key } from "lucide-react";
 import { getRoles } from "@/src/services/roles";
 import NotAuthorized from "@/src/app/components/notAuthorized";
 import { Suspense } from "react";
+import { requirePermission } from "@/src/lib/auth-helpers/auth-helpers-server";
 
 async function RolesContent() {
+    await requirePermission("cargos", "visualizar");
+
     const initialRoles = await getRoles();
 
     if (initialRoles === null) {
