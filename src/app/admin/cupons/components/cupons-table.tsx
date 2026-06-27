@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { 
+import {
   Trash2, Copy, Check
 } from "lucide-react";
 import {
@@ -67,7 +67,6 @@ export function CuponsTable({
             <TableHead>Status</TableHead>
             <TableHead>Resgatado Por</TableHead>
             <TableHead>Data do Resgate</TableHead>
-            <TableHead>Expiração do Cupom</TableHead>
             <TableHead className="text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -120,15 +119,6 @@ export function CuponsTable({
                 </TableCell>
                 <TableCell className="text-xs text-slate-600">
                   {formatDate(coupon.usedAt)}
-                </TableCell>
-                <TableCell className="text-xs">
-                  {coupon.expiresAt ? (
-                    <span className={new Date(coupon.expiresAt) <= new Date() ? "text-rose-600 font-medium" : "text-slate-600"}>
-                      {formatDate(coupon.expiresAt)}
-                    </span>
-                  ) : (
-                    <span className="text-slate-400">Nunca expira</span>
-                  )}
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
