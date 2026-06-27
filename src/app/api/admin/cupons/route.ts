@@ -103,7 +103,7 @@ async function _POST(request: Request) {
       return NextResponse.json({ error: validated.error.issues[0].message }, { status: 400 });
     }
 
-    const { quantity, prefix, expiresInDays } = validated.data;
+    const { quantity, prefix, expiresInDays, origem } = validated.data;
     const durationDays = expiresInDays || 7;
 
     const createdCodes: string[] = [];
@@ -117,7 +117,8 @@ async function _POST(request: Request) {
         code,
         used: false,
         durationDays,
-        expiresAt: null
+        expiresAt: null,
+        origem
       });
       createdCodes.push(code);
     }

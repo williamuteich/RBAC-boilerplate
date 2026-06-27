@@ -28,6 +28,7 @@ export async function generateCoupons(data: {
   quantity: number;
   prefix?: string;
   expiresInDays?: number | null;
+  origem?: string;
 }): Promise<{ success: boolean; codes?: string[]; error?: string }> {
   const cookie = (await headers()).get("cookie") || "";
   const res = await fetch(`${API_URL}/api/admin/cupons`, {

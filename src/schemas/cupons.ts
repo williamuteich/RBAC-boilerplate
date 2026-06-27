@@ -10,7 +10,8 @@ export const getCuponsQuerySchema = z.object({
 export const generateCouponsSchema = z.object({
   quantity: z.coerce.number().int().min(1, "Quantidade mínima é 1").max(50, "Quantidade máxima é 50").default(1),
   prefix: z.string().max(10, "Prefixo muito longo").optional().transform(v => v || "LOVE"),
-  expiresInDays: z.coerce.number().int().positive().nullable().optional()
+  expiresInDays: z.coerce.number().int().positive().nullable().optional(),
+  origem: z.string().optional().default("google")
 });
 
 export const idParamSchema = z.object({

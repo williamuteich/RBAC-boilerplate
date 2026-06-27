@@ -63,6 +63,7 @@ export function CuponsTable({
         <TableHeader className="bg-muted/50">
           <TableRow>
             <TableHead>Código do Cupom</TableHead>
+            <TableHead>Origem</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Resgatado Por</TableHead>
             <TableHead>Data do Resgate</TableHead>
@@ -73,7 +74,7 @@ export function CuponsTable({
         <TableBody>
           {coupons.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
+              <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
                 Nenhum cupom encontrado.
               </TableCell>
             </TableRow>
@@ -99,6 +100,15 @@ export function CuponsTable({
                       )}
                     </Button>
                   </div>
+                </TableCell>
+                <TableCell className="capitalize text-xs font-semibold">
+                  {coupon.origem === "google" && <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">Google Ads</span>}
+                  {coupon.origem === "instagram" && <span className="text-pink-600 bg-pink-50 px-2 py-0.5 rounded border border-pink-100">Instagram Ads</span>}
+                  {coupon.origem === "indicacao" && <span className="text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">Indicação</span>}
+                  {coupon.origem === "suporte" && <span className="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">Suporte</span>}
+                  {coupon.origem !== "google" && coupon.origem !== "instagram" && coupon.origem !== "indicacao" && coupon.origem !== "suporte" && (
+                    <span className="text-slate-600 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">{coupon.origem}</span>
+                  )}
                 </TableCell>
                 <TableCell>{getStatusBadge(coupon)}</TableCell>
                 <TableCell className="text-xs">

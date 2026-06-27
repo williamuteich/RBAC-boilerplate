@@ -56,24 +56,19 @@ enum AdminActionType {
   DELETE
 }
 
-enum ClientStatus {
-  ACTIVE
-  PENDING
-  SUSPENDED
-}
-
 model SaaSClient {
-  id               Int          @id @default(autoincrement())
-  email            String       @unique
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  emailHash        String?
   name             String
   image            String?
-  status           ClientStatus @default(PENDING)
-  plan             String       @default("MONTHLY")
+  status           String    @default("ACTIVE")
+  plan             String    @default("MONTHLY")
   lastPaymentValue Float?
   lastPaymentDate  DateTime?
   expirationDate   DateTime?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   tribute Tribute?
 }
@@ -87,7 +82,7 @@ model Tribute {
   theme       String   @default("spotify")
   songTitle   String   @default("Perfect")
   songArtist  String   @default("Ed Sheeran")
-  songUrl     String   @default("https://www.youtube.com/watch?v=T-doQhcwDS8")
+  songUrl     String   @default("https://www.youtube.com/watch?v=yKNxeF4Kxyc")
   letterTitle String   @default("Para Minha Vida,")
   letterBody  String   @default("Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma. Cada detalhe, cada conversa e cada sorriso ao seu lado me fazem ter a certeza de que quero passar o resto dos meus dias com você.")
   photos      Json     @default("[]")
@@ -107,6 +102,7 @@ model Coupon {
   usedAt       DateTime?
   expiresAt    DateTime?
   durationDays Int       @default(7)
+  origem       String    @default("google")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }

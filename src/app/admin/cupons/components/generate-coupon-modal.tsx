@@ -63,6 +63,21 @@ export function GenerateCouponModal({
             </div>
 
             <div className="space-y-2">
+              <Label>Origem / Canal de Aquisição</Label>
+              <select
+                name="origem"
+                defaultValue="google"
+                className="h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-slate-900 cursor-pointer"
+              >
+                <option value="google">Google Ads</option>
+                <option value="instagram">Instagram Ads</option>
+                <option value="indicacao">Indicação</option>
+                <option value="suporte">Suporte (Cliente Insatisfeito)</option>
+                <option value="outros">Outros</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
               <Label>Dias de Acesso Concedidos</Label>
               <Input
                 name="expiresInDays"
