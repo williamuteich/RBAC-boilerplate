@@ -78,6 +78,20 @@ export function GenerateCouponModal({
             </div>
 
             <div className="space-y-2">
+              <Label>Valor da Conversão (Opcional)</Label>
+              <Input
+                name="value"
+                type="number"
+                step="0.01"
+                min="0.01"
+                placeholder="Ex: 150.00"
+              />
+              <span className="text-[10px] text-[#696684] block leading-normal mt-1">
+                Se deixado em branco, o sistema usará o valor real do plano assinado pelo cliente ou R$ 150,00 como padrão.
+              </span>
+            </div>
+
+            <div className="space-y-2">
               <Label>Dias de Acesso Concedidos</Label>
               <Input
                 name="expiresInDays"

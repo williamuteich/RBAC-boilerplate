@@ -103,6 +103,7 @@ model Coupon {
   expiresAt    DateTime?
   durationDays Int       @default(7)
   origem       String    @default("google")
+  value        Float?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }

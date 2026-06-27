@@ -62,7 +62,7 @@ export function LeadsDashboard({ initialLeads }: LeadsDashboardProps) {
       const timeStr = lead.usedAt
         ? new Date(lead.usedAt).toISOString().replace("T", " ").substring(0, 19)
         : new Date().toISOString().replace("T", " ").substring(0, 19);
-      csvContent += `${lead.emailHash},Purchase,${timeStr},150.00,BRL\n`;
+      csvContent += `${lead.emailHash},Purchase,${timeStr},${lead.value.toFixed(2)},BRL\n`;
     });
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -88,7 +88,7 @@ export function LeadsDashboard({ initialLeads }: LeadsDashboardProps) {
       const timeUnix = lead.usedAt
         ? Math.floor(new Date(lead.usedAt).getTime() / 1000)
         : Math.floor(Date.now() / 1000);
-      csvContent += `${lead.emailHash},Purchase,${timeUnix},150.00,BRL\n`;
+      csvContent += `${lead.emailHash},Purchase,${timeUnix},${lead.value.toFixed(2)},BRL\n`;
     });
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -240,6 +240,7 @@ export function LeadsDashboard({ initialLeads }: LeadsDashboardProps) {
               <TableHead>E-mail</TableHead>
               <TableHead>Origem</TableHead>
               <TableHead>Hash SHA-256 (Email)</TableHead>
+              <TableHead>Valor da Venda</TableHead>
               <TableHead>Cupom Utilizado</TableHead>
               <TableHead>Data do Resgate</TableHead>
             </TableRow>
@@ -272,6 +273,9 @@ export function LeadsDashboard({ initialLeads }: LeadsDashboardProps) {
                   </TableCell>
                   <TableCell className="font-mono text-[10px] text-slate-500 max-w-[150px] truncate" title={lead.emailHash}>
                     {lead.emailHash || "-"}
+                  </TableCell>
+                  <TableCell className="text-xs font-semibold text-emerald-600">
+                    {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(lead.value)}
                   </TableCell>
                   <TableCell className="text-xs">
                     <code className="px-2 py-0.5 bg-slate-100 text-slate-800 font-mono text-[10.5px] rounded border border-slate-200">

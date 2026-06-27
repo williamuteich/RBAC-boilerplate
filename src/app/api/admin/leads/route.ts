@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { checkAdminApi, hasPermission } from "@/src/lib/auth-helpers/auth-helpers-server";
+import { Coupon } from "@/generated/prisma/client";
 
 export async function GET() {
   const session = await checkAdminApi();
@@ -26,7 +27,7 @@ export async function GET() {
 
     const clientMap = new Map(clients.map(c => [c.email, c]));
 
-    const leads = usedCoupons.map(coupon => {
+    const leads = usedCoupons.map((coupon: Coupon) => {
       const client = coupon.usedBy ? clientMap.get(coupon.usedBy) : null;
       return {
         id: coupon.id,
@@ -34,6 +35,7 @@ export async function GET() {
         email: coupon.usedBy,
         emailHash: client?.emailHash || "",
         origem: coupon.origem,
+        value: coupon.value || client?.lastPaymentValue || 150.00,
         usedAt: coupon.usedAt,
         code: coupon.code
       };

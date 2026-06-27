@@ -50,13 +50,16 @@ export function CuponsDashboard({
     const expiresInDaysStr = formData.get("expiresInDays") as string;
     const expiresInDays = expiresInDaysStr ? parseInt(expiresInDaysStr) : null;
     const origem = formData.get("origem") as string || "google";
+    const valueStr = formData.get("value") as string;
+    const value = valueStr ? parseFloat(valueStr) : null;
 
     startTransition(async () => {
       const res = await generateCoupons({
         quantity,
         prefix,
         expiresInDays,
-        origem
+        origem,
+        value
       });
 
       if (res.success && res.codes) {

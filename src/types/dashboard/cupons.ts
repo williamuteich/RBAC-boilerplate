@@ -8,6 +8,7 @@ export interface Coupon {
   usedAt: Date | string | null;
   expiresAt: Date | string | null;
   origem: string;
+  value: number | null;
   createdAt: Date | string;
   updatedAt: Date | string;
 }

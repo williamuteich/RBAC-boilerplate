@@ -4,6 +4,7 @@ export interface Lead {
   email: string | null;
   emailHash: string;
   origem: string;
+  value: number;
   usedAt: Date | string | null;
   code: string;
 }
