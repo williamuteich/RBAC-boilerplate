@@ -70,38 +70,39 @@ model SaaSClient {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  tribute          Tribute?
+  tribute Tribute?
 }
 
 model Tribute {
-  id           Int        @id @default(autoincrement())
-  tributeId    String     @unique @default(uuid())
-  partnerA     String     @default("Lucas")
-  partnerB     String     @default("Gabriela")
-  anniversary  String     @default("12/06/2023")
-  theme        String     @default("spotify")
-  songTitle    String     @default("Perfect")
-  songArtist   String     @default("Ed Sheeran")
-  songUrl      String     @default("https://www.youtube.com/watch?v=yKNxeF4Kxyc")
-  letterTitle  String     @default("Para Minha Vida,")
-  letterBody   String     @default("Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma. Cada detalhe, cada conversa e cada sorriso ao seu lado me fazem ter a certeza de que quero passar o resto dos meus dias com você.")
-  photos       Json       @default("[]")
-  photosCount  Int        @default(0)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id          Int      @id @default(autoincrement())
+  tributeId   String   @unique @default(uuid())
+  partnerA    String   @default("Lucas")
+  partnerB    String   @default("Gabriela")
+  anniversary String   @default("12/06/2023")
+  theme       String   @default("spotify")
+  songTitle   String   @default("Perfect")
+  songArtist  String   @default("Ed Sheeran")
+  songUrl     String   @default("https://www.youtube.com/watch?v=yKNxeF4Kxyc")
+  letterTitle String   @default("Para Minha Vida,")
+  letterBody  String   @default("Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma. Cada detalhe, cada conversa e cada sorriso ao seu lado me fazem ter a certeza de que quero passar o resto dos meus dias com você.")
+  photos      Json     @default("[]")
+  photosCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   saasClientId Int        @unique
   saasClient   SaaSClient @relation(fields: [saasClientId], references: [id], onDelete: Cascade)
 }
 
 model Coupon {
-  id        Int       @id @default(autoincrement())
-  code      String    @unique
-  used      Boolean   @default(false)
-  usedBy    String?
-  usedAt    DateTime?
+  id           Int       @id @default(autoincrement())
+  code         String    @unique
+  used         Boolean   @default(false)
+  usedBy       String?
+  usedAt       DateTime?
   expiresAt    DateTime?
   durationDays Int       @default(7)
+  origem       String    @default("google")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
