@@ -68,7 +68,7 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
               } else {
                 event.target.unMute();
               }
-              
+
               win.playTributeAudio = () => {
                 try {
                   event.target.playVideo();
@@ -82,7 +82,7 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
                 try {
                   event.target.playVideo();
                   setIsPlaying(true);
-                } catch (e) {}
+                } catch (e) { }
               } else {
                 setIsPlaying(false);
               }
@@ -131,7 +131,7 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
       } else {
         if (typeof player.pauseVideo === "function") player.pauseVideo();
       }
-    } catch (err) {}
+    } catch (err) { }
   }, [isPlaying]);
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
       } else {
         if (typeof player.unMute === "function") player.unMute();
       }
-    } catch (err) {}
+    } catch (err) { }
   }, [isMuted]);
 
   useEffect(() => {
@@ -159,7 +159,7 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
             if (typeof player.getDuration === "function") {
               setDuration(player.getDuration());
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       }, 500);
     }
@@ -220,19 +220,20 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
 }
 
 export function useTributeReactions(isPublic: boolean) {
-  const [reactions, setReactions] = useState<{ id: number; left: number; delay: number }[]>([]);
+  const [reactions, setReactions] = useState<{ id: number; left: number; delay: number; size: number }[]>([]);
 
   const triggerReaction = () => {
     if (!isPublic) return;
     let count = 0;
-    const maxRepetitions = 15;
+    const maxRepetitions = 8;
 
     const generateWave = () => {
-      const waveItems = Array.from({ length: 3 }).map((_, i) => {
+      const waveItems = Array.from({ length: 2 }).map((_, i) => {
         const id = Date.now() + Math.random() + i;
-        const left = 10 + Math.random() * 80;
-        const delay = Math.random() * 0.1;
-        return { id, left, delay };
+        const left = 15 + Math.random() * 70;
+        const delay = Math.random() * 0.15;
+        const size = Math.random() * 12 + 12;
+        return { id, left, delay, size };
       });
 
       setReactions((prev) => [...prev, ...waveItems]);
@@ -252,7 +253,7 @@ export function useTributeReactions(isPublic: boolean) {
       if (count >= maxRepetitions) {
         clearInterval(interval);
       }
-    }, 120);
+    }, 220);
   };
 
   return { reactions, triggerReaction };

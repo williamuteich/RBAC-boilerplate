@@ -90,13 +90,13 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
           100% { transform: translateY(-105vh) rotate(360deg) scale(0.6); opacity: 0; }
         }
         @keyframes reaction-float {
-          0% { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 0; }
-          10% { transform: translateY(-10vh) scale(1.35) rotate(-15deg); opacity: 1; }
-          50% { transform: translateY(-50vh) scale(1.1) rotate(15deg); }
-          100% { transform: translateY(-105vh) scale(0.8) rotate(-5deg); opacity: 0; }
+          0% { transform: translateY(0) rotate(0deg) scale(0.7); opacity: 0; }
+          10% { opacity: 0.95; transform: translateY(-10vh) rotate(20deg) scale(1.1); }
+          90% { opacity: 0.95; }
+          100% { transform: translateY(-105vh) rotate(180deg) scale(0.7); opacity: 0; }
         }
         .animate-float-heart { animation: float-heart 12s linear infinite; }
-        .animate-reaction { animation: reaction-float 3.5s cubic-bezier(0.08, 0.82, 0.17, 1) forwards; }
+        .animate-reaction { animation: reaction-float 4.2s linear forwards; }
         .animate-spin-slow { animation: spin 15s linear infinite; }
       `}</style>
 
@@ -124,17 +124,17 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
       {isPublic && (
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
           {reactions.map((r) => (
-            <div
+            <Heart
               key={r.id}
-              className="absolute pointer-events-none text-red-500 fill-red-500 animate-reaction text-4xl"
+              className="absolute pointer-events-none text-rose-600 fill-rose-500 animate-reaction"
               style={{
                 left: `${r.left}%`,
+                width: `${r.size}px`,
+                height: `${r.size}px`,
                 animationDelay: `${r.delay}s`,
                 bottom: "-50px"
               }}
-            >
-              ❤️
-            </div>
+            />
           ))}
         </div>
       )}
