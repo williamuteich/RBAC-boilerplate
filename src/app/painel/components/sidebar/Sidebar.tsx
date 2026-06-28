@@ -34,18 +34,17 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     ? user.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
     : "US";
 
-  const navigation = [
+  const navigation: {
+    title: string;
+    href: string;
+    icon: any;
+    external?: boolean;
+    disabled?: boolean;
+  }[] = [
     {
       title: "Editar Homenagem",
       href: "/painel",
       icon: Edit3,
-    },
-    {
-      title: "Ver Página",
-      href: tributeId ? `/p/${tributeId}` : "#",
-      icon: ExternalLink,
-      external: true,
-      disabled: !tributeId,
     },
     {
       title: "Pagamento",

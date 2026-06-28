@@ -47,18 +47,16 @@ export function DashboardEditor() {
               const isCompleted = step > s.id;
 
               return (
-                <button
+                <div
                   key={s.id}
-                  type="button"
-                  onClick={() => setStep(s.id)}
                   className="flex flex-col items-center justify-center gap-1.5 group focus:outline-none"
                 >
-                  <div className={`w-8 h-8 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${
+                  <div className={`w-8 h-8 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
                     isActive 
                       ? "bg-linear-to-br from-[#9A75F0] to-[#8B5CF6] text-white shadow-md shadow-[#9A75F0]/30 scale-105" 
                       : isCompleted 
                         ? "bg-emerald-50 text-emerald-600 border border-emerald-200" 
-                        : "bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-slate-100 group-hover:text-slate-600"
+                        : "bg-slate-50 text-slate-400 border border-slate-100"
                   }`}>
                     <Icon className="w-3.5 h-3.5 md:w-5 md:h-5" />
                   </div>
@@ -67,11 +65,11 @@ export function DashboardEditor() {
                       ? "text-[#9A75F0]" 
                       : isCompleted 
                         ? "text-emerald-600" 
-                        : "text-slate-400 group-hover:text-slate-600"
+                        : "text-slate-400"
                   }`}>
                     {s.label}
                   </span>
-                </button>
+                </div>
               );
             })}
           </div>
