@@ -10,6 +10,11 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
   const [duration, setDuration] = useState(0);
   const [isStoryPaused, setIsStoryPaused] = useState(false);
   const playerRef = useRef<any>(null);
+  const isPlayingRef = useRef(isPlaying);
+
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
 
   const getYouTubeId = (url: string) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -78,7 +83,7 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
                 }
               };
 
-              if (win.shouldAutoPlay) {
+              if (win.shouldAutoPlay || isPlayingRef.current) {
                 try {
                   event.target.playVideo();
                   setIsPlaying(true);
