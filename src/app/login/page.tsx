@@ -7,7 +7,7 @@ import { UserLoginForm } from "../components/auth/UserLoginForm";
 async function LoginContent() {
   const session = await getServerSession(auth);
 
-  if (session) {
+  if (session && session.user?.tipo === "USER") {
     redirect("/painel");
   }
 
