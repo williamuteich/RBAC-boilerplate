@@ -77,7 +77,7 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
   return (
     <div className="w-full min-h-screen bg-[#FAF9FF] text-[#2D2A4A] relative flex flex-col px-4 pt-4 pb-12 gap-5 animate-in fade-in duration-500">
       {isPublic && videoId && (
-        <div className="hidden">
+        <div className="absolute pointer-events-none opacity-0 w-0 h-0" style={{ width: 0, height: 0 }} aria-hidden="true">
           <div id="youtube-player" />
         </div>
       )}

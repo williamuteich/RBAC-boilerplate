@@ -85,7 +85,7 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
   return (
     <div className="w-full min-h-screen bg-[#121212] text-white flex flex-col px-4 pt-4 pb-12 gap-4 relative animate-in fade-in duration-500">
       {isPublic && videoId && (
-        <div className="hidden">
+        <div className="absolute pointer-events-none opacity-0 w-0 h-0" style={{ width: 0, height: 0 }} aria-hidden="true">
           <div id="youtube-player" />
         </div>
       )}
@@ -166,7 +166,7 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
           return (
             <div key={index} className="flex-1 h-[2px] bg-white/20 rounded-full overflow-hidden">
               <div
-                className={`h-full bg-white ${isActive ? "animate-story-progress" : ""} ${isStoryPaused ? "animation-paused" : ""}`}
+                className={`h-full bg-white ${isActive ? "animate-story-progress" : ""} ${(isStoryPaused || !isPlaying) ? "animation-paused" : ""}`}
                 style={{
                   width: isCompleted ? "100%" : "0%"
                 }}

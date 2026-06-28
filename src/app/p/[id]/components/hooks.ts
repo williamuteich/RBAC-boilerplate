@@ -21,14 +21,14 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
 
   useEffect(() => {
     if (!isPublic) return;
-    if (theme === "story" && isStoryPaused) return;
+    if (theme === "story" && (isStoryPaused || !isPlaying)) return;
 
     const interval = setInterval(() => {
       setActivePhotoIdx((prev) => (prev + 1) % photosCount);
     }, 7000);
 
     return () => clearInterval(interval);
-  }, [photosCount, isPublic, isStoryPaused, theme]);
+  }, [photosCount, isPublic, isStoryPaused, theme, isPlaying]);
 
   useEffect(() => {
     if (!isPublic || !videoId) return;
