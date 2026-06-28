@@ -19,8 +19,7 @@ export function PublishSection() {
   const [copied, setCopied] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
-  const absoluteUrl =
-    `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/p/${tributeId}`;
+  const absoluteUrl = `/p/${tributeId}`;
 
   useEffect(() => {
     if (saveSuccess) {
@@ -115,39 +114,21 @@ export function PublishSection() {
           </button>
         </div>
 
-        <div className="flex flex-col gap-1.5 w-full text-left mt-2">
-          <span className="text-[10px] font-bold text-[#696684] uppercase tracking-wider flex items-center gap-1">
-            <Globe className="w-3.5 h-3.5 text-[#9A75F0]" /> Endereço da Sua Homenagem
-          </span>
-          <div className="flex items-center gap-2 bg-white border border-[#E8E6F5] p-1.5 rounded-xl w-full">
-            <input
-              type="text"
-              readOnly
-              value={absoluteUrl}
-              onClick={(e) => (e.target as HTMLInputElement).select()}
-              className="text-xs font-bold text-[#2D2A4A] bg-transparent outline-hidden px-2 py-1 flex-1 truncate select-all"
-            />
-            <div className="flex items-center gap-0.5 shrink-0">
-              <button
-                type="button"
-                onClick={handleCopyLink}
-                className="cursor-pointer p-2 hover:bg-slate-50 rounded-lg text-slate-500 hover:text-[#9A75F0] transition-colors flex items-center justify-center"
-                title="Copiar Link"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-              </button>
-              <a
-                href={absoluteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cursor-pointer p-2 hover:bg-slate-50 rounded-lg text-slate-500 hover:text-[#9A75F0] transition-colors flex items-center justify-center"
-                title="Acessar Página"
-              >
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
+        <a
+          href={absoluteUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group w-full relative flex items-center gap-3 bg-gradient-to-r from-[#9A75F0] to-[#8B5CF6] hover:from-[#8b6fe3] hover:to-[#7c4ee6] text-white rounded-2xl px-5 py-4 shadow-lg shadow-[#9A75F0]/25 hover:shadow-[#9A75F0]/40 transition-all duration-200 active:scale-[0.98] cursor-pointer"
+        >
+          <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+            <Globe className="w-4 h-4 text-white" />
           </div>
-        </div>
+          <div className="flex-1 text-left">
+            <p className="text-xs font-extrabold text-white leading-tight">Ver Minha Homenagem</p>
+            <p className="text-[10px] text-white/70 mt-0.5">Abre em nova aba</p>
+          </div>
+          <ExternalLink className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200 shrink-0" />
+        </a>
       </div>
 
       <Button
