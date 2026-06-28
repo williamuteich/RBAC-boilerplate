@@ -28,16 +28,6 @@ export function PublicTributeRenderer({
 
   const handleUnlock = () => {
     setUnlocked(true);
-    if (typeof window !== "undefined") {
-      (window as any).shouldAutoPlay = true;
-      if (typeof (window as any).playTributeAudio === "function") {
-        try {
-          (window as any).playTributeAudio();
-        } catch (e) {
-          console.error("Error playing audio on unlock:", e);
-        }
-      }
-    }
   };
 
   const skeleton = data.theme === "spotify" ? <SpotifySkeleton /> : <StorySkeleton />;

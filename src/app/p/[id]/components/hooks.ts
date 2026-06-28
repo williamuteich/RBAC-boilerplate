@@ -43,6 +43,16 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
 
       try {
         new win.YT.Player("youtube-player", {
+          videoId: videoId,
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            rel: 0,
+            modestbranding: 1,
+            playsinline: 1
+          },
           events: {
             onStateChange: (event: any) => {
               if (event.data === 1) {
@@ -74,10 +84,7 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
                   setIsPlaying(true);
                 } catch (e) {}
               } else {
-                try {
-                  event.target.playVideo();
-                  setIsPlaying(true);
-                } catch (e) {}
+                setIsPlaying(false);
               }
             }
           }
