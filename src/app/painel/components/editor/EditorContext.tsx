@@ -35,8 +35,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         setPartnerB(data.partnerB || "Gabriela");
         setAnniversary(data.anniversary || "12/06/2023");
         setTheme(data.theme === "story" ? "story" : "spotify");
-        setSongTitle(data.songTitle || "Perfect");
-        setSongArtist(data.songArtist || "Ed Sheeran");
+        setSongTitle(data.songTitle || "Nossa Música");
+        setSongArtist(data.songArtist || "Nossa História");
         setSongUrl(data.songUrl || "https://www.youtube.com/watch?v=yKNxeF4Kxyc");
         setLetterTitle(data.letterTitle || "Para Minha Vida,");
         setLetterBody(data.letterBody || "Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma.");

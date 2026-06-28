@@ -14,8 +14,8 @@ export function ThemeSelectionSection() {
     partnerA: "Lucas",
     partnerB: "Gabriela",
     anniversary: "12/06/2023 18:30",
-    songTitle: "Perfect",
-    songArtist: "Ed Sheeran",
+    songTitle: "Nossa Música",
+    songArtist: "Nossa História",
     songUrl: "https://www.youtube.com/watch?v=yKNxeF4Kxyc",
     letterTitle: "Para Minha Vida",
     letterLines: [
