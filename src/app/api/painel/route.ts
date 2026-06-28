@@ -50,7 +50,7 @@ export async function GET() {
     theme: client.tribute?.theme ?? "spotify",
     songTitle: client.tribute?.songTitle ?? "Nossa Música",
     songArtist: client.tribute?.songArtist ?? "Nossa História",
-    songUrl: client.tribute?.songUrl ?? "https://www.youtube.com/watch?v=yKNxeF4Kxyc",
+    songUrl: client.tribute?.songUrl ?? "https://www.youtube.com/watch?v=f_jbPirdnyg",
     letterTitle: client.tribute?.letterTitle ?? "Para Minha Vida,",
     letterBody: client.tribute?.letterBody ?? "",
     photos: client.tribute?.photos ?? [],

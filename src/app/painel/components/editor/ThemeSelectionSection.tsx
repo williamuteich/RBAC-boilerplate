@@ -16,7 +16,7 @@ export function ThemeSelectionSection() {
     anniversary: "12/06/2023 18:30",
     songTitle: "Nossa Música",
     songArtist: "Nossa História",
-    songUrl: "https://www.youtube.com/watch?v=yKNxeF4Kxyc",
+    songUrl: "https://www.youtube.com/watch?v=f_jbPirdnyg",
     letterTitle: "Para Minha Vida",
     letterLines: [
       "Desde o momento em que te conheci, percebi que minha vida nunca mais seria a mesma. Cada detalhe, cada conversa e cada sorriso ao seu lado me fazem ter a certeza de que quero passar o resto dos meus dias com você."
