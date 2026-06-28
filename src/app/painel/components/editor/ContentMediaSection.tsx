@@ -49,13 +49,20 @@ export function ContentMediaSection() {
             </div>
           </div>
           <div className="flex flex-col gap-1.5 mt-4">
-            <label className="text-[10px] text-slate-500">Link do Vídeo no YouTube</label>
+            <div className="flex justify-between items-center">
+              <label className="text-[10px] text-slate-500 font-semibold">Link do Vídeo no YouTube</label>
+              <span className="text-[9.5px] text-[#9A75F0] font-bold">Apenas o áudio tocará</span>
+            </div>
             <Input
               type="text"
               value={songUrl}
               onChange={(e) => setSongUrl(e.target.value)}
+              placeholder="Ex: https://www.youtube.com/watch?v=f_jbPirdnyg"
               className="rounded-xl border-[#E8E6F5] bg-white text-[#2D2A4A] focus-visible:ring-[#9A75F0] text-xs py-4"
             />
+            <p className="text-[9.5px] text-slate-400 mt-0.5 leading-relaxed">
+              Abra o vídeo no YouTube, copie o link completo da barra de endereços (ou clique em <strong>Compartilhar</strong> e copie o link curto) e cole aqui.
+            </p>
           </div>
         </div>
 
