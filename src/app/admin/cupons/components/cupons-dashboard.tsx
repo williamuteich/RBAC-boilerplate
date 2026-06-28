@@ -12,6 +12,7 @@ import { GenerateCouponModal } from "./generate-coupon-modal";
 import { useToast } from "@/src/app/components/toast-provider";
 import { Copy, Check, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { parseCurrencyToNumber } from "@/src/lib/masks";
 import {
   Dialog,
   DialogContent,
@@ -51,7 +52,7 @@ export function CuponsDashboard({
     const expiresInDays = expiresInDaysStr ? parseInt(expiresInDaysStr) : null;
     const origem = formData.get("origem") as string || "google";
     const valueStr = formData.get("value") as string;
-    const value = valueStr ? parseFloat(valueStr) : null;
+    const value = parseCurrencyToNumber(valueStr);
 
     startTransition(async () => {
       const res = await generateCoupons({
@@ -135,7 +136,6 @@ export function CuponsDashboard({
         isPending={isPending}
       />
 
-      {/* Modal para exibir os cupons gerados */}
       <Dialog open={generatedCodes !== null} onOpenChange={(open) => !open && setGeneratedCodes(null)}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

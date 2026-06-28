@@ -7,13 +7,30 @@ export function maskDate(value: string): string {
   return `${clean.slice(0, 2)}/${clean.slice(2, 4)}/${clean.slice(4, 8)} ${clean.slice(8, 10)}:${clean.slice(10, 12)}`;
 }
 
-export function maskCurrency(value: string | number): string {
-  const cleanNum = typeof value === "number" ? value : parseFloat(String(value).replace(/\D/g, "")) / 100;
-  if (isNaN(cleanNum)) return "R$ 0,00";
+export function maskCurrency(value: string | number | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "";
+  
+  let cleanNum: number;
+  if (typeof value === "number") {
+    cleanNum = value;
+  } else {
+    const clean = value.replace(/\D/g, "");
+    if (!clean) return "";
+    cleanNum = parseFloat(clean) / 100;
+  }
+  
+  if (isNaN(cleanNum)) return "";
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL"
   }).format(cleanNum);
+}
+
+export function parseCurrencyToNumber(value: string | null | undefined): number | null {
+  if (!value) return null;
+  const clean = value.replace(/\D/g, "");
+  if (!clean) return null;
+  return parseFloat(clean) / 100;
 }
 
 export function unmask(value: string): string {

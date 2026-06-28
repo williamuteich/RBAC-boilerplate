@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Ticket, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { FormEvent } from "react";
+import { maskCurrency } from "@/src/lib/masks";
 
 interface GenerateCouponModalProps {
   isOpen: boolean;
@@ -25,8 +29,17 @@ export function GenerateCouponModal({
   onSubmit,
   isPending
 }: GenerateCouponModalProps) {
+  const [valueVal, setValueVal] = useState("");
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setValueVal("");
+    }
+    onOpenChange(open);
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
           <DialogHeader>
@@ -81,10 +94,10 @@ export function GenerateCouponModal({
               <Label>Valor da Conversão (Opcional)</Label>
               <Input
                 name="value"
-                type="number"
-                step="0.01"
-                min="0.01"
-                placeholder="Ex: 150.00"
+                type="text"
+                placeholder="R$ 0,00"
+                value={valueVal}
+                onChange={(e) => setValueVal(maskCurrency(e.target.value))}
               />
               <span className="text-[10px] text-[#696684] block leading-normal mt-1">
                 Se deixado em branco, o sistema usará o valor real do plano assinado pelo cliente ou R$ 150,00 como padrão.
@@ -110,7 +123,7 @@ export function GenerateCouponModal({
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full bg-[#9A75F0] hover:bg-[#855fe6] text-white font-bold h-10 text-xs rounded-md cursor-pointer"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm h-10 flex items-center justify-center gap-2"
             >
               {isPending ? (
                 <div className="flex items-center justify-center gap-2">

@@ -52,9 +52,9 @@ export function CuponsFiltersBar({
 
         <Button
           onClick={onGenerateClick}
-          className="h-10 px-4 bg-[#9A75F0] hover:bg-[#855fe6] text-white font-bold text-xs tracking-wide uppercase rounded-md cursor-pointer flex items-center gap-1.5 shadow-sm shadow-[#9A75F0]/10 transition-colors"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm h-10 flex items-center gap-2"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="h-4 w-4" />
           Gerar Cupons
         </Button>
       </div>
