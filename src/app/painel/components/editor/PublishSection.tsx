@@ -118,7 +118,7 @@ export function PublishSection() {
           href={absoluteUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="group w-full relative flex items-center gap-3 bg-gradient-to-r from-[#9A75F0] to-[#8B5CF6] hover:from-[#8b6fe3] hover:to-[#7c4ee6] text-white rounded-2xl px-5 py-4 shadow-lg shadow-[#9A75F0]/25 hover:shadow-[#9A75F0]/40 transition-all duration-200 active:scale-[0.98] cursor-pointer"
+          className="group w-full relative flex items-center gap-3 bg-linear-to-r from-[#9A75F0] to-[#8B5CF6] hover:from-[#8b6fe3] hover:to-[#7c4ee6] text-white rounded-2xl px-5 py-4 shadow-lg shadow-[#9A75F0]/25 hover:shadow-[#9A75F0]/40 transition-all duration-200 active:scale-[0.98] cursor-pointer"
         >
           <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
             <Globe className="w-4 h-4 text-white" />
