@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
 import { getDashboardData } from "@/src/services/dashboard";
 import { DashboardContent } from "./components/dashboard-content";
+import { requireAdminContext } from "@/src/lib/auth-helpers/auth-helpers-server";
 
 export const metadata = {
   title: "Dashboard – AdminCore",
@@ -8,10 +8,13 @@ export const metadata = {
 };
 
 export default async function AdminDashboardPage() {
+  await requireAdminContext();
   const data = await getDashboardData();
 
   if (!data) {
-    redirect("/");
+    return (
+      <p className="flex h-screen w-full items-center justify-center text-white">Nenhum dado disponível</p>
+    );
   }
 
   return (
