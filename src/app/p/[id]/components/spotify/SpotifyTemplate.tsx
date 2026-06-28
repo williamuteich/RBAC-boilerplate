@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Heart, QrCode, Volume2, VolumeX, Shuffle, SkipBack, Pause, SkipForward, Repeat, Copy, Download, X } from "lucide-react";
 import { CalendarWidget } from "@/src/app/components/CalendarWidget";
 import { LoveLetterWidget } from "@/src/app/components/LoveLetterWidget";
@@ -32,14 +32,18 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
     toggleQrCode,
   } = useTributeSharing();
 
-  const backgroundHearts = useMemo(() => {
-    return Array.from({ length: 28 }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      size: Math.random() * 14 + 8,
-      delay: Math.random() * -15,
-      duration: Math.random() * 10 + 10,
-    }));
+  const [backgroundHearts, setBackgroundHearts] = useState<{ id: number; left: number; size: number; delay: number; duration: number }[]>([]);
+
+  useEffect(() => {
+    setBackgroundHearts(
+      Array.from({ length: 28 }).map((_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        size: Math.random() * 14 + 8,
+        delay: Math.random() * -15,
+        duration: Math.random() * 10 + 10,
+      }))
+    );
   }, []);
 
   const getCardStyle = (index: number) => {
@@ -83,27 +87,27 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
           0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
           10% { opacity: 0.6; }
           90% { opacity: 0.6; }
-          100% { transform: translateY(-80vh) rotate(360deg) scale(0.6); opacity: 0; }
+          100% { transform: translateY(-105vh) rotate(360deg) scale(0.6); opacity: 0; }
         }
         @keyframes reaction-float {
-          0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
-          15% { transform: translateY(-20px) scale(1.2) rotate(-10deg); opacity: 1; }
-          50% { transform: translateY(-80px) scale(1) rotate(10deg); opacity: 0.85; }
-          100% { transform: translateY(-160px) scale(0.7) rotate(0deg); opacity: 0; }
+          0% { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 0; }
+          10% { transform: translateY(-10vh) scale(1.35) rotate(-15deg); opacity: 1; }
+          50% { transform: translateY(-50vh) scale(1.1) rotate(15deg); }
+          100% { transform: translateY(-105vh) scale(0.8) rotate(-5deg); opacity: 0; }
         }
         .animate-float-heart { animation: float-heart 12s linear infinite; }
-        .animate-reaction { animation: reaction-float 2s cubic-bezier(0.08, 0.82, 0.17, 1) forwards; }
+        .animate-reaction { animation: reaction-float 3.5s cubic-bezier(0.08, 0.82, 0.17, 1) forwards; }
         .animate-spin-slow { animation: spin 15s linear infinite; }
       `}</style>
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(244,63,94,0.04),transparent_50%)] pointer-events-none"></div>
 
       {isPublic && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
           {backgroundHearts.map((heart) => (
             <Heart
               key={heart.id}
-              className="absolute text-rose-300/20 fill-rose-300/10 animate-float-heart"
+              className="absolute text-rose-500 fill-rose-500/70 animate-float-heart"
               style={{
                 left: `${heart.left}%`,
                 width: `${heart.size}px`,
@@ -118,15 +122,15 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
       )}
 
       {isPublic && (
-        <div className="absolute inset-x-0 bottom-24 top-0 pointer-events-none overflow-hidden z-40">
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
           {reactions.map((r) => (
             <div
               key={r.id}
-              className="absolute pointer-events-none text-rose-500 fill-rose-500 animate-reaction text-2xl"
+              className="absolute pointer-events-none text-red-500 fill-red-500 animate-reaction text-4xl"
               style={{
                 left: `${r.left}%`,
                 animationDelay: `${r.delay}s`,
-                bottom: "20px"
+                bottom: "-50px"
               }}
             >
               ❤️
@@ -135,7 +139,7 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
         </div>
       )}
 
-      <div className="w-full flex items-center justify-between text-[#2D2A4A] z-10 mt-1">
+      <div className="w-full flex items-center justify-between text-[#2D2A4A] relative z-20 mt-1">
         {isPublic ? (
           <button
             onClick={toggleQrCode}
@@ -157,7 +161,7 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
         </button>
       </div>
 
-      <div className="w-full aspect-square max-h-[360px] relative z-10 flex items-center justify-center px-4 pt-2 pb-8">
+      <div className="w-full aspect-square max-h-[360px] relative z-20 flex items-center justify-center px-4 pt-2 pb-8">
         <div className="w-full h-full relative cursor-pointer" onClick={triggerReaction}>
           {data.photos.map((photo: PhotoItem, index: number) => {
             const card = getCardStyle(index);
@@ -179,7 +183,7 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
         )}
       </div>
 
-      <div className="w-full flex items-center justify-between mt-1 z-10 px-0.5">
+      <div className="w-full flex items-center justify-between mt-1 relative z-20 px-0.5">
         <div className="min-w-0 pr-4 flex-1">
           <h4 className="text-base font-black tracking-tight text-[#2D2A4A] truncate flex items-center gap-2">
             {data.songTitle}
@@ -206,7 +210,7 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
         </div>
       </div>
 
-      <div className="w-full flex flex-col gap-1 relative py-1 z-10">
+      <div className="w-full flex flex-col gap-1 relative py-1 z-20">
         <div className="w-full h-1 bg-slate-200 rounded-full overflow-visible relative">
           <div
             className="h-full bg-rose-500 rounded-full relative transition-all duration-500 linear"
@@ -223,7 +227,7 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
         </div>
       </div>
 
-      <div className="w-full flex items-center justify-between px-6 z-10">
+      <div className="w-full flex items-center justify-between px-6 relative z-20">
         <Shuffle className="w-3.5 h-3.5 text-[#696684]" />
         <SkipBack className="w-4 h-4 text-[#2D2A4A] fill-current" />
         <button
@@ -236,8 +240,10 @@ export default function SpotifyTemplate({ data, isPublic = false }: TemplateProp
         <Repeat className="w-3.5 h-3.5 text-[#696684]" />
       </div>
 
-      <div className="w-full flex flex-col gap-5 z-10 mt-1">
+      <div className="w-full relative z-20">
         <LoveLetterWidget notes={data.letterLines} size="md" dark={false} />
+      </div>
+      <div className="w-full relative z-0 mt-1">
         <CalendarWidget dateStr={data.anniversary} size="md" dark={false} />
       </div>
       <a

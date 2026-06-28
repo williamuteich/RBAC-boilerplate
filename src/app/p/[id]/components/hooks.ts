@@ -58,8 +58,27 @@ export function useTributeAudio(songUrl: string, photosCount: number, isPublic: 
               } else {
                 event.target.unMute();
               }
-              event.target.playVideo();
-              setIsPlaying(true);
+              
+              win.playTributeAudio = () => {
+                try {
+                  event.target.playVideo();
+                  setIsPlaying(true);
+                } catch (e) {
+                  console.error("Error playing tribute audio:", e);
+                }
+              };
+
+              if (win.shouldAutoPlay) {
+                try {
+                  event.target.playVideo();
+                  setIsPlaying(true);
+                } catch (e) {}
+              } else {
+                try {
+                  event.target.playVideo();
+                  setIsPlaying(true);
+                } catch (e) {}
+              }
             }
           }
         });
@@ -214,7 +233,7 @@ export function useTributeReactions(isPublic: boolean) {
       waveItems.forEach((item) => {
         setTimeout(() => {
           setReactions((prev) => prev.filter((r) => r.id !== item.id));
-        }, 2000);
+        }, 4000);
       });
     };
 

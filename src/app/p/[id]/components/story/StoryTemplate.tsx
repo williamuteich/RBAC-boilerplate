@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Heart, Volume2, VolumeX, Pause, Play, QrCode, Copy, Download, X } from "lucide-react";
 import { CalendarWidget } from "@/src/app/components/CalendarWidget";
 import { LoveLetterWidget } from "@/src/app/components/LoveLetterWidget";
@@ -33,14 +33,18 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
     toggleQrCode,
   } = useTributeSharing();
 
-  const backgroundHearts = useMemo(() => {
-    return Array.from({ length: 28 }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      size: Math.random() * 14 + 8,
-      delay: Math.random() * -15,
-      duration: Math.random() * 10 + 10,
-    }));
+  const [backgroundHearts, setBackgroundHearts] = useState<{ id: number; left: number; size: number; delay: number; duration: number }[]>([]);
+
+  useEffect(() => {
+    setBackgroundHearts(
+      Array.from({ length: 28 }).map((_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        size: Math.random() * 14 + 8,
+        delay: Math.random() * -15,
+        duration: Math.random() * 10 + 10,
+      }))
+    );
   }, []);
 
   const getCardStyle = (index: number) => {
@@ -91,20 +95,20 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
           0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
           10% { opacity: 0.6; }
           90% { opacity: 0.6; }
-          100% { transform: translateY(-80vh) rotate(360deg) scale(0.6); opacity: 0; }
+          100% { transform: translateY(-105vh) rotate(360deg) scale(0.6); opacity: 0; }
         }
         @keyframes reaction-float {
-          0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
-          15% { transform: translateY(-20px) scale(1.2) rotate(-10deg); opacity: 1; }
-          50% { transform: translateY(-80px) scale(1) rotate(10deg); opacity: 0.85; }
-          100% { transform: translateY(-160px) scale(0.7) rotate(0deg); opacity: 0; }
+          0% { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 0; }
+          10% { transform: translateY(-10vh) scale(1.35) rotate(-15deg); opacity: 1; }
+          50% { transform: translateY(-50vh) scale(1.1) rotate(15deg); }
+          100% { transform: translateY(-105vh) scale(0.8) rotate(-5deg); opacity: 0; }
         }
         @keyframes story-progress-ani {
           0% { width: 0%; }
           100% { width: 100%; }
         }
         .animate-float-heart { animation: float-heart 12s linear infinite; }
-        .animate-reaction { animation: reaction-float 2s cubic-bezier(0.08, 0.82, 0.17, 1) forwards; }
+        .animate-reaction { animation: reaction-float 3.5s cubic-bezier(0.08, 0.82, 0.17, 1) forwards; }
         .animate-story-progress { animation: story-progress-ani 7s linear forwards; }
         .animation-paused { animation-play-state: paused !important; }
         .animate-spin-slow { animation: spin 15s linear infinite; }
@@ -119,11 +123,11 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
       </div>
 
       {isPublic && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
           {backgroundHearts.map((heart) => (
             <Heart
               key={heart.id}
-              className="absolute text-rose-300/20 fill-rose-300/10 animate-float-heart"
+              className="absolute text-rose-500 fill-rose-500/70 animate-float-heart"
               style={{
                 left: `${heart.left}%`,
                 width: `${heart.size}px`,
@@ -138,15 +142,15 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
       )}
 
       {isPublic && (
-        <div className="absolute inset-x-0 bottom-24 top-0 pointer-events-none overflow-hidden z-40">
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
           {reactions.map((r) => (
             <div
               key={r.id}
-              className="absolute pointer-events-none text-rose-500 fill-rose-500 animate-reaction text-2xl"
+              className="absolute pointer-events-none text-red-500 fill-red-500 animate-reaction text-4xl"
               style={{
                 left: `${r.left}%`,
                 animationDelay: `${r.delay}s`,
-                bottom: "20px"
+                bottom: "-50px"
               }}
             >
               ❤️
@@ -209,7 +213,7 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
         </div>
       </div>
 
-      <div className="w-full aspect-4/5 max-h-[400px] relative z-10 flex items-center justify-center px-4 pt-2 pb-10 my-1">
+      <div className="w-full aspect-4/5 max-h-[400px] relative z-20 flex items-center justify-center px-4 pt-2 pb-10 my-1">
         <div className="w-full h-full relative">
           {data.photos.map((photo: PhotoItem, index: number) => {
             const card = getCardStyle(index);
@@ -250,7 +254,7 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
         </div>
       </div>
 
-      <div className="w-full flex gap-2.5 z-10">
+      <div className="w-full flex gap-2.5 relative z-20">
         <div className="flex-1 bg-white/10 border border-white/15 p-2.5 rounded-2xl flex items-center justify-between gap-2.5 shadow-lg text-white">
           <div className="flex items-center gap-2 min-w-0">
             <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white/10">
@@ -281,11 +285,13 @@ export default function StoryTemplate({ data, isPublic = false }: TemplateProps)
         </button>
       </div>
 
-      <div className="flex flex-col gap-3 z-10">
+      <div className="w-full relative z-20">
         <LoveLetterWidget notes={data.letterLines} size="md" dark={true} />
+      </div>
+      <div className="w-full relative z-0 mt-1">
         <CalendarWidget dateStr={data.anniversary} size="md" dark={true} />
       </div>
-      <div className="w-full flex flex-col items-center gap-3 mt-2 z-10">
+      <div className="w-full flex flex-col items-center gap-3 mt-2 relative z-20">
         <div className="bg-linear-to-r from-rose-500 to-pink-600 px-3.5 py-1.5 rounded-full flex items-center gap-1.5 text-white shadow-md">
           <Heart className="w-2.5 h-2.5 fill-current text-white animate-ping shrink-0" />
           <span className="text-[7.5px] font-black tracking-widest uppercase">DESDE {data.anniversary}</span>
