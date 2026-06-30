@@ -52,6 +52,6 @@ export default async function ClientesAdminPage({
       }>
         <ClientesContent searchParamsPromise={searchParams} />
       </Suspense>
-    </div>
+    </div >
   );
 }

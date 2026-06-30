@@ -1,4 +1,4 @@
-import { 
+import {
   ExternalLink, Edit2
 } from "lucide-react";
 import {
@@ -86,15 +86,12 @@ export function ClientsTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <a
-                    href={`/p/${client.tributeId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <p
                     className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
                   >
                     glamourlindoia.com.br/{client.tributeId}
                     <ExternalLink className="w-3 h-3" />
-                  </a>
+                  </p>
                 </TableCell>
                 <TableCell>
                   <span className="text-xs font-medium">{getPlanLabel(client.plan)}</span>
